@@ -22,9 +22,7 @@
 
 // Material Dashboard 2 React layouts
 import Dashboard from "layouts/dashboard";
-import Tables from "layouts/tables";
 import Billing from "layouts/billing";
-import Notifications from "layouts/notifications";
 import Profile from "layouts/profile";
 
 // @mui icons
@@ -41,11 +39,11 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Tables",
-    key: "tables",
-    icon: <Icon fontSize="small">table_view</Icon>,
-    route: "/tables",
-    component: <Tables />,
+    name: "Inventario",
+    key: "inventory",
+    icon: <Icon fontSize="small">inventory</Icon>,
+    route: "/inventory",
+    component: <Billing />,
   },
   {
     type: "collapse",
@@ -54,14 +52,6 @@ const routes = [
     icon: <Icon fontSize="small">receipt_long</Icon>,
     route: "/billing",
     component: <Billing />,
-  },
-  {
-    type: "collapse",
-    name: "Notifications",
-    key: "notifications",
-    icon: <Icon fontSize="small">notifications</Icon>,
-    route: "/notifications",
-    component: <Notifications />,
   },
   {
     type: "collapse",
