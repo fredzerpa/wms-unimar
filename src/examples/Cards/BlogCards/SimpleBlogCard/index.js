@@ -1,18 +1,3 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 // react-router components
 import { Link } from "react-router-dom";
 
@@ -28,7 +13,7 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
 
-function SimpleBlogCard({ image, title, description, action }) {
+const SimpleBlogCard = ({ image, title, description, action }) => {
   return (
     <Card>
       <MDBox position="relative" borderRadius="lg" mt={-3} mx={2}>

@@ -1,4 +1,4 @@
-function menuItem(theme) {
+const menuItem = (theme) => {
   const { palette, borders, transitions } = theme;
 
   const { secondary, light, dark } = palette;

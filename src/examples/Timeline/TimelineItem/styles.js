@@ -1,4 +1,4 @@
-function timelineItem(theme, ownerState) {
+const timelineItem = (theme, ownerState) => {
   const { borders } = theme;
   const { lastItem, isDark } = ownerState;
 

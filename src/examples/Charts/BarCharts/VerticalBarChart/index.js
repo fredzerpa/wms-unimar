@@ -1,18 +1,3 @@
-/**
-=========================================================
-* Material Dashboard 2  React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 import { useMemo } from "react";
 
 // porp-types is a library for typechecking of props
@@ -46,7 +31,7 @@ import colors from "assets/theme/base/colors";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-function VerticalBarChart({ icon, title, description, height, chart }) {
+const VerticalBarChart = ({ icon, title, description, height, chart }) => {
   const chartDatasets = chart.datasets
     ? chart.datasets.map((dataset) => ({
         ...dataset,
@@ -101,7 +86,7 @@ function VerticalBarChart({ icon, title, description, height, chart }) {
             <Bar data={data} options={options} redraw />
           </MDBox>
         ),
-        [chart, height]
+        [data, height, options]
       )}
     </MDBox>
   );

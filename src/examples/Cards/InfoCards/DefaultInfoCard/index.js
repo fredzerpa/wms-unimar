@@ -1,18 +1,3 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 // prop-types is library for typechecking of props
 import PropTypes from "prop-types";
 
@@ -25,7 +10,7 @@ import Icon from "@mui/material/Icon";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 
-function DefaultInfoCard({ color, icon, title, description, value }) {
+const DefaultInfoCard = ({ color, icon, title, description, value }) => {
   return (
     <Card>
       <MDBox p={2} mx={3} display="flex" justifyContent="center">

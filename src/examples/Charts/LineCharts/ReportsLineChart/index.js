@@ -1,18 +1,3 @@
-/**
-=========================================================
-* Material Dashboard 2  React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 import { useMemo } from "react";
 
 // porp-types is a library for typechecking of props
@@ -55,7 +40,7 @@ ChartJS.register(
   Filler
 );
 
-function ReportsLineChart({ color, title, description, date, chart }) {
+const ReportsLineChart = ({ color, title, description, date, chart }) => {
   const { data, options } = configs(chart.labels || [], chart.datasets || {});
 
   return (
@@ -76,7 +61,7 @@ function ReportsLineChart({ color, title, description, date, chart }) {
               <Line data={data} options={options} redraw />
             </MDBox>
           ),
-          [chart, color]
+          [color, data, options]
         )}
         <MDBox pt={3} pb={1} px={1}>
           <MDTypography variant="h6" textTransform="capitalize">

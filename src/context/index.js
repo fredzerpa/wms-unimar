@@ -1,19 +1,4 @@
 /**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-/**
   This file is used for controlling the global states of the components,
   you can customize the states for the different components here.
 */
@@ -30,7 +15,7 @@ const MaterialUI = createContext();
 MaterialUI.displayName = "MaterialUIContext";
 
 // Material Dashboard 2 React reducer
-function reducer(state, action) {
+const reducer = (state, action) => {
   switch (action.type) {
     case "MINI_SIDENAV": {
       return { ...state, miniSidenav: action.value };
@@ -53,9 +38,6 @@ function reducer(state, action) {
     case "OPEN_CONFIGURATOR": {
       return { ...state, openConfigurator: action.value };
     }
-    case "DIRECTION": {
-      return { ...state, direction: action.value };
-    }
     case "LAYOUT": {
       return { ...state, layout: action.value };
     }
@@ -69,7 +51,7 @@ function reducer(state, action) {
 }
 
 // Material Dashboard 2 React context provider
-function MaterialUIControllerProvider({ children }) {
+const MaterialUIControllerProvider = ({ children }) => {
   const initialState = {
     miniSidenav: false,
     transparentSidenav: false,
@@ -78,7 +60,6 @@ function MaterialUIControllerProvider({ children }) {
     transparentNavbar: true,
     fixedNavbar: true,
     openConfigurator: false,
-    direction: "ltr",
     layout: "dashboard",
     darkMode: false,
   };
@@ -91,7 +72,7 @@ function MaterialUIControllerProvider({ children }) {
 }
 
 // Material Dashboard 2 React custom hook for using context
-function useMaterialUIController() {
+const useMaterialUIController = () => {
   const context = useContext(MaterialUI);
 
   if (!context) {
@@ -116,7 +97,6 @@ const setSidenavColor = (dispatch, value) => dispatch({ type: "SIDENAV_COLOR", v
 const setTransparentNavbar = (dispatch, value) => dispatch({ type: "TRANSPARENT_NAVBAR", value });
 const setFixedNavbar = (dispatch, value) => dispatch({ type: "FIXED_NAVBAR", value });
 const setOpenConfigurator = (dispatch, value) => dispatch({ type: "OPEN_CONFIGURATOR", value });
-const setDirection = (dispatch, value) => dispatch({ type: "DIRECTION", value });
 const setLayout = (dispatch, value) => dispatch({ type: "LAYOUT", value });
 const setDarkMode = (dispatch, value) => dispatch({ type: "DARKMODE", value });
 
@@ -130,7 +110,6 @@ export {
   setTransparentNavbar,
   setFixedNavbar,
   setOpenConfigurator,
-  setDirection,
   setLayout,
   setDarkMode,
 };

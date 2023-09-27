@@ -1,18 +1,3 @@
-/**
-=========================================================
-* Material Dashboard 2  React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 import { useMemo } from "react";
 
 // porp-types is a library for typechecking of props
@@ -49,7 +34,7 @@ import rgba from "assets/theme/functions/rgba";
 
 ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend);
 
-function RadarChart({ icon, title, description, height, chart }) {
+const RadarChart = ({ icon, title, description, height, chart }) => {
   const chartDatasets = chart.datasets
     ? chart.datasets.map((dataset) => ({
         ...dataset,
@@ -99,7 +84,7 @@ function RadarChart({ icon, title, description, height, chart }) {
             <Radar data={data} options={options} redraw />
           </MDBox>
         ),
-        [chart]
+        [data, height, options]
       )}
     </MDBox>
   );
