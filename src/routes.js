@@ -24,6 +24,7 @@
 import Dashboard from "layouts/dashboard";
 import Billing from "layouts/billing";
 import Profile from "layouts/profile";
+import Inventory from "layouts/inventory";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
@@ -43,7 +44,7 @@ const routes = [
     key: "inventory",
     icon: <Icon fontSize="small">inventory</Icon>,
     route: "/inventory",
-    component: <Billing />,
+    component: <Inventory />,
   },
   {
     type: "collapse",

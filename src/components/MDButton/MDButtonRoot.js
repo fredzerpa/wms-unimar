@@ -1,9 +1,9 @@
 /* eslint-disable prefer-destructuring */
 // @mui material components
-import Button from "@mui/material/Button";
+import { LoadingButton } from "@mui/lab";
 import { styled } from "@mui/material/styles";
 
-export default styled(Button)(({ theme, ownerState }) => {
+export default styled(LoadingButton)(({ theme, ownerState }) => {
   const { palette, functions, borders, boxShadows } = theme;
   const { color, variant, size, circular, iconOnly, darkMode } = ownerState;
 

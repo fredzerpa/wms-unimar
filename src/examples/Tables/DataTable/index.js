@@ -1,296 +1,162 @@
-import { useMemo, useEffect, useState } from "react";
+import { useEffect, useRef, useState, memo } from "react";
 
-// prop-types is a library for typechecking of props
-import PropTypes from "prop-types";
+import MaterialReactTable from "material-react-table";
+import { MRT_Localization_ES } from "material-react-table/locales/es"; // Import Material React Table Translations
+import isEqual from "react-fast-compare";
+import { DateTime } from "luxon";
 
-// react-table components
-import { useTable, usePagination, useGlobalFilter, useAsyncDebounce, useSortBy } from "react-table";
+import { useMaterialUIController } from "context";
 
-// @mui material components
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableContainer from "@mui/material/TableContainer";
-import TableRow from "@mui/material/TableRow";
-import Icon from "@mui/material/Icon";
-import Autocomplete from "@mui/material/Autocomplete";
-
-// Material Dashboard 2 React components
+import colors from "assets/theme/base/colors";
+import ExportsMenu from "./components/ExportsMenu";
+import rgba from "assets/theme/functions/rgba";
 import MDBox from "components/MDBox";
-import MDTypography from "components/MDTypography";
-import MDInput from "components/MDInput";
-import MDPagination from "components/MDPagination";
+import { MRT_Default_Icons } from "./config/icons";
 
-// Material Dashboard 2 React example components
-import DataTableHeadCell from "examples/Tables/DataTable/DataTableHeadCell";
-import DataTableBodyCell from "examples/Tables/DataTable/DataTableBodyCell";
+const DataTable = ({ columns, data, isLoading, onRowClick, customTopToolbarComponents, ...props }) => {
+  const [controller] = useMaterialUIController();
+  const { darkMode } = controller;
 
-const DataTable = ({
-  entriesPerPage,
-  canSearch,
-  showTotalEntries,
-  table,
-  pagination,
-  isSorted,
-  noEndBorder,
-}) => {
-  const defaultValue = entriesPerPage.defaultValue ? entriesPerPage.defaultValue : 10;
-  const entries = entriesPerPage.entries
-    ? entriesPerPage.entries.map((el) => el.toString())
-    : ["5", "10", "15", "20", "25"];
-  const columns = useMemo(() => table.columns, [table]);
-  const data = useMemo(() => table.rows, [table]);
+  const tableContainerRef = useRef(null); // we can get access to the underlying TableContainer element and react to its scroll events
+  const rowVirtualizerInstanceRef = useRef(null); // we can get access to the underlying Virtualizer instance and call its scrollToIndex method
+  const [sorting, setSorting] = useState([]);
 
-  const tableInstance = useTable(
-    { columns, data, initialState: { pageIndex: 0 } },
-    useGlobalFilter,
-    useSortBy,
-    usePagination
-  );
-
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    prepareRow,
-    rows,
-    page,
-    pageOptions,
-    canPreviousPage,
-    canNextPage,
-    gotoPage,
-    nextPage,
-    previousPage,
-    setPageSize,
-    setGlobalFilter,
-    state: { pageIndex, pageSize, globalFilter },
-  } = tableInstance;
-
-  // Set the default value for the entries per page when component mounts
-  useEffect(() => setPageSize(defaultValue || 10), [defaultValue, setPageSize]);
-
-  // Set the entries per page value based on the select value
-  const setEntriesPerPage = (value) => setPageSize(value);
-
-  // Render the paginations
-  const renderPagination = pageOptions.map((option) => (
-    <MDPagination
-      item
-      key={option}
-      onClick={() => gotoPage(Number(option))}
-      active={pageIndex === option}
-    >
-      {option + 1}
-    </MDPagination>
-  ));
-
-  // Handler for the input to set the pagination index
-  const handleInputPagination = ({ target: { value } }) =>
-    value > pageOptions.length || value < 0 ? gotoPage(0) : gotoPage(Number(value));
-
-  // Customized page options starting from 1
-  const customizedPageOptions = pageOptions.map((option) => option + 1);
-
-  // Setting value for the pagination input
-  const handleInputPaginationValue = ({ target: value }) => gotoPage(Number(value.value - 1));
-
-  // Search input value state
-  const [search, setSearch] = useState(globalFilter);
-
-  // Search input state handle
-  const onSearchChange = useAsyncDebounce((value) => {
-    setGlobalFilter(value || undefined);
-  }, 100);
-
-  // A function that sets the sorted value for the table
-  const setSortedValue = (column) => {
-    let sortedValue;
-
-    if (isSorted && column.isSorted) {
-      sortedValue = column.isSortedDesc ? "desc" : "asce";
-    } else if (isSorted) {
-      sortedValue = "none";
-    } else {
-      sortedValue = false;
+  // scroll to top of table when sorting or filters change
+  useEffect(() => {
+    try {
+      // scroll to the top of the table when the sorting changes
+      rowVirtualizerInstanceRef.current?.scrollToIndex?.(0);
+    } catch (error) {
+      console.error(error);
     }
+  }, [sorting]);
 
-    return sortedValue;
-  };
-
-  // Setting the entries starting point
-  const entriesStart = pageIndex === 0 ? pageIndex + 1 : pageIndex * pageSize + 1;
-
-  // Setting the entries ending point
-  let entriesEnd;
-
-  if (pageIndex === 0) {
-    entriesEnd = pageSize;
-  } else if (pageIndex === pageOptions.length - 1) {
-    entriesEnd = rows.length;
-  } else {
-    entriesEnd = pageSize * (pageIndex + 1);
+  const renderTopToolbar = ({ columns }) => ({ table }) => {
+    const exportFileName = `WMS Inventario - ${DateTime.now().toFormat('dd-MM-yyyy')}`;
+    const exportSheetName = `Inventario`;
+    return (
+      <MDBox display="flex">
+        {customTopToolbarComponents && customTopToolbarComponents({ table })}
+        <ExportsMenu
+          table={table}
+          columns={columns}
+          fileName={exportFileName}
+          sheetName={exportSheetName}
+          tooltipPlacement="bottom"
+          color="secondary"
+        />
+      </MDBox>
+    )
   }
 
   return (
-    <TableContainer sx={{ boxShadow: "none" }}>
-      {entriesPerPage || canSearch ? (
-        <MDBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
-          {entriesPerPage && (
-            <MDBox display="flex" alignItems="center">
-              <Autocomplete
-                disableClearable
-                value={pageSize.toString()}
-                options={entries}
-                onChange={(event, newValue) => {
-                  setEntriesPerPage(parseInt(newValue, 10));
-                }}
-                size="small"
-                sx={{ width: "5rem" }}
-                renderInput={(params) => <MDInput {...params} />}
-              />
-              <MDTypography variant="caption" color="secondary">
-                &nbsp;&nbsp;entries per page
-              </MDTypography>
-            </MDBox>
-          )}
-          {canSearch && (
-            <MDBox width="12rem" ml="auto">
-              <MDInput
-                placeholder="Search..."
-                value={search}
-                size="small"
-                fullWidth
-                onChange={({ currentTarget }) => {
-                  setSearch(search);
-                  onSearchChange(currentTarget.value);
-                }}
-              />
-            </MDBox>
-          )}
-        </MDBox>
-      ) : null}
-      <Table {...getTableProps()}>
-        <MDBox component="thead">
-          {headerGroups.map((headerGroup, key) => (
-            <TableRow key={key} {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column, idx) => (
-                <DataTableHeadCell
-                  key={idx}
-                  {...column.getHeaderProps(isSorted && column.getSortByToggleProps())}
-                  width={column.width ? column.width : "auto"}
-                  align={column.align ? column.align : "left"}
-                  sorted={setSortedValue(column)}
-                >
-                  {column.render("Header")}
-                </DataTableHeadCell>
-              ))}
-            </TableRow>
-          ))}
-        </MDBox>
-        <TableBody {...getTableBodyProps()}>
-          {page.map((row, key) => {
-            prepareRow(row);
-            return (
-              <TableRow key={key} {...row.getRowProps()}>
-                {row.cells.map((cell, idx) => (
-                  <DataTableBodyCell
-                    key={idx}
-                    noBorder={noEndBorder && rows.length - 1 === key}
-                    align={cell.column.align ? cell.column.align : "left"}
-                    {...cell.getCellProps()}
-                  >
-                    {cell.render("Cell")}
-                  </DataTableBodyCell>
-                ))}
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
+    <MaterialReactTable
+      // Custom props
+      columns={columns}
+      data={data}
+      state={{
+        isLoading,
+        showAlertBanner: props?.isError,
+        showProgressBars: isLoading,
+        sorting,
+        columnVisibility: { id: false },
+        density: "compact"
+      }}
+      localization={MRT_Localization_ES}
+      renderTopToolbarCustomActions={renderTopToolbar({ columns })}
+      enableDensityToggle={false}
+      positionToolbarAlertBanner="top"
+      enableRowSelection
+      enablePagination={false}
+      enableRowVirtualization // optional, but recommended if it is likely going to be more than 100 rows
+      enableBottomToolbar={false}
+      icons={MRT_Default_Icons} // Add dark theme icon colors
+      muiTableContainerProps={{
+        ref: tableContainerRef, // get access to the table container element
+        sx: {
+          height: '500px',
+          boxShadow: 'none',
+          // Overwrite scroll styles
+          '::-webkit-scrollbar': {
+            width: '8px', // Vertical Scroll size
+            height: '8px', // Horizontal scroll size
+            // display: 'none' /* Hide scroll */,
+          },
+          // Add thumb background color
+          '::-webkit-scrollbar-thumb': {
+            background: '#ccc',
+            borderRadius: '4px',
+          },
 
-      <MDBox
-        display="flex"
-        flexDirection={{ xs: "column", sm: "row" }}
-        justifyContent="space-between"
-        alignItems={{ xs: "flex-start", sm: "center" }}
-        p={!showTotalEntries && pageOptions.length === 1 ? 0 : 3}
-      >
-        {showTotalEntries && (
-          <MDBox mb={{ xs: 3, sm: 0 }}>
-            <MDTypography variant="button" color="secondary" fontWeight="regular">
-              Showing {entriesStart} to {entriesEnd} of {rows.length} entries
-            </MDTypography>
-          </MDBox>
-        )}
-        {pageOptions.length > 1 && (
-          <MDPagination
-            variant={pagination.variant ? pagination.variant : "gradient"}
-            color={pagination.color ? pagination.color : "info"}
-          >
-            {canPreviousPage && (
-              <MDPagination item onClick={() => previousPage()}>
-                <Icon sx={{ fontWeight: "bold" }}>chevron_left</Icon>
-              </MDPagination>
-            )}
-            {renderPagination.length > 6 ? (
-              <MDBox width="5rem" mx={1}>
-                <MDInput
-                  inputProps={{ type: "number", min: 1, max: customizedPageOptions.length }}
-                  value={customizedPageOptions[pageIndex]}
-                  onChange={(handleInputPagination, handleInputPaginationValue)}
-                />
-              </MDBox>
-            ) : (
-              renderPagination
-            )}
-            {canNextPage && (
-              <MDPagination item onClick={() => nextPage()}>
-                <Icon sx={{ fontWeight: "bold" }}>chevron_right</Icon>
-              </MDPagination>
-            )}
-          </MDPagination>
-        )}
-      </MDBox>
-    </TableContainer>
+          '::-webkit-scrollbar-thumb:hover': {
+            background: '#b3b3b3',
+            boxShadow: '0 0 2px 1px rgba(0, 0, 0, 0.2)',
+          },
+
+          '::-webkit-scrollbar-thumb:active': {
+            backgroundColor: '#999999',
+          },
+        },
+      }}
+      muiToolbarAlertBannerProps={
+        props?.isError
+          ? {
+            color: 'error',
+            children: 'Error en la carga de datos',
+          }
+          : undefined
+      }
+      onSortingChange={setSorting}
+      rowVirtualizerInstanceRef={rowVirtualizerInstanceRef} // get access to the virtualizer instance
+      rowVirtualizerProps={{ overscan: 4 }}
+      // Customize Material React Table styles
+      muiLinearProgressProps={{ color: 'info' }}
+      muiTablePaperProps={{ elevation: 0, sx: { overflow: 'hidden', background: 'inherit', '.MuiButtonBase-root': { color: 'text' } } }}
+      muiTopToolbarProps={{ sx: { backgroundColor: 'inherit', color: 'text' } }}
+      muiTableProps={{ sx: { '&, & thead, & tr': { backgroundColor: 'inherit' } } }}
+      muiTableHeadProps={{ sx: { padding: 0 } }}
+      muiTableBodyRowProps={({ isDetailPanel, row, table }) => ({
+        onClick: e => { if (onRowClick) return onRowClick(e, { row, table }) },
+        sx: {
+          cursor: onRowClick && 'pointer', //you might want to change the cursor too when adding an onClick
+          // Change select & hover styles at the rows
+          backgroundColor: row.getIsSelected() && !darkMode && `${colors.background.default}!important`,
+          '&:hover td': {
+            backgroundColor: row.getIsSelected() && `${rgba(colors.info.main, 0.15)}!important`,
+          }
+        },
+      })}
+      muiSelectAllCheckboxProps={{ sx: { width: 'auto', height: 'inherit' } }}
+      muiSelectCheckboxProps={{ sx: { width: 'auto', height: 'inherit' } }}
+      muiSearchTextFieldProps={{
+        sx: {
+          '& > .MuiInputBase-root': {
+            padding: '0.5rem 0.75rem!important',
+            justifyContent: 'space-between',
+            '&:after': {
+              borderColor: colors.info.main
+            }
+          },
+        },
+      }}
+      muiTableHeadCellFilterTextFieldProps={{
+        sx: {
+          '& > .MuiInputBase-root': {
+            padding: '0.5rem 0.75rem!important',
+            justifyContent: 'space-between',
+          },
+        },
+      }}
+      muiTablePaginationProps={{
+        SelectProps: {
+          sx: {
+            width: 'auto!important',
+          },
+        },
+      }}
+      {...props}
+    />
   );
 }
 
-// Setting default values for the props of DataTable
-DataTable.defaultProps = {
-  entriesPerPage: { defaultValue: 10, entries: [5, 10, 15, 20, 25] },
-  canSearch: false,
-  showTotalEntries: true,
-  pagination: { variant: "gradient", color: "info" },
-  isSorted: true,
-  noEndBorder: false,
-};
-
-// Typechecking props for the DataTable
-DataTable.propTypes = {
-  entriesPerPage: PropTypes.oneOfType([
-    PropTypes.shape({
-      defaultValue: PropTypes.number,
-      entries: PropTypes.arrayOf(PropTypes.number),
-    }),
-    PropTypes.bool,
-  ]),
-  canSearch: PropTypes.bool,
-  showTotalEntries: PropTypes.bool,
-  table: PropTypes.objectOf(PropTypes.array).isRequired,
-  pagination: PropTypes.shape({
-    variant: PropTypes.oneOf(["contained", "gradient"]),
-    color: PropTypes.oneOf([
-      "primary",
-      "secondary",
-      "info",
-      "success",
-      "warning",
-      "error",
-      "dark",
-      "light",
-    ]),
-  }),
-  isSorted: PropTypes.bool,
-  noEndBorder: PropTypes.bool,
-};
-
-export default DataTable;
+export default memo(DataTable, isEqual);

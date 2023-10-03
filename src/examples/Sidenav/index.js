@@ -161,7 +161,7 @@ const Sidenav = ({ color, brand, brandName, routes, ...rest }) => {
           (!darkMode && !whiteSidenav && !transparentSidenav) ||
           (darkMode && !transparentSidenav && whiteSidenav)
         }
-      />,
+      />
       <List>{renderRoutes}</List>
     </SidenavRoot>
   );
