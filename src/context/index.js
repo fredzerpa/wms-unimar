@@ -58,7 +58,7 @@ const MaterialUIControllerProvider = ({ children }) => {
     whiteSidenav: false,
     sidenavColor: "info",
     transparentNavbar: true,
-    fixedNavbar: true,
+    fixedNavbar: false,
     openConfigurator: false,
     layout: "dashboard",
     darkMode: false,
