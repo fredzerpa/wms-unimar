@@ -10,9 +10,9 @@ import Icon from "@mui/material/Icon";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 
-const ComplexStatisticsCard = ({ color, title, count, percentage, icon }) => {
+const ComplexStatisticsCard = ({ color, title, count, percentage, icon, slotProps }) => {
   return (
-    <Card>
+    <Card {...slotProps?.card}>
       <MDBox display="flex" justifyContent="space-between" pt={1} px={2}>
         <MDBox
           variant="gradient"
@@ -27,15 +27,15 @@ const ComplexStatisticsCard = ({ color, title, count, percentage, icon }) => {
           height="4rem"
           mt={-3}
         >
-          <Icon fontSize="medium" color="inherit">
+          <Icon fontSize="medium" color="inherit" {...slotProps?.icon}>
             {icon}
           </Icon>
         </MDBox>
         <MDBox textAlign="right" lineHeight={1.25}>
-          <MDTypography variant="button" fontWeight="light" color="text">
+          <MDTypography variant="button" fontWeight="light" color="text" {...slotProps?.title}>
             {title}
           </MDTypography>
-          <MDTypography variant="h4">{count}</MDTypography>
+          <MDTypography variant="h4" {...slotProps?.count}>{count}</MDTypography>
         </MDBox>
       </MDBox>
       <Divider />
@@ -46,6 +46,7 @@ const ComplexStatisticsCard = ({ color, title, count, percentage, icon }) => {
             variant="button"
             fontWeight="bold"
             color={percentage.color}
+            {...slotProps?.percentage}
           >
             {percentage.amount}
           </MDTypography>
@@ -92,7 +93,7 @@ ComplexStatisticsCard.propTypes = {
       "white",
     ]),
     amount: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    label: PropTypes.string,
+    label: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   }),
   icon: PropTypes.node.isRequired,
 };

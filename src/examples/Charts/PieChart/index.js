@@ -6,6 +6,7 @@ import PropTypes from "prop-types";
 // react-chartjs-2 components
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -58,7 +59,7 @@ const PieChart = ({ icon, title, description, height, chart }) => {
       {useMemo(
         () => (
           <MDBox height={height}>
-            <Pie data={data} options={options} redraw />
+            <Pie data={data} options={options} redraw plugins={[ChartDataLabels]} />
           </MDBox>
         ),
         [data, height, options]
@@ -66,7 +67,7 @@ const PieChart = ({ icon, title, description, height, chart }) => {
     </MDBox>
   );
 
-  return title || description ? <Card>{renderChart}</Card> : renderChart;
+  return title || description ? <Card sx={{ height: "100%" }} >{renderChart}</Card> : renderChart;
 }
 
 // Setting default values for the props of PieChart

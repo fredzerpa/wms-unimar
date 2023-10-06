@@ -22,6 +22,8 @@ import Card from "@mui/material/Card";
 import Divider from "@mui/material/Divider";
 import Icon from "@mui/material/Icon";
 
+import lodash from "lodash";
+
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
@@ -42,6 +44,7 @@ ChartJS.register(
 
 const ReportsLineChart = ({ color, title, description, date, chart }) => {
   const { data, options } = configs(chart.labels || [], chart.datasets || {});
+  const chartOptions = lodash.merge(options, chart.options)
 
   return (
     <Card sx={{ height: "100%" }}>
@@ -58,10 +61,10 @@ const ReportsLineChart = ({ color, title, description, date, chart }) => {
               mt={-5}
               height="12.5rem"
             >
-              <Line data={data} options={options} redraw />
+              <Line data={data} options={chartOptions} redraw />
             </MDBox>
           ),
-          [color, data, options]
+          [chartOptions, color, data]
         )}
         <MDBox pt={3} pb={1} px={1}>
           <MDTypography variant="h6" textTransform="capitalize">

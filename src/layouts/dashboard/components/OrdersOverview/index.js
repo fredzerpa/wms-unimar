@@ -1,6 +1,7 @@
 // @mui material components
 import Card from "@mui/material/Card";
 import Icon from "@mui/material/Icon";
+import SimpleBar from "simplebar-react";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -11,57 +12,71 @@ import TimelineItem from "examples/Timeline/TimelineItem";
 
 const OrdersOverview = () => {
   return (
-    <Card sx={{ height: "100%" }}>
-      <MDBox pt={3} px={3}>
-        <MDTypography variant="h6" fontWeight="medium">
-          Orders overview
-        </MDTypography>
-        <MDBox mt={0} mb={2}>
-          <MDTypography variant="button" color="text" fontWeight="regular">
-            <MDTypography display="inline" variant="body2" verticalAlign="middle">
-              <Icon sx={{ color: ({ palette: { success } }) => success.main }}>arrow_upward</Icon>
-            </MDTypography>
-            &nbsp;
-            <MDTypography variant="button" color="text" fontWeight="medium">
-              24%
-            </MDTypography>{" "}
-            this month
+    <Card sx={{ height: "100%", py: 3 }}>
+      <SimpleBar style={{ maxHeight: 500 }}> {/* 500px stands for DataTable height */}
+        <MDBox px={3}>
+          <MDTypography variant="h6" fontWeight="medium">
+            Ultimos 30 dias
           </MDTypography>
+          <MDBox mt={0} mb={2}>
+            <MDTypography variant="button" color="text" fontWeight="regular">
+              <MDTypography display="inline" variant="body2" verticalAlign="middle">
+                <Icon sx={{ color: ({ palette: { success } }) => success.main }}>arrow_upward</Icon>
+              </MDTypography>
+              &nbsp;
+              <MDTypography variant="button" color="text" fontWeight="medium">
+                24%
+              </MDTypography>{" "}
+              envios este mes
+            </MDTypography>
+          </MDBox>
         </MDBox>
-      </MDBox>
-      <MDBox p={2}>
-        <TimelineItem
-          color="success"
-          icon="notifications"
-          title="$2400, Design changes"
-          dateTime="22 DEC 7:20 PM"
-        />
-        <TimelineItem
-          color="error"
-          icon="inventory_2"
-          title="New order #1832412"
-          dateTime="21 DEC 11 PM"
-        />
-        <TimelineItem
-          color="info"
-          icon="shopping_cart"
-          title="Server payments for April"
-          dateTime="21 DEC 9:34 PM"
-        />
-        <TimelineItem
-          color="warning"
-          icon="payment"
-          title="New card added for order #4395133"
-          dateTime="20 DEC 2:20 AM"
-        />
-        <TimelineItem
-          color="primary"
-          icon="vpn_key"
-          title="New card added for order #4395133"
-          dateTime="18 DEC 4:54 AM"
-          lastItem
-        />
-      </MDBox>
+        <MDBox px={2}>
+          <TimelineItem
+            color="primary"
+            icon="shopping_cart"
+            title="Compra de 100 productos"
+            dateTime="5 OCT"
+          />
+          <TimelineItem
+            color="success"
+            icon="send"
+            title="64 productos enviados a Local-1"
+            dateTime="5 OCT"
+          />
+          <TimelineItem
+            color="warning"
+            icon="close"
+            title="Cancelación de compra de productos orden #1832412"
+            dateTime="3 OCT"
+          />
+          <TimelineItem
+            color="success"
+            icon="send"
+            title="20 productos enviados a Local-2"
+            dateTime="1 OCT"
+          />
+          <TimelineItem
+            color="success"
+            icon="send"
+            title="44 productos enviados a Local-4"
+            dateTime="1 OCT"
+          />
+          <TimelineItem
+            color="primary"
+            icon="shopping_cart"
+            title="Compra de 120 productos"
+            dateTime="28 SEP"
+          />
+          <TimelineItem
+            color="success"
+            icon="send"
+            title="37 productos enviados a Local-3"
+            dateTime="25 SEP"
+            lastItem
+          />
+        </MDBox>
+      </SimpleBar>
     </Card>
   );
 }

@@ -38,8 +38,14 @@ const configs = (labels, datasets) => {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: {
-          display: false,
+        datalabels: {
+          formatter: (value, ctx) => {
+            const datapoints = ctx.chart.data.datasets[0].data
+            const total = datapoints.reduce((total, datapoint) => total + datapoint, 0)
+            const percentage = value / total * 100
+            return percentage.toFixed(0) + "%";
+          },
+          color: '#ffffff'
         },
       },
       interaction: {

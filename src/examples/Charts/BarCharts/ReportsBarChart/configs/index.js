@@ -22,6 +22,10 @@ const configs = (labels, datasets) => {
         legend: {
           display: false,
         },
+        // Quitamos las cajas de colores en la leyenda durante el hover
+        tooltip: {
+          displayColors: false, // Caja de color de las leyendas en el hover
+        }
       },
       interaction: {
         intersect: false,

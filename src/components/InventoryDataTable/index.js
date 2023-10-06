@@ -71,7 +71,7 @@ const InventoryDataTable = ({ ...rest }) => {
       header: "Tipo",
       Header: formatColumnHeader,
       Cell: formatColumnCell,
-      size: 150,
+      size: 160,
     },
     {
       accessorKey: "typeClass",
