@@ -5,9 +5,9 @@ import Grid from "@mui/material/Grid";
 import MDBox from "components/MDBox";
 
 // Material Dashboard 2 React examples
-import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import Footer from "examples/Footer";
+import DashboardLayout from "components/LayoutContainers/DashboardLayout";
+import DashboardNavbar from "components/Navbars/DashboardNavbar";
+import Footer from "components/Footer";
 
 // Billing page components
 import ShippingsHistory from "layouts/shippings/components/ShippingsHistory";

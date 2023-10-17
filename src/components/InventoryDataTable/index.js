@@ -3,7 +3,7 @@ import { useState } from "react";
 import MDTypography from "components/MDTypography";
 import ItemModalForm from "components/Modals/ItemForm";
 import AddItemButton from "./AddItemButton";
-import DataTable from "examples/Tables/DataTable";
+import DataTable from "components/Tables/DataTable";
 
 // Data
 import { productsData } from "./data/productsData";

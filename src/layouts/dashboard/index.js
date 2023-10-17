@@ -8,15 +8,15 @@ import colors from "assets/theme/base/colors";
 
 import MDBox from "components/MDBox";
 import InventoryDataTable from "components/InventoryDataTable";
-import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import Footer from "examples/Footer";
-import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
-import ReportsLineChart from "examples/Charts/LineCharts/ReportsLineChart";
-import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatisticsCard";
+import DashboardLayout from "components/LayoutContainers/DashboardLayout";
+import DashboardNavbar from "components/Navbars/DashboardNavbar";
+import Footer from "components/Footer";
+import ReportsBarChart from "components/Charts/BarCharts/ReportsBarChart";
+import ReportsLineChart from "components/Charts/LineCharts/ReportsLineChart";
+import ComplexStatisticsCard from "components/Cards/StatisticsCards/ComplexStatisticsCard";
 import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
 import MDTypography from "components/MDTypography";
-import PieChart from "examples/Charts/PieChart";
+import PieChart from "components/Charts/PieChart";
 
 // Utils
 import { formatCurrency, formatPercentage, formatNumber } from "utils/functions.utils";
