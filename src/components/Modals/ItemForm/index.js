@@ -1,25 +1,26 @@
-import { useState } from 'react';
+import { useState } from "react";
 // Libraries
-import { Card, Grid, MenuItem, Modal, Select } from '@mui/material';
-import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import PropTypes from 'prop-types';
-import SimpleBar from 'simplebar-react';
-import 'simplebar-react/dist/simplebar.min.css';
-import { Controller, useForm } from 'react-hook-form';
-import { DateTime } from 'luxon';
-import { Lock } from '@mui/icons-material';
+import { Card, Grid, MenuItem, Modal, Select } from "@mui/material";
+import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import PropTypes from "prop-types";
+import SimpleBar from "simplebar-react";
+import "simplebar-react/dist/simplebar.min.css";
+import { Controller, useForm } from "react-hook-form";
+import { DateTime } from "luxon";
+import { Lock } from "@mui/icons-material";
 
 // Components
-import MDBox from 'components/MDBox';
-import MDButton from 'components/MDButton';
-import MDTypography from 'components/MDTypography';
-import MDInput from 'components/MDInput';
-import { defaultsDeep } from 'lodash';
+import MDBox from "components/MDBox";
+import MDButton from "components/MDButton";
+import MDTypography from "components/MDTypography";
+import MDInput from "components/MDInput";
+import { defaultsDeep } from "lodash";
+import { useMaterialUIController } from "context";
 
 const formatItemRawData = rawData => {
   if (!rawData) return {};
-  const date = DateTime.fromFormat(rawData?.date, 'dd/MM/yyyy');
+  const date = DateTime.fromFormat(rawData?.date, "dd/MM/yyyy");
   return {
     ...rawData,
     date
@@ -28,23 +29,25 @@ const formatItemRawData = rawData => {
 
 const INITIAL_VALUES = {
   id: null,
-  slot: '',
+  slot: "",
   date: DateTime.now(),
-  code: '',
-  size: '',
-  name: '',
-  type: '',
-  typeClass: '',
-  observations: '',
+  code: "",
+  size: "",
+  name: "",
+  type: "",
+  typeClass: "",
+  observations: "",
 }
 const ItemModalForm = ({ item, open, close }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { register, control, handleSubmit, watch, formState: { errors } } = useForm({
     values: defaultsDeep(formatItemRawData(item), INITIAL_VALUES),
   });
+  const [controller] = useMaterialUIController();
+  const { darkMode } = controller;
 
-  const watchTypeSelection = watch('type');
-  const watchObservations = watch('observations');
+  const watchTypeSelection = watch("type");
+  const watchObservations = watch("observations");
 
 
   const onSubmit = async data => {
@@ -62,7 +65,7 @@ const ItemModalForm = ({ item, open, close }) => {
 
   const handleClose = e => {
     close();
-  } 
+  }
 
   return (
     <Modal
@@ -70,17 +73,17 @@ const ItemModalForm = ({ item, open, close }) => {
       onClose={handleClose}
     >
       <Card
-        component='form'
+        component="form"
         encType="multipart/form-data"
         onSubmit={handleSubmit(onSubmit)}
         sx={theme => ({
-          width: '550px',
-          maxWidth: '100%',
-          position: 'absolute',
+          width: "550px",
+          maxWidth: "100%",
+          position: "absolute",
           overflow: "hidden",
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
           [theme.breakpoints.down("md")]: {
             height: "100%",
             width: "100%",
@@ -90,7 +93,7 @@ const ItemModalForm = ({ item, open, close }) => {
       >
         <SimpleBar
           style={{
-            maxHeight: '80vh',
+            maxHeight: "80vh",
           }}
         >
           <LocalizationProvider dateAdapter={AdapterLuxon} adapterLocale="es-es">
@@ -115,7 +118,7 @@ const ItemModalForm = ({ item, open, close }) => {
                           {...field}
                           error={!!errors?.slot}
                           fullWidth
-                          sx={{ '#mui-component-select-slot': { p: '0.75rem!important' } }}
+                          sx={{ "#mui-component-select-slot": { p: "0.75rem!important" } }}
                         // TODO: readOnly={!user.privileges.events.upsert}
                         >
                           <MenuItem value={1} sx={{ my: 0.5 }}>Lote 1</MenuItem>
@@ -125,7 +128,7 @@ const ItemModalForm = ({ item, open, close }) => {
                         </Select>
                       )}
                       rules={{
-                        required: 'Este campo es requerido'
+                        required: "Este campo es requerido"
                       }}
                     />
                     {
@@ -154,7 +157,8 @@ const ItemModalForm = ({ item, open, close }) => {
                           }}
                           slotProps={{
                             openPickerButton: {
-                              color: 'info'
+                              color: darkMode ? "white" : "info"
+
                             },
                           }}
                           sx={{ width: "100%" }}
@@ -214,18 +218,17 @@ const ItemModalForm = ({ item, open, close }) => {
                           {...field}
                           error={!!errors?.size}
                           fullWidth
-                          sx={{ '#mui-component-select-size': { p: '0.75rem!important' } }}
                         // TODO: readOnly={!user.privileges.events.upsert}
                         >
-                          <MenuItem value='quarterGallon' sx={{ my: 0.5 }}>1&frasl;4 Galon</MenuItem>
-                          <MenuItem value='oneGallon' sx={{ my: 0.5 }}>1 Galon</MenuItem>
-                          <MenuItem value='fourGallons' sx={{ my: 0.5 }}>4 Galones</MenuItem>
-                          <MenuItem value='fiveGallons' sx={{ my: 0.5 }}>5 Galones</MenuItem>
-                          <MenuItem value='kit' sx={{ my: 0.5 }}>Kit (bicomponente)</MenuItem>
+                          <MenuItem value="quarterGallon" sx={{ my: 0.5 }}>1&frasl;4 Galon</MenuItem>
+                          <MenuItem value="oneGallon" sx={{ my: 0.5 }}>1 Galon</MenuItem>
+                          <MenuItem value="fourGallons" sx={{ my: 0.5 }}>4 Galones</MenuItem>
+                          <MenuItem value="fiveGallons" sx={{ my: 0.5 }}>5 Galones</MenuItem>
+                          <MenuItem value="kit" sx={{ my: 0.5 }}>Kit (bicomponente)</MenuItem>
                         </Select>
                       )}
                       rules={{
-                        required: 'Este campo es requerido'
+                        required: "Este campo es requerido"
                       }}
                     />
                     {
@@ -275,16 +278,16 @@ const ItemModalForm = ({ item, open, close }) => {
                           {...field}
                           error={!!errors?.type}
                           fullWidth
-                          sx={{ '#mui-component-select-type': { p: '0.75rem!important' } }}
+                          sx={{ "#mui-component-select-type": { p: "0.75rem!important" } }}
                         // TODO: readOnly={!user.privileges.events.upsert}
                         >
                           <MenuItem value="architectural" sx={{ my: 0.5 }}>Arquitectonico</MenuItem>
                           <MenuItem value="enamel" sx={{ my: 0.5 }}>Esmalte</MenuItem>
-                          <MenuItem value="industrialAndMarine" sx={{ my: 0.5 }}>Industrial y Marina</MenuItem>
+                          <MenuItem value="industrialAndMarine" sx={{ my: 0.5 }}>Industrial & Marina</MenuItem>
                         </Select>
                       )}
                       rules={{
-                        required: 'Este campo es requerido'
+                        required: "Este campo es requerido"
                       }}
                     />
                     {
@@ -303,13 +306,13 @@ const ItemModalForm = ({ item, open, close }) => {
                     <Controller
                       control={control}
                       name="typeClass"
-                      disabled={watchTypeSelection === 'industrialAndMarine'}
+                      disabled={watchTypeSelection === "industrialAndMarine"}
                       render={({ field }) => (
                         <Select
                           {...field}
                           error={!!errors?.typeClass}
                           fullWidth
-                          sx={{ '#mui-component-select-typeClass': { p: '0.75rem!important' } }}
+                          sx={{ "#mui-component-select-typeClass": { p: "0.75rem!important" } }}
                         // TODO: readOnly={!user.privileges.events.upsert}
                         >
                           <MenuItem value="A" sx={{ my: 0.5 }}>Clase A</MenuItem>
@@ -318,7 +321,7 @@ const ItemModalForm = ({ item, open, close }) => {
                         </Select>
                       )}
                       rules={{
-                        required: 'Este campo es requerido'
+                        required: "Este campo es requerido"
                       }}
                     />
                     {

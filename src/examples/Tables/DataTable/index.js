@@ -35,7 +35,7 @@ const DataTable = ({ columns, data, isLoading, onRowClick, customTopToolbarCompo
     const exportFileName = `WMS Inventario - ${DateTime.now().toFormat('dd-MM-yyyy')}`;
     const exportSheetName = `Inventario`;
     return (
-      <MDBox display="flex">
+      <MDBox display="flex" height="100%">
         {customTopToolbarComponents && customTopToolbarComponents({ table })}
         <ExportsMenu
           table={table}
@@ -59,7 +59,7 @@ const DataTable = ({ columns, data, isLoading, onRowClick, customTopToolbarCompo
         showAlertBanner: props?.isError,
         showProgressBars: isLoading,
         sorting,
-        columnVisibility: { id: false },
+        columnVisibility: { _id: false },
         density: "compact"
       }}
       localization={MRT_Localization_ES}

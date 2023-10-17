@@ -10,10 +10,11 @@ import { productsData } from "./data/productsData";
 
 // Utils
 import { formatInventoryRawData } from "./utils/functions.utils";
+import MDBox from "components/MDBox";
 
 
 const formatColumnHeader = ({ column }) => (<MDTypography variant="h6">{column.columnDef.header}</MDTypography>)
-const formatColumnCell = ({ cell }) => (<MDTypography variant="button" color="text" fontWeight="light">{cell.getValue()}</MDTypography>)
+const formatColumnCell = ({ cell }) => (<MDTypography variant="button" color="text" fontWeight="light">{cell.getValue() ?? ""}</MDTypography>)
 
 const TableTopToolbar = () => {
   const [openItemModalForm, setOpenItemModalForm] = useState(false);
@@ -22,10 +23,10 @@ const TableTopToolbar = () => {
   const closeItemModalForm = e => setOpenItemModalForm(false);
 
   return (
-    <>
+    <MDBox mr={2}>
       <AddItemButton tooltipPlacement="bottom" color="secondary" onClick={handleAddItemClick} />
       <ItemModalForm open={openItemModalForm} close={closeItemModalForm} onSubmit={null} />
-    </>
+    </MDBox>
   )
 }
 
@@ -36,7 +37,7 @@ const InventoryDataTable = ({ ...rest }) => {
 
   const dataTableColumns = [
     {
-      accessorKey: "id",
+      accessorKey: "_id",
       header: "ID",
       Header: formatColumnHeader,
       Cell: formatColumnCell,
@@ -46,25 +47,11 @@ const InventoryDataTable = ({ ...rest }) => {
       enableGlobalFilter: false,
     },
     {
-      accessorKey: "code",
-      header: "Codigo",
-      Header: formatColumnHeader,
-      Cell: formatColumnCell,
-      size: 120,
-    },
-    {
       accessorKey: "name",
       header: "Nombre",
       Header: formatColumnHeader,
       Cell: formatColumnCell,
       size: 200,
-    },
-    {
-      accessorKey: "stock",
-      header: "Cantidad",
-      Header: formatColumnHeader,
-      Cell: formatColumnCell,
-      size: 150,
     },
     {
       accessorKey: "type",
@@ -81,11 +68,25 @@ const InventoryDataTable = ({ ...rest }) => {
       size: 100,
     },
     {
+      accessorKey: "code",
+      header: "Codigo",
+      Header: formatColumnHeader,
+      Cell: formatColumnCell,
+      size: 120,
+    },
+    {
       accessorKey: "size",
       header: "Medida",
       Header: formatColumnHeader,
       Cell: formatColumnCell,
       size: 120,
+    },
+    {
+      accessorKey: "quantity",
+      header: "Cantidad",
+      Header: formatColumnHeader,
+      Cell: formatColumnCell,
+      size: 150,
     },
     {
       accessorKey: "slot",

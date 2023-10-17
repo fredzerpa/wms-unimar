@@ -5,11 +5,16 @@ import xlsx from "json-as-xlsx"
 import PropTypes from "prop-types";
 
 import MDButton from "components/MDButton";
+import MDBox from "components/MDBox";
+import { useMaterialUIController } from "context";
 
 
 const ExportsMenu = ({ table, columns, fileName, sheetName, tooltipLabel, tooltipPlacement, ...rest }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+
+  const [controller] = useMaterialUIController();
+  const {darkMode} = controller;
 
   const openMenu = (event) => setAnchorEl(event.currentTarget);
   const closeMenu = () => setAnchorEl(null);
@@ -46,12 +51,12 @@ const ExportsMenu = ({ table, columns, fileName, sheetName, tooltipLabel, toolti
   }
 
   return (
-    <>
-      <Tooltip title={tooltipLabel} placement={tooltipPlacement}>
-        <MDButton size="small" variant="text" color="dark" circular onClick={openMenu} {...rest}>
+    <MDBox>
+      <MDButton iconOnly variant="text" color={darkMode ? "white" : "dark"} circular onClick={openMenu} {...rest}>
+        <Tooltip title={tooltipLabel} placement={tooltipPlacement}>
           <FileDownload sx={{ height: "1.5rem", width: "1.5rem" }} />
-        </MDButton>
-      </Tooltip>
+        </Tooltip>
+      </MDButton>
       <Menu anchorEl={anchorEl} open={open} onClose={closeMenu}>
         <MenuItem onClick={handleExportByTable}>Exportar tabla</MenuItem>
         <MenuItem
@@ -60,7 +65,7 @@ const ExportsMenu = ({ table, columns, fileName, sheetName, tooltipLabel, toolti
           Exportar por filas
         </MenuItem>
       </Menu>
-    </>
+    </MDBox>
   );
 }
 

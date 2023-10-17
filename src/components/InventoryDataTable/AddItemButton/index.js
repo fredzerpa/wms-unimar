@@ -5,15 +5,19 @@ import PropTypes from 'prop-types';
 
 // Components
 import MDButton from 'components/MDButton';
+import { useMaterialUIController } from 'context';
 
 
 const AddItemButton = ({ tooltipLabel, tooltipPlacement, onClick, ...rest }) => {
+  const [controller] = useMaterialUIController();
+  const {darkMode} = controller;
+  
   return (
-    <Tooltip title={tooltipLabel} placement={tooltipPlacement}>
-      <MDButton size="small" variant="text" color="dark" circular onClick={onClick} {...rest}>
+    <MDButton iconOnly variant="text" color={darkMode ? "white" : "dark"} circular onClick={onClick} {...rest}>
+      <Tooltip title={tooltipLabel} placement={tooltipPlacement}>
         <NoteAddIcon sx={{ height: "1.5rem", width: "1.5rem" }} />
-      </MDButton>
-    </Tooltip>
+      </Tooltip>
+    </MDButton>
   )
 }
 
