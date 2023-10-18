@@ -18,7 +18,7 @@ import MDTypography from "components/MDTypography";
 import MDInput from "components/MDInput";
 import { useMaterialUIController } from "context";
 import colors from "assets/theme/base/colors";
-import { productsData } from "components/InventoryDataTable/data/productsData";
+import { productsData } from "data/productsData";
 import SelectedProducts from "./SelectedProducts";
 import { formatOnSubmitShippingsForm, formatSelectedProductsData, formatShippingsFormEntryData, formatShippingsProductsLabels } from "./utils/functions.utils";
 

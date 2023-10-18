@@ -6,7 +6,7 @@ import AddItemButton from "./AddItemButton";
 import DataTable from "components/Tables/DataTable";
 
 // Data
-import { productsData } from "./data/productsData";
+import { productsData } from "data/productsData";
 
 // Utils
 import { formatInventoryRawData } from "./utils/functions.utils";

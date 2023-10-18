@@ -14,7 +14,7 @@ import ShippingDetails from "layouts/shippings/components/ShippingDetails";
 import AddShippingButton from "../AddShippingButton";
 import ShippingModalForm from "components/Modals/ShippingForm";
 
-import { shippingsData } from "./data/shippingData";
+import { shippingsData } from "data/shippingData";
 import { DateTime } from "luxon";
 import DebouncedInput from "components/DebouncedInput";
 
