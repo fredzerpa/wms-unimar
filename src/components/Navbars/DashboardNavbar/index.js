@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 // react-router components
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 // prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
@@ -18,7 +18,6 @@ import MDBox from "components/MDBox";
 
 // Material Dashboard 2 React example components
 import Breadcrumbs from "components/Breadcrumbs";
-import NotificationItem from "components/Items/NotificationItem";
 
 // Custom styles for DashboardNavbar
 import {
@@ -36,6 +35,8 @@ import {
   setMiniSidenav,
   setOpenConfigurator,
 } from "context";
+import { Divider, ListItemIcon, ListItemText, MenuItem } from "@mui/material";
+import { Logout, Person } from "@mui/icons-material";
 
 const DashboardNavbar = ({ absolute, light, isMini }) => {
   const [navbarType, setNavbarType] = useState();
@@ -43,6 +44,8 @@ const DashboardNavbar = ({ absolute, light, isMini }) => {
   const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator, darkMode } = controller;
   const [openMenu, setOpenMenu] = useState(false);
   const route = useLocation().pathname.split("/").slice(1);
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     // Setting the navbar type
@@ -72,25 +75,44 @@ const DashboardNavbar = ({ absolute, light, isMini }) => {
 
   const handleMiniSidenav = () => setMiniSidenav(dispatch, !miniSidenav);
   const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
-  const handleOpenMenu = (event) => setOpenMenu(event.currentTarget);
   const handleCloseMenu = () => setOpenMenu(false);
+  const handleOpenMenu = (event) => setOpenMenu(event.currentTarget);
 
   // Render the notifications menu
   const renderMenu = () => (
     <Menu
       anchorEl={openMenu}
-      anchorReference={null}
-      anchorOrigin={{
-        vertical: "bottom",
-        horizontal: "left",
-      }}
-      open={Boolean(openMenu)}
+      id="account-menu"
+      open={!!openMenu}
       onClose={handleCloseMenu}
-      sx={{ mt: 2 }}
+      onClick={handleCloseMenu}
+      transformOrigin={{ horizontal: 'center', vertical: 'top' }}
+      anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
     >
-      <NotificationItem icon={<Icon>email</Icon>} title="Check new messages" />
-      <NotificationItem icon={<Icon>podcasts</Icon>} title="Manage Podcast sessions" />
-      <NotificationItem icon={<Icon>shopping_cart</Icon>} title="Payment successfully completed" />
+      <MenuItem onClick={() => navigate('/profile')}>
+        <ListItemIcon>
+          <Person fontSize="small" />
+        </ListItemIcon>
+        <ListItemText
+          primary='Perfil'
+          primaryTypographyProps={{
+            variant: "button", textTransform: "capitalize", fontWeight: "regular"
+          }}
+
+        />
+      </MenuItem>
+      <Divider />
+      <MenuItem onClick={null}>
+        <ListItemIcon>
+          <Logout fontSize="small" />
+        </ListItemIcon>
+        <ListItemText
+          primary='Cerrar Sesion'
+          primaryTypographyProps={{
+            variant: "button", textTransform: "capitalize", fontWeight: "regular"
+          }}
+        />
+      </MenuItem>
     </Menu>
   );
 
@@ -120,13 +142,7 @@ const DashboardNavbar = ({ absolute, light, isMini }) => {
         {isMini ? null : (
           <MDBox sx={(theme) => navbarRow(theme, { isMini })}>
             <MDBox color={light ? "white" : "inherit"}>
-              <Link to="/authentication/sign-in/basic">
-                <IconButton sx={navbarIconButton} size="small" disableRipple>
-                  <Icon sx={iconsStyle}>account_circle</Icon>
-                </IconButton>
-              </Link>
               <IconButton
-                size="small"
                 disableRipple
                 color="inherit"
                 sx={navbarMobileMenu}
@@ -137,7 +153,6 @@ const DashboardNavbar = ({ absolute, light, isMini }) => {
                 </Icon>
               </IconButton>
               <IconButton
-                size="small"
                 disableRipple
                 color="inherit"
                 sx={navbarIconButton}
@@ -155,7 +170,7 @@ const DashboardNavbar = ({ absolute, light, isMini }) => {
                 variant="contained"
                 onClick={handleOpenMenu}
               >
-                <Icon sx={iconsStyle}>notifications</Icon>
+                <Icon sx={iconsStyle}>account_circle</Icon>
               </IconButton>
               {renderMenu()}
             </MDBox>
