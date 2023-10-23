@@ -181,7 +181,7 @@ const ProfileInfoCard = ({ title, info, onSubmit: onActionSubmit }) => {
   });
 
   return (
-    <Card sx={{ height: "100%", boxShadow: "none" }}>
+    <Card sx={{ height: "100%", boxShadow: "none", backgroundColor: "inherit" }}>
       <MDBox display="flex" justifyContent="space-between" alignItems="center" pt={2} px={2}>
         <MDTypography variant="h6" fontWeight="medium" textTransform="capitalize">
           {title}

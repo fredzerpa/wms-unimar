@@ -88,7 +88,7 @@ const ProfilesList = () => {
 
   return (
     <>
-      <Card sx={{ height: "100%", boxShadow: "none" }}>
+      <Card sx={{ height: "100%", boxShadow: "none", backgroundColor: "inherit" }}>
         <MDBox pt={2} px={2}>
           <MDBox display="flex" justifyContent="space-between">
             <MDTypography variant="h6" fontWeight="medium" textTransform="capitalize">

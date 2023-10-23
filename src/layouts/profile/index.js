@@ -25,7 +25,7 @@ const Overview = () => {
     <DashboardLayout>
       <DashboardNavbar />
       <MDBox mb={2} />
-      <Header>
+      <Header user={userSession}>
         <MDBox mt={5} mb={3}>
           <Grid container spacing={2} display="flex" justifyContent="center" sx={{}}>
             <Grid xs={12} md={5}>
