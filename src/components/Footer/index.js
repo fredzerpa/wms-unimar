@@ -26,7 +26,8 @@ const Footer = ({ company, links }) => {
         </Link>
       </MDBox>
     ));
-
+    
+    // TODO: remove false
   return (
     <MDBox
       width="100%"

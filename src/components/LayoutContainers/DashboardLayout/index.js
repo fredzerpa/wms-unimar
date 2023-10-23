@@ -37,6 +37,7 @@ const DashboardLayout = ({ children }) => {
       })}
     >
       {children}
+      
     </MDBox>
   );
 }

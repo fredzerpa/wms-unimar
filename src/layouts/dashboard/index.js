@@ -1,5 +1,6 @@
 // @mui material components
-import { Card, Grid } from "@mui/material";
+import { Card } from "@mui/material";
+import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import { Link } from "react-router-dom";
 import { DateTime, Info } from "luxon";
 
@@ -10,7 +11,6 @@ import MDBox from "components/MDBox";
 import InventoryDataTable from "components/InventoryDataTable";
 import DashboardLayout from "components/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "components/Navbars/DashboardNavbar";
-import Footer from "components/Footer";
 import ReportsBarChart from "components/Charts/BarCharts/ReportsBarChart";
 import ReportsLineChart from "components/Charts/LineCharts/ReportsLineChart";
 import ComplexStatisticsCard from "components/Cards/StatisticsCards/ComplexStatisticsCard";
@@ -31,7 +31,7 @@ const Dashboard = () => {
       <DashboardNavbar />
       <MDBox py={3}>
         <Grid container spacing={3}>
-          <Grid item xs={12} md={6} lg={3}>
+          <Grid xs={12} md={6} lg={3}>
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
                 color="dark"
@@ -46,7 +46,7 @@ const Dashboard = () => {
               />
             </MDBox>
           </Grid>
-          <Grid item xs={12} md={6} lg={3}>
+          <Grid xs={12} md={6} lg={3}>
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
                 icon="local_shipping"
@@ -60,7 +60,7 @@ const Dashboard = () => {
               />
             </MDBox>
           </Grid>
-          <Grid item xs={12} md={6} lg={3}>
+          <Grid xs={12} md={6} lg={3}>
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
                 color="success"
@@ -75,7 +75,7 @@ const Dashboard = () => {
               />
             </MDBox>
           </Grid>
-          <Grid item xs={12} md={6} lg={3}>
+          <Grid xs={12} md={6} lg={3}>
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
                 color="primary"
@@ -110,7 +110,7 @@ const Dashboard = () => {
         </Grid>
         <MDBox mt={4.5}>
           <Grid container spacing={3}>
-            <Grid item xs={12} md={6} lg={4}>
+            <Grid xs={12} md={6} lg={4}>
               <MDBox mb={3}>
                 <ReportsBarChart
                   color="info"
@@ -124,7 +124,7 @@ const Dashboard = () => {
                 />
               </MDBox>
             </Grid>
-            <Grid item xs={12} md={6} lg={4}>
+            <Grid xs={12} md={6} lg={4}>
               <MDBox mb={3}>
                 <ReportsLineChart
                   color="dark"
@@ -148,7 +148,7 @@ const Dashboard = () => {
                 />
               </MDBox>
             </Grid>
-            <Grid item xs={12} md={6} lg={4}>
+            <Grid xs={12} md={6} lg={4}>
               <MDBox pb={3} height="100%">
                 <PieChart
                   icon={{ color: "primary", component: "leaderboard" }}
@@ -169,7 +169,7 @@ const Dashboard = () => {
         </MDBox>
         <MDBox>
           <Grid container spacing={3}>
-            <Grid item xs={12} md={6} lg={8}>
+            <Grid xs={12} md={6} lg={8}>
               <Card sx={{ p: 2, overflow: "hidden" }}>
                 <InventoryDataTable
                   enableTopToolbar={false}
@@ -178,13 +178,13 @@ const Dashboard = () => {
                 />
               </Card>
             </Grid>
-            <Grid item xs={12} md={6} lg={4}>
+            <Grid xs={12} md={6} lg={4}>
               <OrdersOverview />
             </Grid>
           </Grid>
         </MDBox>
       </MDBox>
-      <Footer />
+      
     </DashboardLayout>
   );
 }

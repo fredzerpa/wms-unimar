@@ -1,6 +1,7 @@
 import { useState } from "react";
 // Libraries
-import { Card, Grid, MenuItem, Modal, Select } from "@mui/material";
+import { Card, MenuItem, Modal, Select } from "@mui/material";
+import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import PropTypes from "prop-types";
@@ -105,7 +106,7 @@ const ItemModalForm = ({ item, open, close }) => {
               <MDBox>
                 <Grid container spacing={2} mb={1}>
 
-                  <Grid item xs={6}>
+                  <Grid xs={6}>
                     <MDTypography ml={1} component="label" variant="caption" fontWeight="bold" textTransform="capitalize">
                       Lote
                       <MDTypography color="error" component="span" fontWeight="light" fontSize="small">*</MDTypography>
@@ -140,7 +141,7 @@ const ItemModalForm = ({ item, open, close }) => {
                     }
                   </Grid>
 
-                  <Grid item xs={6}>
+                  <Grid xs={6}>
                     <MDTypography ml={1} component="label" variant="caption" fontWeight="bold" textTransform="capitalize">
                       Fecha de Ingreso
                       <MDTypography color="error" component="span" fontWeight="light" fontSize="small">*</MDTypography>
@@ -184,7 +185,7 @@ const ItemModalForm = ({ item, open, close }) => {
                 </Grid>
 
                 <Grid container spacing={2} mb={1}>
-                  <Grid item xs={6}>
+                  <Grid xs={6}>
                     <MDTypography ml={1} component="label" variant="caption" fontWeight="bold" textTransform="capitalize">
                       Codigo
                       <MDTypography color="error" component="span" fontWeight="light" fontSize="small">*</MDTypography>
@@ -205,7 +206,7 @@ const ItemModalForm = ({ item, open, close }) => {
                     }
                   </Grid>
 
-                  <Grid item xs={6}>
+                  <Grid xs={6}>
                     <MDTypography ml={1} component="label" variant="caption" fontWeight="bold" textTransform="capitalize">
                       Medidas
                       <MDTypography color="error" component="span" fontWeight="light" fontSize="small">*</MDTypography>
@@ -265,7 +266,7 @@ const ItemModalForm = ({ item, open, close }) => {
 
                 <Grid container spacing={2} mb={1}>
 
-                  <Grid item xs={6}>
+                  <Grid xs={6}>
                     <MDTypography ml={1} component="label" variant="caption" fontWeight="bold" textTransform="capitalize">
                       Tipo
                       <MDTypography color="error" component="span" fontWeight="light" fontSize="small">*</MDTypography>
@@ -298,7 +299,7 @@ const ItemModalForm = ({ item, open, close }) => {
                       )
                     }
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid xs={6}>
                     <MDTypography ml={1} component="label" variant="caption" fontWeight="bold" textTransform="capitalize">
                       Clasificación
                       <MDTypography color="error" component="span" fontWeight="light" fontSize="small">*</MDTypography>

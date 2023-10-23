@@ -1,125 +1,244 @@
-// react-routers components
-import { Link } from "react-router-dom";
-
-// prop-types is library for typechecking of props
+// Libraries
+import { useState } from "react";
 import PropTypes from "prop-types";
-
-// @mui material components
-import Card from "@mui/material/Card";
-import Divider from "@mui/material/Divider";
-import Tooltip from "@mui/material/Tooltip";
-import Icon from "@mui/material/Icon";
+import { Card, Divider, Tooltip } from "@mui/material";
+import { Edit } from "@mui/icons-material";
+import { useForm } from "react-hook-form";
+import { enqueueSnackbar } from "notistack";
+import { defaultsDeep } from 'lodash';
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
+import MDInput from "components/MDInput";
+import MDButton from "components/MDButton";
 
-// Material Dashboard 2 React base styles
-import colors from "assets/theme/base/colors";
-import typography from "assets/theme/base/typography";
+// Utils
+import { formatUserEntryData, formatUserSubmitData } from "./utils/functions.utils";
 
-const ProfileInfoCard = ({ title, description, info, social, action, shadow }) => {
-  const labels = [];
-  const values = [];
-  const { socialMediaColors } = colors;
-  const { size } = typography;
+const DEFAULT_VALUES = {
+  email: {
+    label: "Email",
+    value: "",
+    isEditable: false,
+  },
+  fullname: {
+    label: "Nombre Completo",
+    value: {
+      names: {
+        label: "Nombres",
+        value: "",
+      },
+      lastnames: {
+        label: "Apellidos",
+        value: ""
+      },
+    },
+    isEditable: true,
+  },
+  phone: {
+    label: "Telefono",
+    value: "",
+    isEditable: true,
+  },
+}
 
-  // Convert this form `objectKey` of the object key in to this `object key`
-  Object.keys(info).forEach((el) => {
-    if (el.match(/[A-Z\s]+/)) {
-      const uppercaseLetter = Array.from(el).find((i) => i.match(/[A-Z]+/));
-      const newElement = el.replace(uppercaseLetter, ` ${uppercaseLetter.toLowerCase()}`);
-
-      labels.push(newElement);
-    } else {
-      labels.push(el);
-    }
+const ProfileInfoCard = ({ title, info, onSubmit: onActionSubmit }) => {
+  const [editMode, setEditMode] = useState(false);
+  const { register, handleSubmit, getValues, reset } = useForm({
+    defaultValues: defaultsDeep(formatUserEntryData(info), DEFAULT_VALUES)
   });
 
-  // Push the object values into the values array
-  Object.values(info).forEach((el) => values.push(el));
+  const openEditMode = () => setEditMode(true);
+  const closeEditMode = () => setEditMode(false);
+
+  const onSubmit = async (data) => {
+    try {
+      // Remove non editable properties
+      Object.entries(data).forEach(([key, { isEditable }]) => {
+        if (!isEditable) delete data[key];
+      });
+
+      const formattedData = formatUserSubmitData(data)
+
+      // Set data structure as mongo schema
+      formattedData.phones = { main: formattedData.phone };
+      formattedData.names = formattedData.fullname.names;
+      formattedData.lastnames = formattedData.fullname.lastnames;
+      formattedData.fullname = `${formattedData.names} ${formattedData.lastnames}`;
+      delete formattedData.phone; // remove duplicate
+
+      const response = await onActionSubmit(formattedData);
+      if (response?.error) throw new Error(response.message);
+      enqueueSnackbar("Se ha actualizado su perfil", { variant: "success" });
+      closeEditMode();
+    } catch (err) {
+      reset(null, { keepDefaultValues: true });
+      return enqueueSnackbar(err.message, { variant: "error" });
+    }
+  }
+
+  const onCancel = () => {
+    reset(null, { keepDefaultValues: true })
+    closeEditMode();
+  }
 
   // Render the card info items
-  const renderItems = labels.map((label, key) => (
-    <MDBox key={label} display="flex" py={1} pr={2}>
-      <MDTypography variant="button" fontWeight="bold" textTransform="capitalize">
-        {label}: &nbsp;
-      </MDTypography>
-      <MDTypography variant="button" fontWeight="regular" color="text">
-        &nbsp;{values[key]}
-      </MDTypography>
-    </MDBox>
-  ));
+  const renderItems = Object.entries(info).map(([key, value], i) => {
+    const isEditable = getValues(key)?.isEditable;
 
-  // Render the card social media icons
-  const renderSocial = social.map(({ link, icon, color }) => (
-    <MDBox
-      key={color}
-      component="a"
-      href={link}
-      target="_blank"
-      rel="noreferrer"
-      fontSize={size.lg}
-      color={socialMediaColors[color].main}
-      pr={1}
-      pl={0.5}
-      lineHeight={1}
-    >
-      {icon}
-    </MDBox>
-  ));
+    // Nested Objects in value
+    if (typeof value === "object") {
+      return (
+        <MDBox key={i} display="flex" flexDirection="column" py={1}>
+          <MDTypography variant="button" width="100%" fontWeight="bold" textTransform="capitalize" >
+            {
+              // Convert this form `objectKey` of the object key in to this `object key`
+              getValues(key).label
+            }
+          </MDTypography>
+          <MDBox display="flex" justifyContent="space-between" gap={1}>
+            {
+              editMode ?
+                (
+                  Object.entries(value).map(([childKey, childValue]) => {
+                    return (
+                      <MDInput
+                        key={childKey}
+                        {...register(`${key}.value.${childKey}.value`)}
+                        size="small"
+                        placeholder={getValues(key).value[childKey].label}
+                        InputProps={{
+                          readOnly: !isEditable,
+                        }}
+                        fullWidth
+                      />
+                    )
+                  })
+                )
+                :
+                (
+                  <MDTypography
+                    fontWeight="regular"
+                    variant="button"
+                    width="100%"
+                    textTransform="capitalize"
+                    sx={theme => ({
+                      color: theme.palette.grey[700], // Same input color
+                      padding: `${theme.functions.pxToRem(8)} ${theme.functions.pxToRem(12)}`, // Same input padding
+                    })}
+                  >
+                    {Object.values(getValues(key).value).map(({ value }) => value).join(" ")}
+                  </MDTypography>
+                )
+            }
+          </MDBox>
+        </MDBox>
+      )
+    }
+
+    return (
+      <MDBox key={i} display="flex" flexDirection="column" py={1}>
+        <MDTypography variant="button" width="100%" fontWeight="bold" textTransform="capitalize" >
+          {
+            // Convert this form `objectKey` of the object key in to this `object key`
+            getValues(key).label
+          }
+        </MDTypography>
+        <MDBox display="flex">
+          {
+            editMode ?
+              (
+                <MDInput
+                  {...register(`${key}.value`)}
+                  size="small"
+                  readOnly={!(isEditable && editMode)}
+                  fullWidth
+                  InputProps={{
+                    readOnly: !(isEditable && editMode),
+                  }}
+                />
+              )
+              :
+              (
+                <MDTypography
+                  fontWeight="regular"
+                  variant="button"
+                  width="100%"
+                  sx={theme => ({
+                    color: theme.palette.grey[700], // Same input color
+                    padding: `${theme.functions.pxToRem(8)} ${theme.functions.pxToRem(12)}`, // Same input padding
+                  })}
+                >
+                  {getValues(key).value}
+                </MDTypography>
+              )
+          }
+
+        </MDBox>
+      </MDBox>
+    )
+  });
 
   return (
-    <Card sx={{ height: "100%", boxShadow: !shadow && "none" }}>
+    <Card sx={{ height: "100%", boxShadow: "none" }}>
       <MDBox display="flex" justifyContent="space-between" alignItems="center" pt={2} px={2}>
         <MDTypography variant="h6" fontWeight="medium" textTransform="capitalize">
           {title}
         </MDTypography>
-        <MDTypography component={Link} to={action.route} variant="body2" color="secondary">
-          <Tooltip title={action.tooltip} placement="top">
-            <Icon>edit</Icon>
-          </Tooltip>
-        </MDTypography>
+        {
+          !editMode && (
+            <Tooltip title="Editar" placement="top">
+              <MDButton
+                iconOnly
+                variant="text"
+                color="secondary"
+                circular
+                onClick={openEditMode}
+              >
+                <Edit />
+              </MDButton>
+            </Tooltip>
+          )
+        }
       </MDBox>
       <MDBox p={2}>
         <MDBox mb={2} lineHeight={1}>
           <MDTypography variant="button" color="text" fontWeight="light">
-            {description}
+            Para cambiar su nivel o email, por favor comuniquese con administracion
           </MDTypography>
         </MDBox>
         <MDBox opacity={0.3}>
           <Divider />
         </MDBox>
-        <MDBox>
-          {renderItems}
-          <MDBox display="flex" py={1} pr={2}>
-            <MDTypography variant="button" fontWeight="bold" textTransform="capitalize">
-              social: &nbsp;
-            </MDTypography>
-            {renderSocial}
+        <MDBox component="form" role="form" onSubmit={handleSubmit(onSubmit)}>
+          <MDBox>
+            {renderItems}
           </MDBox>
+          {
+            editMode && (
+              <MDBox display="flex" alignItems="center" justifyContent="flex-end" gap={3} p={2}>
+                <MDButton size="small" onClick={onCancel}>
+                  Cancelar
+                </MDButton>
+                <MDButton size="small" variant="gradient" color="dark" type="submit">
+                  Guardar
+                </MDButton>
+              </MDBox>
+            )
+          }
         </MDBox>
       </MDBox>
     </Card>
   );
 }
 
-// Setting default props for the ProfileInfoCard
-ProfileInfoCard.defaultProps = {
-  shadow: true,
-};
 
 // Typechecking props for the ProfileInfoCard
 ProfileInfoCard.propTypes = {
   title: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
-  info: PropTypes.objectOf(PropTypes.string).isRequired,
-  social: PropTypes.arrayOf(PropTypes.object).isRequired,
-  action: PropTypes.shape({
-    route: PropTypes.string.isRequired,
-    tooltip: PropTypes.string.isRequired,
-  }).isRequired,
-  shadow: PropTypes.bool,
+  info: PropTypes.object.isRequired,
+  onSubmit: PropTypes.func.isRequired,
 };
 
 export default ProfileInfoCard;

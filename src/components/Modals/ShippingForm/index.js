@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 // Libraries
-import { Autocomplete, Card, Grid, MenuItem, Modal, Select } from "@mui/material";
+import { Autocomplete, Card, MenuItem, Modal, Select } from "@mui/material";
+import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import PropTypes from "prop-types";
@@ -121,7 +122,7 @@ const ShippingModalForm = ({ shippingData, open, close, onSubmit }) => {
 
               <MDBox>
                 <Grid container spacing={2} mb={1}>
-                  <Grid item xs={6}>
+                  <Grid xs={6}>
                     <MDTypography ml={1} component="label" variant="caption" fontWeight="bold">
                       Fecha de Envio
                       <MDTypography color="error" component="span" fontWeight="light" fontSize="small">*</MDTypography>
@@ -158,7 +159,7 @@ const ShippingModalForm = ({ shippingData, open, close, onSubmit }) => {
                     }
                   </Grid>
 
-                  <Grid item xs={6}>
+                  <Grid xs={6}>
                     <MDTypography ml={1} component="label" variant="caption" fontWeight="bold">
                       Tienda
                       <MDTypography color="error" component="span" fontWeight="light" fontSize="small">*</MDTypography>

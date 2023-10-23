@@ -144,16 +144,20 @@ const Sidenav = ({ color, brand, brandName, routes, ...rest }) => {
             <Icon sx={{ fontWeight: "bold" }}>close</Icon>
           </MDTypography>
         </MDBox>
-        <MDBox component={NavLink} to="/" display="flex" alignItems="center">
-          {brand && <MDBox component="img" src={brand} alt="Brand" width="2rem" />}
-          <MDBox
-            width={!brandName && "100%"}
-            sx={(theme) => sidenavLogoLabel(theme, { miniSidenav })}
-          >
-            <MDTypography component="h6" variant="button" fontWeight="medium" color={textColor}>
-              {brandName}
-            </MDTypography>
-          </MDBox>
+        <MDBox component={NavLink} to="/" display="flex" alignItems="center" justifyContent="center">
+          {brand && <MDBox component="img" src={brand} alt="Brand" width="10rem" />}
+          {
+            brandName && (
+              <MDBox
+                width={!brandName && "100%"}
+                sx={(theme) => sidenavLogoLabel(theme, { miniSidenav })}
+              >
+                <MDTypography component="h6" variant="button" fontWeight="medium" color={textColor}>
+                  {brandName}
+                </MDTypography>
+              </MDBox>
+            )
+          }
         </MDBox>
       </MDBox>
       <Divider
@@ -177,7 +181,7 @@ Sidenav.defaultProps = {
 Sidenav.propTypes = {
   color: PropTypes.oneOf(["primary", "secondary", "info", "success", "warning", "error", "dark"]),
   brand: PropTypes.string,
-  brandName: PropTypes.string.isRequired,
+  brandName: PropTypes.string,
   routes: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 

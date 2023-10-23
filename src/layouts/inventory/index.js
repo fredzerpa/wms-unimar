@@ -1,5 +1,5 @@
 // Libraries
-import Grid from "@mui/material/Grid";
+import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import Card from "@mui/material/Card";
 
 // Material Dashboard 2 React components
@@ -18,7 +18,7 @@ const Inventory = () => {
       <DashboardNavbar />
       <MDBox pt={6} pb={3}>
         <Grid container spacing={6}>
-          <Grid item xs={12}>
+          <Grid xs={12}>
             <Card>
               <MDBox
                 mx={2}

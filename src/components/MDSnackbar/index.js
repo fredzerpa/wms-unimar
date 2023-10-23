@@ -23,20 +23,16 @@ const MDSnackbar = ({ color, icon, title, dateTime, content, close, bgWhite, ...
   const { darkMode } = controller;
 
   let titleColor;
-  let dateTimeColor;
   let dividerColor;
 
   if (bgWhite) {
     titleColor = color;
-    dateTimeColor = "dark";
     dividerColor = false;
   } else if (color === "light") {
     titleColor = darkMode ? "inherit" : "dark";
-    dateTimeColor = darkMode ? "inherit" : "text";
     dividerColor = false;
   } else {
     titleColor = "white";
-    dateTimeColor = "white";
     dividerColor = true;
   }
 
@@ -88,24 +84,6 @@ const MDSnackbar = ({ color, icon, title, dateTime, content, close, bgWhite, ...
               {title}
             </MDTypography>
           </MDBox>
-          <MDBox display="flex" alignItems="center" lineHeight={0}>
-            <MDTypography variant="caption" color={dateTimeColor}>
-              {dateTime}
-            </MDTypography>
-            <Icon
-              sx={{
-                color: ({ palette: { dark, white } }) =>
-                  (bgWhite && !darkMode) || color === "light" ? dark.main : white.main,
-                fontWeight: ({ typography: { fontWeightBold } }) => fontWeightBold,
-                cursor: "pointer",
-                marginLeft: 2,
-                transform: "translateY(-1px)",
-              }}
-              onClick={close}
-            >
-              close
-            </Icon>
-          </MDBox>
         </MDBox>
         <Divider sx={{ margin: 0 }} light={dividerColor} />
         <MDBox
@@ -150,7 +128,6 @@ MDSnackbar.propTypes = {
   ]),
   icon: PropTypes.node.isRequired,
   title: PropTypes.string.isRequired,
-  dateTime: PropTypes.string.isRequired,
   content: PropTypes.node.isRequired,
   close: PropTypes.func.isRequired,
   bgWhite: PropTypes.bool,

@@ -55,6 +55,13 @@ export default styled(Avatar)(({ theme, ownerState }) => {
         fontSize: fontSize.md,
       };
       break;
+    case "xxxl":
+      sizeValue = {
+        width: pxToRem(150),
+        height: pxToRem(150),
+        fontSize: fontSize.md,
+      };
+      break;
     default: {
       sizeValue = {
         width: pxToRem(48),

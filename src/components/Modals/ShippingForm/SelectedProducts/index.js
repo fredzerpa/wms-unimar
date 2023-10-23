@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Close } from "@mui/icons-material";
-import { FormControl, Grid, InputLabel, MenuItem, Select } from "@mui/material";
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import SimpleBar from "simplebar-react";
 import PropTypes from "prop-types";
 
@@ -48,7 +49,7 @@ const Product = ({ productData, onDataChange, onProductRemove, errors }) => {
         </MDTypography>
       </MDBox>
       <Grid container spacing={2}>
-        <Grid item xs={6}>
+        <Grid xs={6}>
           <MDInput
             label="Cantidad"
             placeholder="Cantidad de producto"
@@ -64,7 +65,7 @@ const Product = ({ productData, onDataChange, onProductRemove, errors }) => {
           />
         </Grid>
 
-        <Grid item xs={6}>
+        <Grid xs={6}>
           <FormControl fullWidth sx={{ height: "100%" }} required>
             <InputLabel id={`product-${productData._id}-size-label`}>Medida</InputLabel>
             <Select

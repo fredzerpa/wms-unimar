@@ -18,12 +18,14 @@ import themeDark from "assets/theme-dark";
 // Material Dashboard 2 React routes
 import routes from "routes";
 
-// Material Dashboard 2 React contexts
+// Contexts
 import { useMaterialUIController, setMiniSidenav } from "context";
+import { AuthProvider } from "context/auth.context";
+import { MountPoint } from "context/confirmation.context";
 
 // Images
-import brandWhite from "assets/images/logo-ct.png";
-import brandDark from "assets/images/logo-ct-dark.png";
+import brandWhite from "assets/images/logo.svg";
+import brandDark from "assets/images/logo-dark.svg";
 
 const App = () => {
   const [controller, dispatch] = useMaterialUIController();
@@ -75,24 +77,28 @@ const App = () => {
 
   return (
     <ThemeProvider theme={darkMode ? themeDark : theme}>
-      <CssBaseline />
-      {layout === "dashboard" && (
-        <>
-          <Sidenav
-            color={sidenavColor}
-            brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
-            brandName="Pinturas Reinaldo"
-            routes={routes}
-            onMouseEnter={handleOnMouseEnter}
-            onMouseLeave={handleOnMouseLeave}
-          />
-          <Configurator />
-        </>
-      )}
-      <Routes>
-        {getRoutes(routes)}
-        <Route path="*" element={<Navigate to="/dashboard" />} />
-      </Routes>
+      <AuthProvider userData={null}>
+
+        <MountPoint /> {/* Confirmation Context Provider */}
+        <CssBaseline />
+        {layout === "dashboard" && (
+          <>
+            <Sidenav
+              color={sidenavColor}
+              brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandWhite : brandDark}
+              routes={routes}
+              onMouseEnter={handleOnMouseEnter}
+              onMouseLeave={handleOnMouseLeave}
+            />
+            <Configurator />
+          </>
+        )}
+        <Routes>
+          {getRoutes(routes)}
+          <Route path="*" element={<Navigate to="/dashboard" />} />
+        </Routes>
+
+      </AuthProvider>
     </ThemeProvider>
   );
 }

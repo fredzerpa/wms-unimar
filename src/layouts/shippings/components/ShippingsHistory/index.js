@@ -34,14 +34,13 @@ const ShippingsHistory = () => {
   const handleDeleteShipping = shippingData => console.log(shippingData);
 
   const handleSearch = useCallback(search => {
-    const searchValue = search;
     const filteredData = shippingsData.filter(shippingData => {
       const { store, date, products } = shippingData
 
       const detailedData = [`Local ${store}`, date, ...products.flatMap(({ code, name }) => [code, name])];
 
-      const regexp = new RegExp(searchValue, "gi");
-      return detailedData.filter(data => regexp.test(data)).length
+      const regex = new RegExp(search, "gi");
+      return detailedData.filter(data => regex.test(data)).length
     })
 
     setShippings(filteredData);
