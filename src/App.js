@@ -24,8 +24,9 @@ import { AuthProvider } from "context/auth.context";
 import { MountPoint } from "context/confirmation.context";
 
 // Images
-import brandWhite from "assets/images/logo.svg";
-import brandDark from "assets/images/logo-dark.svg";
+import brandWhite from "assets/images/tiendas-montana.png";
+import brandDark from "assets/images/tiendas-montana.png";
+import { BillsProvider } from "context/bills.context";
 
 const App = () => {
   const [controller, dispatch] = useMaterialUIController();
@@ -78,26 +79,29 @@ const App = () => {
   return (
     <ThemeProvider theme={darkMode ? themeDark : theme}>
       <AuthProvider userData={null}>
+        <BillsProvider>
+          <MountPoint /> {/* Confirmation Context Provider */}
+          <CssBaseline />
 
-        <MountPoint /> {/* Confirmation Context Provider */}
-        <CssBaseline />
-        {layout === "dashboard" && (
-          <>
-            <Sidenav
-              color={sidenavColor}
-              brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandWhite : brandDark}
-              routes={routes}
-              onMouseEnter={handleOnMouseEnter}
-              onMouseLeave={handleOnMouseLeave}
-            />
-            <Configurator />
-          </>
-        )}
-        <Routes>
-          {getRoutes(routes)}
-          <Route path="*" element={<Navigate to="/dashboard" />} />
-        </Routes>
+          {layout === "dashboard" && (
+            <>
+              <Sidenav
+                color={sidenavColor}
+                brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandWhite : brandDark}
+                routes={routes}
+                onMouseEnter={handleOnMouseEnter}
+                onMouseLeave={handleOnMouseLeave}
+              />
+              <Configurator />
+            </>
+          )}
 
+          <Routes>
+            {getRoutes(routes)}
+            <Route path="*" element={<Navigate to="/dashboard" />} />
+          </Routes>
+
+        </BillsProvider>
       </AuthProvider>
     </ThemeProvider>
   );

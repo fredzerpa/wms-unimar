@@ -10,9 +10,6 @@ import MDBox from "components/MDBox";
 // Material Dashboard 2 React example components
 import PageLayout from "components/LayoutContainers/PageLayout";
 
-// Authentication pages components
-import Footer from "layouts/authentication/components/Footer";
-
 const BasicLayout = ({ image, children }) => {
   return (
     <PageLayout>
@@ -34,12 +31,11 @@ const BasicLayout = ({ image, children }) => {
       />
       <MDBox px={1} width="100%" height="100vh" mx="auto">
         <Grid container spacing={1} justifyContent="center" alignItems="center" height="100%">
-          <Grid xs={11} sm={9} md={5} lg={4} xl={3}>
+          <Grid xs={11} sm={8} md={6} lg={5} xl={4}>
             {children}
           </Grid>
         </Grid>
       </MDBox>
-      <Footer light />
     </PageLayout>
   );
 }

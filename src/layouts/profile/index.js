@@ -27,7 +27,7 @@ const Overview = () => {
       <MDBox mb={2} />
       <Header user={userSession}>
         <MDBox mt={5} mb={3}>
-          <Grid container spacing={2} display="flex" justifyContent="center" sx={{}}>
+          <Grid container spacing={2} display="flex" justifyContent="center">
             <Grid xs={12} md={5}>
               <ProfileInfoCard
                 title="Información de perfil"

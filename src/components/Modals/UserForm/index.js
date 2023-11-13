@@ -8,6 +8,7 @@ import { Controller, useForm } from "react-hook-form";
 import { defaultsDeep } from "lodash";
 import { serialize as formatObjToFormData } from "object-to-formdata";
 import { enqueueSnackbar } from "notistack";
+import PropTypes from "prop-types";
 
 // MD UI components
 import MDAvatar from "components/MDAvatar";
@@ -115,19 +116,18 @@ const DEFAULT_VALUES = {
   }
 }
 
-const UserFormModal = ({ title = "", open, close, user = {}, onSubmit: actionOnSubmit = () => null }) => {
-  const [isLoading, setIsLoading] = useState(false);
+const UserFormModal = ({ title = "", open, close, user, onSubmit }) => {
+  const { user: userSession } = useAuth();
   const [visiblePassword, setVisiblePassword] = useState(false);
   const [expandAdvancedFeatures, setExpandAdvancedFeatures] = useState(false);
-  const { register, setValue, getValues, control, handleSubmit, reset, formState: { errors } } = useForm({
+  const { register, setValue, getValues, control, handleSubmit, reset, formState: { errors, isSubmitting, isDirty } } = useForm({
     defaultValues: defaultsDeep(
       { ...user, privileges: formatPrivilegesToModalSchema(user?.privileges || {}) },
       DEFAULT_VALUES
     ),
   });
-  const { user: userSession } = useAuth();
 
-  const onSubmit = async data => {
+  const onFormSubmit = async data => {
     const consent = await GetPasswordConsent({
       title: `Actualizar ${data.names.split(" ")[0]}`,
       description: "Ingrese su clave para actualizar el usuario",
@@ -135,7 +135,6 @@ const UserFormModal = ({ title = "", open, close, user = {}, onSubmit: actionOnS
 
     if (consent?.error || !consent) throw new Error(consent?.message || "Contraseña incorrecta");
 
-    setIsLoading(true);
     // Add missing properties
     data.fullname = `${data.names} ${data.lastnames}`;
     // Format data to Mongoose Schema
@@ -145,7 +144,7 @@ const UserFormModal = ({ title = "", open, close, user = {}, onSubmit: actionOnS
 
     try {
       const isUpdatingUser = Object.keys(user).length;
-      const response = await actionOnSubmit(formData);
+      const response = await onSubmit(formData);
       if (response?.error || !response) throw new Error(response?.message || `No se pudo ${isUpdatingUser ? "actualizar" : "crear"} el usuario`);
       enqueueSnackbar(`Se ha ${isUpdatingUser ? "actualizado" : "creado"} el usuario con exito`, { variant: "success" });
       close();
@@ -153,12 +152,11 @@ const UserFormModal = ({ title = "", open, close, user = {}, onSubmit: actionOnS
       console.log(err)
       enqueueSnackbar(err.message, { variant: "error" });
     } finally {
-      setIsLoading(false);
     }
   };
 
   const handleClose = (event, reason) => {
-    if (reason === "backdropClick") return; // Do not close modal by accident
+    if (reason === "backdropClick" || reason === "escapeKeyDown") return; // Do not close modal by accident
     reset();
     close();
   }
@@ -252,7 +250,7 @@ const UserFormModal = ({ title = "", open, close, user = {}, onSubmit: actionOnS
       <Card
         component="form"
         encType="multipart/form-data"
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(onFormSubmit)}
         sx={theme => ({
           width: "500px",
           maxWidth: "100%",
@@ -482,7 +480,7 @@ const UserFormModal = ({ title = "", open, close, user = {}, onSubmit: actionOnS
               </MDBox>
               <MDBox mb={2} display="flex" justifyContent="flex-end" gap={3}>
                 <MDButton color="dark" variant="text" onClick={close} sx={{ alignSelf: "center" }}>Cancelar</MDButton>
-                <MDButton loading={isLoading} color="info" variant="gradient" type="submit">Guardar</MDButton>
+                <MDButton loading={isSubmitting} disabled={!isDirty} color="info" variant="gradient" type="submit">Guardar</MDButton>
               </MDBox>
             </MDBox>
           </MDBox>
@@ -491,5 +489,18 @@ const UserFormModal = ({ title = "", open, close, user = {}, onSubmit: actionOnS
     </Modal >
   )
 }
+
+UserFormModal.defaultProps = {
+  user: {},
+  onSubmit: console.log,
+}
+
+UserFormModal.propTypes = {
+  user: PropTypes.object,
+  open: PropTypes.bool.isRequired,
+  close: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func,
+}
+
 
 export default UserFormModal;

@@ -1,26 +1,25 @@
 // prop-types is a library for typechecking of props
 import PropTypes from "prop-types";
-
-// @mui material components
 import Icon from "@mui/material/Icon";
+import lodash from "lodash";
+import { Accordion, AccordionDetails, AccordionSummary, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { ExpandMore } from "@mui/icons-material";
+import SimpleBar from "simplebar-react";
+
+// Context
+import { useMaterialUIController } from "context";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
-
-// Material Dashboard 2 React context
-import { useMaterialUIController } from "context";
 import colorsDark from "assets/theme-dark/base/colors";
-import { Accordion, AccordionDetails, AccordionSummary, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import { ExpandMore } from "@mui/icons-material";
-import SimpleBar from "simplebar-react";
 
 // Utils
-import { formatSelectionProducts } from "components/Modals/ShippingForm/utils/functions.utils";
+import { formatSelectionProducts } from "../../utils/functions.utils";
 
-const ShippingDetails = ({ title, shippingData, noGutter, onEdit, onDelete }) => {
-  const { store, date, products } = shippingData;
+const BillDetails = ({ title, billData, noGutter, onEdit, onDelete }) => {
+  const { date, products, total } = billData;
 
   const [controller] = useMaterialUIController();
   const { darkMode } = controller;
@@ -63,9 +62,9 @@ const ShippingDetails = ({ title, shippingData, noGutter, onEdit, onDelete }) =>
         </MDBox>
         <MDBox mb={1} lineHeight={0}>
           <MDTypography variant="caption" color="text">
-            Enviado a:&nbsp;&nbsp;&nbsp;
+            Total:&nbsp;&nbsp;&nbsp;
             <MDTypography variant="caption" fontWeight="medium" textTransform="capitalize">
-              {store.name}
+              ${total.usd}
             </MDTypography>
           </MDTypography>
         </MDBox>
@@ -114,14 +113,14 @@ const ShippingDetails = ({ title, shippingData, noGutter, onEdit, onDelete }) =>
                             Medida
                           </MDTypography>
                         </TableCell>
-                        <TableCell align="center" width="10%">
+                        <TableCell align="center" width="7.5%">
                           <MDTypography variant="button" fontWeight="medium">
                             Cantidad
                           </MDTypography>
                         </TableCell>
-                        <TableCell align="center" width="7.5%">
+                        <TableCell align="right" width="10%">
                           <MDTypography variant="button" fontWeight="medium">
-                            Lote
+                            Costo
                           </MDTypography>
                         </TableCell>
                       </TableRow>
@@ -130,7 +129,7 @@ const ShippingDetails = ({ title, shippingData, noGutter, onEdit, onDelete }) =>
                       {
                         formatSelectionProducts(products).map(product => (
                           <TableRow
-                            key={product.name}
+                            key={lodash.uniqueId()}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                           >
                             <TableCell align="center">
@@ -163,9 +162,9 @@ const ShippingDetails = ({ title, shippingData, noGutter, onEdit, onDelete }) =>
                                 {product.quantity}
                               </MDTypography>
                             </TableCell>
-                            <TableCell align="center">
+                            <TableCell align="right">
                               <MDTypography variant="caption">
-                                {product.slot}
+                                $ {product.unitCost.usd}
                               </MDTypography>
                             </TableCell>
                           </TableRow>
@@ -184,17 +183,17 @@ const ShippingDetails = ({ title, shippingData, noGutter, onEdit, onDelete }) =>
 }
 
 // Setting default values for the props of Bill
-ShippingDetails.defaultProps = {
+BillDetails.defaultProps = {
   noGutter: false,
 };
 
 // Typechecking props for the Bill
-ShippingDetails.propTypes = {
+BillDetails.propTypes = {
   title: PropTypes.string.isRequired,
-  shippingData: PropTypes.object.isRequired,
+  billData: PropTypes.object.isRequired,
   noGutter: PropTypes.bool,
   onEdit: PropTypes.func,
   onDelete: PropTypes.func,
 };
 
-export default ShippingDetails;
+export default BillDetails;

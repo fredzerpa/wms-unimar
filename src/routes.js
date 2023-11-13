@@ -22,13 +22,14 @@
 
 // Material Dashboard 2 React layouts
 import Dashboard from "layouts/dashboard";
-// import Billing from "layouts/billing";
+import Billing from "layouts/billing";
 import Profile from "layouts/profile";
 import Inventory from "layouts/inventory";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
 import Shippings from "layouts/shippings";
+import SignIn from "layouts/authentication/sign-in";
 
 const routes = [
   {
@@ -47,14 +48,14 @@ const routes = [
     route: "/inventory",
     component: <Inventory />,
   },
-  // {
-  //   type: "collapse",
-  //   name: "Facturas",
-  //   key: "billing",
-  //   icon: <Icon fontSize="small">receipt_long</Icon>,
-  //   route: "/billing",
-  //   component: <Billing />,
-  // },
+  {
+    type: "collapse",
+    name: "Facturas",
+    key: "billing",
+    icon: <Icon fontSize="small">receipt_long</Icon>,
+    route: "/billing",
+    component: <Billing />,
+  },
   {
     type: "collapse",
     name: "shippings",
@@ -65,11 +66,20 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Profile",
+    name: "Perfil",
     key: "profile",
     icon: <Icon fontSize="small">person</Icon>,
     route: "/profile",
     component: <Profile />,
+  },
+  {
+    type: "collapse",
+    name: "Inicio de Sesion",
+    key: "sign-in",
+    route: "/auth/sign-in",
+    icon: <Icon fontSize="small">login</Icon>,
+    component: <SignIn />,
+    hidden: true,
   },
 ];
 

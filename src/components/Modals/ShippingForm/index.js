@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 // Libraries
 import { Autocomplete, Card, MenuItem, Modal, Select } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
@@ -12,16 +12,22 @@ import { DateTime } from "luxon";
 import { Lock } from "@mui/icons-material";
 import lodash from "lodash";
 
+// Context
+import { useAuth } from "context/auth.context";
+import { useMaterialUIController } from "context";
+import useProducts from "context/products.context";
+
 // Components
 import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
 import MDTypography from "components/MDTypography";
 import MDInput from "components/MDInput";
-import { useMaterialUIController } from "context";
 import colors from "assets/theme/base/colors";
-import { productsData } from "data/productsData";
 import SelectedProducts from "./SelectedProducts";
-import { formatOnSubmitShippingsForm, formatSelectedProductsData, formatShippingsFormEntryData, formatShippingsProductsLabels } from "./utils/functions.utils";
+import GetPasswordConsent from "components/GetPasswordConsent";
+
+// Utils
+import { formatOnSubmitShippingsForm, formatSelectedProductsData, formatShippingsFormEntryData, formatSelectionProducts } from "./utils/functions.utils";
 
 const INITIAL_VALUES = {
   id: null,
@@ -34,10 +40,12 @@ const INITIAL_VALUES = {
   observations: "",
 }
 
-const ShippingModalForm = ({ shippingData, open, close, onSubmit }) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { register, control, handleSubmit, watch, reset, setValue, getValues, formState: { defaultValues, errors } } = useForm({
-    defaultValues: lodash.defaultsDeep(formatShippingsFormEntryData(shippingData, productsData), INITIAL_VALUES),
+const ShippingModalForm = ({ shippingData, open, close, onSubmit, onDelete }) => {
+  const { user: userSession } = useAuth();
+  const { products } = useProducts();
+
+  const { register, control, handleSubmit, watch, setValue, getValues, formState: { errors, isDirty, isSubmitting } } = useForm({
+    defaultValues: lodash.defaultsDeep(formatShippingsFormEntryData(shippingData), INITIAL_VALUES),
   });
   const [controller] = useMaterialUIController();
   const { darkMode } = controller;
@@ -45,24 +53,39 @@ const ShippingModalForm = ({ shippingData, open, close, onSubmit }) => {
   const selectedProducts = watch("products.selected");
   const watchObservations = watch("observations");
 
-  useEffect(() => console.log(defaultValues), [defaultValues])
+  const isEditing = !lodash.isEmpty(shippingData);
 
-  const onFormSubmit = async data => {
+  const handleShippingDelete = async event => {
+    const data = formatOnSubmitShippingsForm(getValues());
+
+    const consent = await GetPasswordConsent({
+      title: `Eliminar ${data.name}`,
+      description: "Ingrese su clave para eliminar el registro",
+    });
+
+    if (consent?.error || !consent) throw new Error(consent?.message || "Contraseña incorrecta");
+
     try {
-      setIsSubmitting(true);
-      await new Promise((res, rej) => setTimeout(() => res(true), 3000));
-      onSubmit(formatOnSubmitShippingsForm(data));
+      await onDelete(data);
     } catch (err) {
       console.error(err);
     } finally {
-      setIsSubmitting(false);
+      handleClose();
+    }
+  }
+
+  const onFormSubmit = async data => {
+    try {
+      await onSubmit(formatOnSubmitShippingsForm(data));
+    } catch (err) {
+      console.error(err);
+    } finally {
       handleClose();
     }
   };
 
   const handleClose = (event, reason) => {
-    if (reason === "backdropClick") return; // Do not close modal by accident
-    reset();
+    if (reason === "backdropClick" || reason === "escapeKeyDown") return; // Do not close modal by accident
     close();
   }
 
@@ -173,7 +196,7 @@ const ShippingModalForm = ({ shippingData, open, close, onSubmit }) => {
                           error={!!errors?.store}
                           fullWidth
                           sx={{ "#mui-component-select-store": { p: "0.75rem!important" } }}
-                        // TODO: readOnly={!user.privileges.events.upsert}
+                          readOnly={!userSession.privileges.shippings.upsert}
                         >
                           <MenuItem value={1} sx={{ my: 0.5 }}>Local 1</MenuItem>
                           <MenuItem value={2} sx={{ my: 0.5 }}>Local 2</MenuItem>
@@ -210,8 +233,8 @@ const ShippingModalForm = ({ shippingData, open, close, onSubmit }) => {
                             {...rest}
                             fullWidth
                             multiple
-                            options={formatShippingsProductsLabels(productsData)}
-                            getOptionLabel={(option) => `${option.name} - ${option.type} ${option?.typeClass ? `"${option.typeClass}"` : ""}`}
+                            options={formatSelectionProducts(products)}
+                            getOptionLabel={(option) => `[${option.code}] ${option.name} - ${option.type.label} ${option?.typeClass ? `"${option.typeClass}"` : ""}`}
                             renderTags={() => null}
                             filterSelectedOptions
                             value={value}
@@ -262,7 +285,7 @@ const ShippingModalForm = ({ shippingData, open, close, onSubmit }) => {
                     inputProps={{ maxLength: 3000 }}
                     error={!!errors?.observations}
                     placeholder="Ej: Envio realizado con mal tiempo.."
-                  // TODO: readOnly={!user.privileges.events.upsert}
+                    readOnly={!userSession.privileges.shippings.upsert}
                   />
                   {
                     !!watchObservations?.length && (
@@ -282,10 +305,9 @@ const ShippingModalForm = ({ shippingData, open, close, onSubmit }) => {
 
                 <MDBox mt={3} mb={1} display="flex" justifyContent="flex-between" width="100%">
                   <MDBox width="100%">
-                    {/* // TODO: Boolean(Object.keys(item).length) && user.privileges.events.delete && */}
                     {
-                      shippingData?.id && (
-                        <MDButton loading={isSubmitting} color="error" variant="gradient" onClick={null}>
+                      isEditing && userSession.privileges.shippings.delete && (
+                        <MDButton loading={isSubmitting} color="error" variant="gradient" onClick={handleShippingDelete}>
                           <Lock sx={{ mr: 1 }} />
                           Eliminar
                         </MDButton>
@@ -293,8 +315,12 @@ const ShippingModalForm = ({ shippingData, open, close, onSubmit }) => {
                     }
                   </MDBox>
                   <MDBox display="flex" justifyContent="flex-end" gap={3} width="100%">
-                    <MDButton loading={isSubmitting} variant="contained" onClick={handleClose} sx={{ alignSelf: "center" }}>Cancelar</MDButton>
-                    <MDButton loading={isSubmitting} color="info" variant="gradient" type="submit">Guardar</MDButton>
+                    <MDButton loading={isSubmitting} variant="contained" onClick={handleClose} sx={{ alignSelf: "center" }}>
+                      Cancelar
+                    </MDButton>
+                    <MDButton loading={isSubmitting} disabled={!isDirty} color="info" variant="gradient" type="submit">
+                      Guardar
+                    </MDButton>
                   </MDBox>
                 </MDBox>
 
@@ -308,15 +334,17 @@ const ShippingModalForm = ({ shippingData, open, close, onSubmit }) => {
 }
 
 ShippingModalForm.defaultProps = {
-  item: {},
-  onSubmit: console.log,
+  onSubmit: async data => await console.log(new Promise((res, rej) => setTimeout(() => res(data), 3000))),
+  onDelete: async data => await console.log(new Promise((res, rej) => setTimeout(() => res(data), 3000))),
 }
+
 
 ShippingModalForm.propTypes = {
   item: PropTypes.object,
   open: PropTypes.bool.isRequired,
   close: PropTypes.func.isRequired,
-  onSubmit: PropTypes.func,
+  onSubmit: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
 }
 
 export default ShippingModalForm;

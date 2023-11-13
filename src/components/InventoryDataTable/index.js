@@ -1,16 +1,16 @@
 import { useState } from "react";
 
 import MDTypography from "components/MDTypography";
-import ItemModalForm from "components/Modals/ItemForm";
+import ProductModalForm from "components/Modals/ItemForm";
 import AddItemButton from "./AddItemButton";
 import DataTable from "components/Tables/DataTable";
+import MDBox from "components/MDBox";
 
 // Data
 import { productsData } from "data/productsData";
 
 // Utils
-import { formatInventoryRawData } from "./utils/functions.utils";
-import MDBox from "components/MDBox";
+import { formatInventoryEntryData } from "./utils/functions.utils";
 
 
 const formatColumnHeader = ({ column }) => (<MDTypography variant="h6">{column.columnDef.header}</MDTypography>)
@@ -20,20 +20,24 @@ const TableTopToolbar = () => {
   const [openItemModalForm, setOpenItemModalForm] = useState(false);
 
   const handleAddItemClick = e => setOpenItemModalForm(true);
-  const closeItemModalForm = e => setOpenItemModalForm(false);
+  const closeProductModalForm = e => setOpenItemModalForm(false);
 
   return (
     <MDBox mr={2}>
       <AddItemButton tooltipPlacement="bottom" color="secondary" onClick={handleAddItemClick} />
-      <ItemModalForm open={openItemModalForm} close={closeItemModalForm} onSubmit={null} />
+      {
+        openItemModalForm && (
+          <ProductModalForm open={openItemModalForm} close={closeProductModalForm} onSubmit={null} />
+        )
+      }
     </MDBox>
   )
 }
 
 const InventoryDataTable = ({ ...rest }) => {
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedProduct, setSelectedItem] = useState(null);
 
-  const closeItemModalForm = e => setSelectedItem(null);
+  const closeProductModalForm = e => setSelectedItem(null);
 
   const dataTableColumns = [
     {
@@ -54,11 +58,11 @@ const InventoryDataTable = ({ ...rest }) => {
       size: 200,
     },
     {
-      accessorKey: "type",
+      accessorKey: "type.label",
       header: "Tipo",
       Header: formatColumnHeader,
       Cell: formatColumnCell,
-      size: 160,
+      size: 200,
     },
     {
       accessorKey: "typeClass",
@@ -75,14 +79,14 @@ const InventoryDataTable = ({ ...rest }) => {
       size: 120,
     },
     {
-      accessorKey: "size",
+      accessorKey: "size.label",
       header: "Medida",
       Header: formatColumnHeader,
       Cell: formatColumnCell,
       size: 120,
     },
     {
-      accessorKey: "quantity",
+      accessorKey: "stock",
       header: "Cantidad",
       Header: formatColumnHeader,
       Cell: formatColumnCell,
@@ -96,7 +100,7 @@ const InventoryDataTable = ({ ...rest }) => {
       size: 100,
     },
     {
-      accessorKey: "date",
+      accessorKey: "entryDate",
       header: "Fecha de ingreso",
       Header: formatColumnHeader,
       Cell: formatColumnCell,
@@ -105,16 +109,17 @@ const InventoryDataTable = ({ ...rest }) => {
 
   ]
 
-  const handleTableRowClick = (e, { row, table }) => {
-    const item = productsData.find(product => product.id === row.original.id);
-    setSelectedItem(item);
+  const handleTableRowClick = (event, { row, table }) => {
+    const productData = row.original;
+    console.log(productData)
+    setSelectedItem(productData);
   }
 
   return (
     <>
       <DataTable
         columns={dataTableColumns}
-        data={formatInventoryRawData(productsData)}
+        data={formatInventoryEntryData(productsData)}
         isLoading={false}
         enableFullScreenToggle={false}
         enableMultiSort
@@ -123,7 +128,17 @@ const InventoryDataTable = ({ ...rest }) => {
         customTopToolbarComponents={TableTopToolbar}
         {...rest}
       />
-      <ItemModalForm item={selectedItem} open={!!selectedItem} close={closeItemModalForm} onSubmit={null} />
+      {
+        !!selectedProduct && (
+          <ProductModalForm
+            item={selectedProduct}
+            open={!!selectedProduct}
+            close={closeProductModalForm}
+            onSubmit={console.log}
+            onDelete={console.log}
+          />
+        )
+      }
     </>
   );
 }

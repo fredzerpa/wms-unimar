@@ -1,8 +1,7 @@
-
-export const formatInventoryRawData = rawData => {
+export const formatInventoryEntryData = rawData => {
   const PRODUCTS_PARAMS_LABELS_SCHEMA = {
     size: {
-      "quarterGallon": <><sup>1</sup>&frasl;<sub>4</sub> &nbsp;Galon</>, // Stands for 1/4 Galon
+      "quarterGallon": "1/4 Galon",
       "oneGallon": "1 Galon",
       "fourGallons": "4 Galones",
       "fiveGallons": "5 Galones",
@@ -19,13 +18,19 @@ export const formatInventoryRawData = rawData => {
 
   const formattedData = rawData.reduce((formatted, data) => {
     const { onStock, ...rest } = data;
-    const type = PRODUCTS_PARAMS_LABELS_SCHEMA.type[data.type];
+    const typeLabel = PRODUCTS_PARAMS_LABELS_SCHEMA.type[data.type];
 
     const itemizedStock = onStock.map(stockDetail => ({
       ...rest,
-      type,
       ...stockDetail,
-      size: PRODUCTS_PARAMS_LABELS_SCHEMA.size[stockDetail.size],
+      type: {
+        value: data.type,
+        label: typeLabel,
+      },
+      size: {
+        value: stockDetail.size,
+        label: PRODUCTS_PARAMS_LABELS_SCHEMA.size[stockDetail.size],
+      },
     }));
 
     formatted.push(...itemizedStock);

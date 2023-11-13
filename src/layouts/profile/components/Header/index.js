@@ -64,9 +64,6 @@ const Header = ({ user = {}, onImageChange = async file => null, children }) => 
         }}
       />
       <Card
-        component="form"
-        role="form"
-        encType="multipart/form-data"
         sx={{
           backdropFilter: `saturate(200%) blur(30px)`,
           backgroundColor: ({ functions: { rgba }, palette: { white } }) => rgba(white.main, 0.8),
@@ -78,87 +75,89 @@ const Header = ({ user = {}, onImageChange = async file => null, children }) => 
           px: 2,
         }}
       >
-        <Grid container spacing={3} alignItems="center">
-          <Grid>
-            <Controller
-              control={control}
-              name="imageUrl"
-              render={({ field: { onChange, value } }) => (
-                <MDButton loading={isLoading} component="label" variant="text" sx={{ p: 0 }}>
-                  <MDAvatar
-                    size="xxl"
-                    variant="rounded"
-                    shadow="md"
-                    bgColor={value && (typeof value === "string") ? "transparent" : "dark"}
-                    src={typeof value === "string" ? value : ""}
-                    sx={{
-                      svg: { // overwrites icon styles
-                        fontSize: "3.5rem !important"
-                      }
-                    }}
-                  >
-                    {
-                      isLoading ? <CircularProgress color="white" /> : <AddPhotoAlternate />
-                    }
-                  </MDAvatar>
-                  <input
-                    hidden
-                    accept="image/,.jpg,.jpeg,.png,.gif,.webp"
-                    type="file"
-                    onChange={async e => {
-                      // On cancel nothing happens
-                      if (e.target.files.length) {
-                        await setValue("imageUrl", e.target.files[0])
-                        return await submitForm(e);
-                      }
-                    }}
-                  />
-                  <MDBox
-                    sx={{
-                      display: !(typeof value === "string" && value) && "none",
-                      position: "absolute",
-                      zIndex: 1300,
-                      width: "100%",
-                      bottom: 0,
-                    }}
-                  >
-                    <MDButton
-                      color="white"
-                      variant="text"
-                      onClick={async e => {
-                        await setValue("imageUrl", null)
-                        return await submitForm(e);
-                      }}
-                      p={0}
-                      size="small"
+        <MDBox component="form" role="form" encType="multipart/form-data">
+          <Grid container spacing={3} alignItems="center">
+            <Grid>
+              <Controller
+                control={control}
+                name="imageUrl"
+                render={({ field: { onChange, value } }) => (
+                  <MDButton loading={isLoading} component="label" variant="text" sx={{ p: 0 }}>
+                    <MDAvatar
+                      size="xxl"
+                      variant="rounded"
+                      shadow="md"
+                      bgColor={value && (typeof value === "string") ? "transparent" : "dark"}
+                      src={typeof value === "string" ? value : ""}
                       sx={{
-                        width: "100%",
-                        borderRadiusBottom: 0,
-                        "&, :hover": {
-                          backgroundColor: "rgba(0, 0, 0, 0.5)",
+                        svg: { // overwrites icon styles
+                          fontSize: "3.5rem !important"
                         }
                       }}
                     >
-                      <MDTypography color="white" fontWeight="regular" textTransform="uppercase" variant="button" fontSize="0.55rem">
-                        Quitar Imagen
-                      </MDTypography>
-                    </MDButton>
-                  </MDBox>
-                </MDButton>
-              )}
-            />
+                      {
+                        isLoading ? <CircularProgress color="white" /> : <AddPhotoAlternate />
+                      }
+                    </MDAvatar>
+                    <input
+                      hidden
+                      accept="image/,.jpg,.jpeg,.png,.gif,.webp"
+                      type="file"
+                      onChange={async e => {
+                        // On cancel nothing happens
+                        if (e.target.files.length) {
+                          await setValue("imageUrl", e.target.files[0])
+                          return await submitForm(e);
+                        }
+                      }}
+                    />
+                    <MDBox
+                      sx={{
+                        display: !(typeof value === "string" && value) && "none",
+                        position: "absolute",
+                        zIndex: 1300,
+                        width: "100%",
+                        bottom: 0,
+                      }}
+                    >
+                      <MDButton
+                        color="white"
+                        variant="text"
+                        onClick={async e => {
+                          await setValue("imageUrl", null)
+                          return await submitForm(e);
+                        }}
+                        p={0}
+                        size="small"
+                        sx={{
+                          width: "100%",
+                          borderRadiusBottom: 0,
+                          "&, :hover": {
+                            backgroundColor: "rgba(0, 0, 0, 0.5)",
+                          }
+                        }}
+                      >
+                        <MDTypography color="white" fontWeight="regular" textTransform="uppercase" variant="button" fontSize="0.55rem">
+                          Quitar Imagen
+                        </MDTypography>
+                      </MDButton>
+                    </MDBox>
+                  </MDButton>
+                )}
+              />
+            </Grid>
+            <Grid>
+              <MDBox height="100%" mt={0.5} lineHeight={1}>
+                <MDTypography variant="h5" fontWeight="medium" textTransform="capitalize">
+                  {user.fullname}
+                </MDTypography>
+                <MDTypography variant="button" color="text" fontWeight="regular" textTransform="uppercase">
+                  {user.isAdmin ? "administrador" : "auxiliar"}
+                </MDTypography>
+              </MDBox>
+            </Grid>
           </Grid>
-          <Grid>
-            <MDBox height="100%" mt={0.5} lineHeight={1}>
-              <MDTypography variant="h5" fontWeight="medium" textTransform="capitalize">
-                {user.fullname}
-              </MDTypography>
-              <MDTypography variant="button" color="text" fontWeight="regular" textTransform="uppercase">
-                {user.isAdmin ? "administrador" : "auxiliar"}
-              </MDTypography>
-            </MDBox>
-          </Grid>
-        </Grid>
+        </MDBox>
         {children}
       </Card>
     </MDBox>

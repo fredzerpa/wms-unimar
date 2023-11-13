@@ -2,7 +2,13 @@ export const shippingsData = [
   {
     "_id": "652cdcfdfc13ae66486c7d2f",
     "date": "03/07/2022",
-    "store": 2,
+    "store": {
+      "name": "Local 2",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "52125-540",
@@ -10,7 +16,8 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "C",
         "quantity": 15,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       },
       {
         "code": "10237-825",
@@ -18,14 +25,21 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 49,
-        "size": "oneGallon"
+        "size": "oneGallon",
+        "slot": 2,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d30",
     "date": "07/02/2023",
-    "store": 3,
+    "store": {
+      "name": "Local 2",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "10812-400",
@@ -33,7 +47,8 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "C",
         "quantity": 30,
-        "size": "oneGallon"
+        "size": "oneGallon",
+        "slot": 2,
       },
       {
         "code": "55111-280",
@@ -41,14 +56,21 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "C",
         "quantity": 1,
-        "size": "oneGallon"
+        "size": "oneGallon",
+        "slot": 2,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d31",
     "date": "29/10/2023",
-    "store": 4,
+    "store": {
+      "name": "Local 2",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "61941-0031",
@@ -56,7 +78,8 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "C",
         "quantity": 19,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       },
       {
         "code": "0363-4007",
@@ -64,14 +87,21 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 6,
-        "size": "oneGallon"
+        "size": "oneGallon",
+        "slot": 2,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d32",
     "date": "28/06/2023",
-    "store": 3,
+    "store": {
+      "name": "Local 2",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "57955-0020",
@@ -79,7 +109,8 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "B",
         "quantity": 25,
-        "size": "fiveGallons"
+        "size": "fiveGallons",
+        "slot": 4,
       },
       {
         "code": "43269-653",
@@ -87,7 +118,8 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 46,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       },
       {
         "code": "49738-328",
@@ -95,7 +127,8 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 23,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       },
       {
         "code": "68084-505",
@@ -103,14 +136,21 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 24,
-        "size": "oneGallon"
+        "size": "oneGallon",
+        "slot": 2,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d33",
     "date": "10/06/2022",
-    "store": 1,
+    "store": {
+      "name": "Local 2",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "65597-106",
@@ -118,7 +158,8 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 50,
-        "size": "kit"
+        "size": "kit",
+        "slot": 3,
       },
       {
         "code": "57894-421",
@@ -126,14 +167,21 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "C",
         "quantity": 32,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d34",
     "date": "14/05/2023",
-    "store": 2,
+    "store": {
+      "name": "Local 2",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "70253-069",
@@ -141,7 +189,8 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "B",
         "quantity": 18,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       },
       {
         "code": "10370-220",
@@ -149,14 +198,21 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 16,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d35",
     "date": "13/07/2023",
-    "store": 4,
+    "store": {
+      "name": "Local 2",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "13548-031",
@@ -164,7 +220,8 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 3,
-        "size": "fiveGallons"
+        "size": "fiveGallons",
+        "slot": 4,
       },
       {
         "code": "55315-251",
@@ -172,7 +229,8 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "B",
         "quantity": 10,
-        "size": "kit"
+        "size": "kit",
+        "slot": 3,
       },
       {
         "code": "43598-210",
@@ -180,7 +238,8 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "C",
         "quantity": 37,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       },
       {
         "code": "54868-1990",
@@ -188,7 +247,8 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 34,
-        "size": "fiveGallons"
+        "size": "fiveGallons",
+        "slot": 4,
       },
       {
         "code": "50991-716",
@@ -196,14 +256,21 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "C",
         "quantity": 29,
-        "size": "fiveGallons"
+        "size": "fiveGallons",
+        "slot": 4,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d36",
     "date": "24/12/2023",
-    "store": 3,
+    "store": {
+      "name": "Local 2",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "43269-680",
@@ -211,7 +278,8 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "B",
         "quantity": 7,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       },
       {
         "code": "67405-543",
@@ -219,7 +287,8 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "C",
         "quantity": 23,
-        "size": "fiveGallons"
+        "size": "fiveGallons",
+        "slot": 4,
       },
       {
         "code": "0338-0085",
@@ -227,7 +296,8 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 10,
-        "size": "fiveGallons"
+        "size": "fiveGallons",
+        "slot": 4,
       },
       {
         "code": "0378-5271",
@@ -235,14 +305,21 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "B",
         "quantity": 44,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d37",
     "date": "14/01/2023",
-    "store": 2,
+    "store": {
+      "name": "Local 3",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "54569-5273",
@@ -250,14 +327,21 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "A",
         "quantity": 28,
-        "size": "fiveGallons"
+        "size": "fiveGallons",
+        "slot": 4,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d38",
     "date": "03/05/2022",
-    "store": 4,
+    "store": {
+      "name": "Local 3",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "54897-507",
@@ -265,7 +349,8 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "A",
         "quantity": 33,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       },
       {
         "code": "68258-5005",
@@ -273,7 +358,8 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "C",
         "quantity": 28,
-        "size": "oneGallon"
+        "size": "oneGallon",
+        "slot": 2,
       },
       {
         "code": "53135-834",
@@ -281,14 +367,21 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 18,
-        "size": "kit"
+        "size": "kit",
+        "slot": 3,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d39",
     "date": "06/01/2023",
-    "store": 1,
+    "store": {
+      "name": "Local 3",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "68703-109",
@@ -296,14 +389,21 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 45,
-        "size": "quarterGallon"
+        "size": "quarterGallon",
+        "slot": 2,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d3a",
     "date": "05/03/2023",
-    "store": 2,
+    "store": {
+      "name": "Local 3",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "0245-0043",
@@ -311,7 +411,8 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "B",
         "quantity": 5,
-        "size": "oneGallon"
+        "size": "oneGallon",
+        "slot": 2,
       },
       {
         "code": "55315-255",
@@ -319,7 +420,8 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "B",
         "quantity": 2,
-        "size": "kit"
+        "size": "kit",
+        "slot": 3,
       },
       {
         "code": "55154-4375",
@@ -327,14 +429,21 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "C",
         "quantity": 17,
-        "size": "kit"
+        "size": "kit",
+        "slot": 3,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d3b",
     "date": "20/08/2023",
-    "store": 2,
+    "store": {
+      "name": "Local 3",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "55319-130",
@@ -342,14 +451,21 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "A",
         "quantity": 14,
-        "size": "quarterGallon"
+        "size": "quarterGallon",
+        "slot": 2,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d3c",
     "date": "27/02/2023",
-    "store": 2,
+    "store": {
+      "name": "Local 3",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "53329-931",
@@ -357,7 +473,8 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "B",
         "quantity": 23,
-        "size": "fiveGallons"
+        "size": "fiveGallons",
+        "slot": 4,
       },
       {
         "code": "60512-6005",
@@ -365,7 +482,8 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 22,
-        "size": "fiveGallons"
+        "size": "fiveGallons",
+        "slot": 4,
       },
       {
         "code": "37808-802",
@@ -373,14 +491,21 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "C",
         "quantity": 7,
-        "size": "fiveGallons"
+        "size": "fiveGallons",
+        "slot": 4,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d3d",
     "date": "07/05/2022",
-    "store": 1,
+    "store": {
+      "name": "Local 3",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "43645-112",
@@ -388,7 +513,8 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "C",
         "quantity": 38,
-        "size": "oneGallon"
+        "size": "oneGallon",
+        "slot": 2,
       },
       {
         "code": "68788-9848",
@@ -396,7 +522,8 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 3,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       },
       {
         "code": "68788-0039",
@@ -404,7 +531,8 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "A",
         "quantity": 13,
-        "size": "quarterGallon"
+        "size": "quarterGallon",
+        "slot": 2,
       },
       {
         "code": "0006-0080",
@@ -412,7 +540,8 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "B",
         "quantity": 10,
-        "size": "quarterGallon"
+        "size": "quarterGallon",
+        "slot": 2,
       },
       {
         "code": "10685-978",
@@ -420,14 +549,21 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 42,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d3e",
     "date": "12/04/2022",
-    "store": 2,
+    "store": {
+      "name": "Local 3",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "66969-6012",
@@ -435,14 +571,21 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 47,
-        "size": "quarterGallon"
+        "size": "quarterGallon",
+        "slot": 2,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d3f",
     "date": "23/12/2022",
-    "store": 4,
+    "store": {
+      "name": "Local 3",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "33261-005",
@@ -450,7 +593,8 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 25,
-        "size": "fiveGallons"
+        "size": "fiveGallons",
+        "slot": 4,
       },
       {
         "code": "51514-201",
@@ -458,14 +602,21 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "B",
         "quantity": 29,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d40",
     "date": "27/10/2022",
-    "store": 2,
+    "store": {
+      "name": "Local 3",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "55045-2092",
@@ -473,14 +624,21 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 30,
-        "size": "kit"
+        "size": "kit",
+        "slot": 3,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d41",
     "date": "02/07/2022",
-    "store": 3,
+    "store": {
+      "name": "Local 3",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "33992-0003",
@@ -488,7 +646,8 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 44,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       },
       {
         "code": "49371-026",
@@ -496,7 +655,8 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "B",
         "quantity": 26,
-        "size": "fiveGallons"
+        "size": "fiveGallons",
+        "slot": 4,
       },
       {
         "code": "52959-558",
@@ -504,7 +664,8 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 38,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       },
       {
         "code": "54312-525",
@@ -512,7 +673,8 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "B",
         "quantity": 49,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       },
       {
         "code": "27437-110",
@@ -520,14 +682,21 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "B",
         "quantity": 12,
-        "size": "fiveGallons"
+        "size": "fiveGallons",
+        "slot": 4,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d42",
     "date": "31/12/2022",
-    "store": 4,
+    "store": {
+      "name": "Local 3",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "52685-331",
@@ -535,7 +704,8 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "A",
         "quantity": 45,
-        "size": "oneGallon"
+        "size": "oneGallon",
+        "slot": 2,
       },
       {
         "code": "54868-4593",
@@ -543,7 +713,8 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 35,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       },
       {
         "code": "11716-8653",
@@ -551,7 +722,8 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "C",
         "quantity": 17,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       },
       {
         "code": "43269-831",
@@ -559,7 +731,8 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 26,
-        "size": "fiveGallons"
+        "size": "fiveGallons",
+        "slot": 4,
       },
       {
         "code": "54575-362",
@@ -567,14 +740,21 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "C",
         "quantity": 42,
-        "size": "fiveGallons"
+        "size": "fiveGallons",
+        "slot": 4,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d43",
     "date": "21/05/2023",
-    "store": 1,
+    "store": {
+      "name": "Local 3",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "63629-4639",
@@ -582,7 +762,8 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "A",
         "quantity": 31,
-        "size": "kit"
+        "size": "kit",
+        "slot": 3,
       },
       {
         "code": "49371-023",
@@ -590,7 +771,8 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "C",
         "quantity": 36,
-        "size": "quarterGallon"
+        "size": "quarterGallon",
+        "slot": 2,
       },
       {
         "code": "21130-660",
@@ -598,14 +780,21 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 27,
-        "size": "quarterGallon"
+        "size": "quarterGallon",
+        "slot": 2,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d44",
     "date": "02/05/2023",
-    "store": 2,
+    "store": {
+      "name": "Local 3",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "0409-3379",
@@ -613,7 +802,8 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 13,
-        "size": "oneGallon"
+        "size": "oneGallon",
+        "slot": 2,
       },
       {
         "code": "57520-0261",
@@ -621,7 +811,8 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 19,
-        "size": "quarterGallon"
+        "size": "quarterGallon",
+        "slot": 2,
       },
       {
         "code": "49738-720",
@@ -629,14 +820,21 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "A",
         "quantity": 13,
-        "size": "quarterGallon"
+        "size": "quarterGallon",
+        "slot": 2,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d45",
     "date": "05/08/2023",
-    "store": 4,
+    "store": {
+      "name": "Local 3",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "49288-0154",
@@ -644,7 +842,8 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "C",
         "quantity": 21,
-        "size": "fiveGallons"
+        "size": "fiveGallons",
+        "slot": 4,
       },
       {
         "code": "0904-6082",
@@ -652,7 +851,8 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "C",
         "quantity": 23,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       },
       {
         "code": "0904-5677",
@@ -660,7 +860,8 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "C",
         "quantity": 36,
-        "size": "oneGallon"
+        "size": "oneGallon",
+        "slot": 2,
       },
       {
         "code": "43742-0133",
@@ -668,14 +869,21 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "A",
         "quantity": 18,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d46",
     "date": "28/11/2023",
-    "store": 4,
+    "store": {
+      "name": "Local 3",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "0472-0013",
@@ -683,7 +891,8 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "B",
         "quantity": 19,
-        "size": "oneGallon"
+        "size": "oneGallon",
+        "slot": 2,
       },
       {
         "code": "13537-346",
@@ -691,7 +900,8 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "A",
         "quantity": 23,
-        "size": "fiveGallons"
+        "size": "fiveGallons",
+        "slot": 4,
       },
       {
         "code": "59726-810",
@@ -699,14 +909,21 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "C",
         "quantity": 37,
-        "size": "quarterGallon"
+        "size": "quarterGallon",
+        "slot": 2,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d47",
     "date": "10/09/2023",
-    "store": 4,
+    "store": {
+      "name": "Local 2",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "0406-9912",
@@ -714,14 +931,21 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "A",
         "quantity": 1,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d48",
     "date": "22/02/2022",
-    "store": 2,
+    "store": {
+      "name": "Local 2",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "54841-001",
@@ -729,7 +953,8 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 6,
-        "size": "kit"
+        "size": "kit",
+        "slot": 3,
       },
       {
         "code": "52533-120",
@@ -737,7 +962,8 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "A",
         "quantity": 38,
-        "size": "fiveGallons"
+        "size": "fiveGallons",
+        "slot": 4,
       },
       {
         "code": "57687-301",
@@ -745,14 +971,21 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 48,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d49",
     "date": "09/11/2022",
-    "store": 1,
+    "store": {
+      "name": "Local 2",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "0268-0830",
@@ -760,7 +993,8 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 18,
-        "size": "fiveGallons"
+        "size": "fiveGallons",
+        "slot": 4,
       },
       {
         "code": "33992-2270",
@@ -768,14 +1002,21 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "C",
         "quantity": 8,
-        "size": "kit"
+        "size": "kit",
+        "slot": 3,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d4a",
     "date": "22/06/2023",
-    "store": 4,
+    "store": {
+      "name": "Local 2",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "10631-096",
@@ -783,14 +1024,21 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 11,
-        "size": "oneGallon"
+        "size": "oneGallon",
+        "slot": 2,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d4b",
     "date": "17/12/2022",
-    "store": 4,
+    "store": {
+      "name": "Local 2",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "52533-045",
@@ -798,7 +1046,8 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "C",
         "quantity": 41,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       },
       {
         "code": "49349-409",
@@ -806,14 +1055,21 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "A",
         "quantity": 47,
-        "size": "oneGallon"
+        "size": "oneGallon",
+        "slot": 2,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d4c",
     "date": "21/10/2023",
-    "store": 4,
+    "store": {
+      "name": "Local 1",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "17089-384",
@@ -821,7 +1077,8 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "C",
         "quantity": 49,
-        "size": "kit"
+        "size": "kit",
+        "slot": 3,
       },
       {
         "code": "37205-459",
@@ -829,7 +1086,8 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "C",
         "quantity": 38,
-        "size": "kit"
+        "size": "kit",
+        "slot": 3,
       },
       {
         "code": "36987-2283",
@@ -837,14 +1095,21 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 46,
-        "size": "kit"
+        "size": "kit",
+        "slot": 3,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d4d",
     "date": "12/02/2022",
-    "store": 2,
+    "store": {
+      "name": "Local 1",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "40076-624",
@@ -852,7 +1117,8 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "B",
         "quantity": 41,
-        "size": "kit"
+        "size": "kit",
+        "slot": 3,
       },
       {
         "code": "42236-001",
@@ -860,7 +1126,8 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "B",
         "quantity": 12,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       },
       {
         "code": "0641-6119",
@@ -868,7 +1135,8 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "A",
         "quantity": 18,
-        "size": "fiveGallons"
+        "size": "fiveGallons",
+        "slot": 4,
       },
       {
         "code": "21695-779",
@@ -876,7 +1144,8 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "C",
         "quantity": 3,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       },
       {
         "code": "0591-3746",
@@ -884,14 +1153,21 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "B",
         "quantity": 45,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d4e",
     "date": "11/01/2022",
-    "store": 2,
+    "store": {
+      "name": "Local 1",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "0363-0536",
@@ -899,7 +1175,8 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "A",
         "quantity": 32,
-        "size": "quarterGallon"
+        "size": "quarterGallon",
+        "slot": 2,
       },
       {
         "code": "63323-132",
@@ -907,7 +1184,8 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "B",
         "quantity": 6,
-        "size": "fiveGallons"
+        "size": "fiveGallons",
+        "slot": 4,
       },
       {
         "code": "60905-0007",
@@ -915,14 +1193,21 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "A",
         "quantity": 36,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d4f",
     "date": "02/08/2022",
-    "store": 4,
+    "store": {
+      "name": "Local 1",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "43857-0317",
@@ -930,7 +1215,8 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 44,
-        "size": "quarterGallon"
+        "size": "quarterGallon",
+        "slot": 2,
       },
       {
         "code": "13107-072",
@@ -938,7 +1224,8 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "B",
         "quantity": 15,
-        "size": "kit"
+        "size": "kit",
+        "slot": 3,
       },
       {
         "code": "35356-889",
@@ -946,7 +1233,8 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 20,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       },
       {
         "code": "0409-1903",
@@ -954,14 +1242,21 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "A",
         "quantity": 22,
-        "size": "quarterGallon"
+        "size": "quarterGallon",
+        "slot": 2,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d50",
     "date": "30/10/2022",
-    "store": 1,
+    "store": {
+      "name": "Local 1",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "36800-015",
@@ -969,7 +1264,8 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "B",
         "quantity": 25,
-        "size": "quarterGallon"
+        "size": "quarterGallon",
+        "slot": 2,
       },
       {
         "code": "54868-5189",
@@ -977,7 +1273,8 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 38,
-        "size": "fiveGallons"
+        "size": "fiveGallons",
+        "slot": 4,
       },
       {
         "code": "67457-148",
@@ -985,7 +1282,8 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 12,
-        "size": "kit"
+        "size": "kit",
+        "slot": 3,
       },
       {
         "code": "68462-222",
@@ -993,7 +1291,8 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 13,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       },
       {
         "code": "57520-0106",
@@ -1001,14 +1300,21 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 42,
-        "size": "quarterGallon"
+        "size": "quarterGallon",
+        "slot": 2,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d51",
     "date": "14/06/2022",
-    "store": 4,
+    "store": {
+      "name": "Local 1",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "63981-973",
@@ -1016,14 +1322,21 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 39,
-        "size": "oneGallon"
+        "size": "oneGallon",
+        "slot": 2,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d52",
     "date": "22/02/2022",
-    "store": 1,
+    "store": {
+      "name": "Local 1",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "45802-083",
@@ -1031,7 +1344,8 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "A",
         "quantity": 9,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       },
       {
         "code": "43419-313",
@@ -1039,14 +1353,21 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "C",
         "quantity": 4,
-        "size": "kit"
+        "size": "kit",
+        "slot": 3,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d53",
     "date": "16/09/2022",
-    "store": 2,
+    "store": {
+      "name": "Local 1",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "57520-0348",
@@ -1054,7 +1375,8 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "C",
         "quantity": 18,
-        "size": "oneGallon"
+        "size": "oneGallon",
+        "slot": 2,
       },
       {
         "code": "76119-1440",
@@ -1062,14 +1384,21 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 22,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d54",
     "date": "20/10/2023",
-    "store": 3,
+    "store": {
+      "name": "Local 1",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "37808-267",
@@ -1077,14 +1406,21 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "C",
         "quantity": 19,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d55",
     "date": "24/10/2023",
-    "store": 1,
+    "store": {
+      "name": "Local 1",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "76162-102",
@@ -1092,7 +1428,8 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "A",
         "quantity": 21,
-        "size": "kit"
+        "size": "kit",
+        "slot": 3,
       },
       {
         "code": "0069-0135",
@@ -1100,7 +1437,8 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "C",
         "quantity": 30,
-        "size": "fiveGallons"
+        "size": "fiveGallons",
+        "slot": 4,
       },
       {
         "code": "0832-1071",
@@ -1108,14 +1446,21 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 6,
-        "size": "fiveGallons"
+        "size": "fiveGallons",
+        "slot": 4,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d56",
     "date": "13/10/2023",
-    "store": 4,
+    "store": {
+      "name": "Local 1",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "41520-911",
@@ -1123,14 +1468,21 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "A",
         "quantity": 15,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d57",
     "date": "20/12/2023",
-    "store": 3,
+    "store": {
+      "name": "Local 3",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "59115-053",
@@ -1138,7 +1490,8 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "A",
         "quantity": 43,
-        "size": "fiveGallons"
+        "size": "fiveGallons",
+        "slot": 4,
       },
       {
         "code": "0781-7137",
@@ -1146,7 +1499,8 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "B",
         "quantity": 42,
-        "size": "fiveGallons"
+        "size": "fiveGallons",
+        "slot": 4,
       },
       {
         "code": "76237-143",
@@ -1154,14 +1508,21 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "B",
         "quantity": 38,
-        "size": "kit"
+        "size": "kit",
+        "slot": 3,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d58",
     "date": "08/01/2022",
-    "store": 2,
+    "store": {
+      "name": "Local 3",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "11410-603",
@@ -1169,14 +1530,21 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "B",
         "quantity": 12,
-        "size": "oneGallon"
+        "size": "oneGallon",
+        "slot": 2,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d59",
     "date": "30/04/2022",
-    "store": 1,
+    "store": {
+      "name": "Local 3",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "76237-192",
@@ -1184,7 +1552,8 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "B",
         "quantity": 28,
-        "size": "fiveGallons"
+        "size": "fiveGallons",
+        "slot": 4,
       },
       {
         "code": "52533-205",
@@ -1192,14 +1561,21 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "B",
         "quantity": 49,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d5a",
     "date": "13/05/2023",
-    "store": 4,
+    "store": {
+      "name": "Local 3",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "37000-335",
@@ -1207,7 +1583,8 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "A",
         "quantity": 41,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       },
       {
         "code": "51514-0321",
@@ -1215,7 +1592,8 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "B",
         "quantity": 29,
-        "size": "oneGallon"
+        "size": "oneGallon",
+        "slot": 2,
       },
       {
         "code": "49483-347",
@@ -1223,14 +1601,21 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 20,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d5b",
     "date": "18/06/2022",
-    "store": 4,
+    "store": {
+      "name": "Local 3",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "59667-0110",
@@ -1238,7 +1623,8 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 10,
-        "size": "kit"
+        "size": "kit",
+        "slot": 3,
       },
       {
         "code": "50114-4336",
@@ -1246,7 +1632,8 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "C",
         "quantity": 40,
-        "size": "kit"
+        "size": "kit",
+        "slot": 3,
       },
       {
         "code": "60608-015",
@@ -1254,7 +1641,8 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "C",
         "quantity": 24,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       },
       {
         "code": "32909-115",
@@ -1262,14 +1650,21 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "C",
         "quantity": 25,
-        "size": "fiveGallons"
+        "size": "fiveGallons",
+        "slot": 4,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d5c",
     "date": "12/07/2023",
-    "store": 4,
+    "store": {
+      "name": "Local 3",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "76314-004",
@@ -1277,7 +1672,8 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 27,
-        "size": "kit"
+        "size": "kit",
+        "slot": 3,
       },
       {
         "code": "13537-195",
@@ -1285,14 +1681,21 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "B",
         "quantity": 47,
-        "size": "kit"
+        "size": "kit",
+        "slot": 3,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d5d",
     "date": "25/04/2023",
-    "store": 4,
+    "store": {
+      "name": "Local 3",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "49371-030",
@@ -1300,7 +1703,8 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "B",
         "quantity": 24,
-        "size": "kit"
+        "size": "kit",
+        "slot": 3,
       },
       {
         "code": "37000-022",
@@ -1308,7 +1712,8 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 18,
-        "size": "kit"
+        "size": "kit",
+        "slot": 3,
       },
       {
         "code": "55154-7461",
@@ -1316,7 +1721,8 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "A",
         "quantity": 24,
-        "size": "quarterGallon"
+        "size": "quarterGallon",
+        "slot": 2,
       },
       {
         "code": "52125-568",
@@ -1324,7 +1730,8 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 7,
-        "size": "kit"
+        "size": "kit",
+        "slot": 3,
       },
       {
         "code": "50458-513",
@@ -1332,14 +1739,21 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 31,
-        "size": "oneGallon"
+        "size": "oneGallon",
+        "slot": 2,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d5e",
     "date": "22/08/2022",
-    "store": 3,
+    "store": {
+      "name": "Local 3",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "68382-066",
@@ -1347,7 +1761,8 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "C",
         "quantity": 16,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       },
       {
         "code": "62037-691",
@@ -1355,7 +1770,8 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "B",
         "quantity": 12,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       },
       {
         "code": "55154-1815",
@@ -1363,14 +1779,21 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 23,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d5f",
     "date": "16/03/2022",
-    "store": 3,
+    "store": {
+      "name": "Local 1",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "63833-387",
@@ -1378,7 +1801,8 @@ export const shippingsData = [
         "type": "architectural",
         "typeClass": "B",
         "quantity": 5,
-        "size": "fiveGallons"
+        "size": "fiveGallons",
+        "slot": 4,
       },
       {
         "code": "53808-0624",
@@ -1386,14 +1810,21 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "A",
         "quantity": 45,
-        "size": "quarterGallon"
+        "size": "quarterGallon",
+        "slot": 2,
       }
     ]
   },
   {
     "_id": "652cdcfdfc13ae66486c7d60",
     "date": "18/04/2023",
-    "store": 1,
+    "store": {
+      "name": "Local 1",
+      "phone": "0295-273-1680",
+      "address": {
+        "full": "Av. Terranova, Porlamar 6301, Nueva Esparta",
+      },
+    },
     "products": [
       {
         "code": "47682-168",
@@ -1401,7 +1832,8 @@ export const shippingsData = [
         "type": "industrialAndMarine",
         "typeClass": null,
         "quantity": 21,
-        "size": "fiveGallons"
+        "size": "fiveGallons",
+        "slot": 4,
       },
       {
         "code": "63629-4144",
@@ -1409,7 +1841,8 @@ export const shippingsData = [
         "type": "enamel",
         "typeClass": "C",
         "quantity": 3,
-        "size": "fourGallons"
+        "size": "fourGallons",
+        "slot": 1,
       }
     ]
   }

@@ -1,51 +1,44 @@
-import { useCallback, useEffect, useState } from "react";
-// @mui material components
+import { memo, useCallback, useState } from "react";
+import isEqual from "react-fast-compare";
 import Card from "@mui/material/Card";
 import { InputAdornment } from "@mui/material";
 import { Search } from "@mui/icons-material";
 import SimpleBar from "simplebar-react";
+import { DateTime } from "luxon";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-
-// Billing page components
-import ShippingDetails from "layouts/shippings/components/ShippingDetails";
-import AddShippingButton from "../AddShippingButton";
-import ShippingModalForm from "components/Modals/ShippingForm";
-
-import { shippingsData } from "data/shippingData";
-import { DateTime } from "luxon";
+import BillDetails from "layouts/billing/components/BillDetails";
+import AddBillButton from "../AddBillButton";
+import BillModalForm from "components/Modals/BillForm";
 import DebouncedInput from "components/DebouncedInput";
 
+const BillingHistory = ({ bills }) => {
+  const [search, setSearch] = useState(bills);
+  const [editBill, setEditBill] = useState(null);
 
-const ShippingsHistory = () => {
-  const [shippings, setShippings] = useState(shippingsData);
-  const [editShipping, setEditShipping] = useState(null);
+  const closeEditBill = () => setEditBill(null);
 
-  const closeEditShipping = () => setEditShipping(null);
-
-  useEffect(() => console.log(editShipping), [editShipping])
-
-  const handleEditShipping = shippingData => {
-    setEditShipping(shippingData);
+  const handleEditBill = billData => {
+    console.log(billData)
+    setEditBill(billData);
   }
-  const handleDeleteShipping = shippingData => console.log(shippingData);
+  const handleDeleteBill = billData => console.log(billData);
 
   const handleSearch = useCallback(search => {
-    const filteredData = shippingsData.filter(shippingData => {
-      const { store, date, products } = shippingData
+    const filteredData = bills.filter(billData => {
+      const { provider, date, products } = billData
 
-      const detailedData = [store.name, date, ...products.flatMap(({ code, name }) => [code, name])];
-
+      const detailedData = [provider.name, date, ...products.flatMap(({ code, name }) => [code, name])];
       const regex = new RegExp(search, "gi");
       return detailedData.filter(data => regex.test(data)).length
     })
 
-    setShippings(filteredData);
-  }, [])
+    setSearch(filteredData);
+  }, [bills])
 
-  const sortShippings = data => data.sort((a, b) => {
+  const sortBills = data => data.sort((a, b) => {
     const diff = DateTime.fromFormat(b.date, 'dd/MM/yyyy').diff(DateTime.fromFormat(a.date, 'dd/MM/yyyy')).as('milliseconds');
     if (diff < 0) return -1
     else if (diff > 0) return 1
@@ -58,7 +51,7 @@ const ShippingsHistory = () => {
         <MDBox pt={3} px={2} display="flex" justifyContent="space-between" alignItems="center">
           <MDBox>
             <MDTypography variant="h6" fontWeight="medium">
-              Historial de Envios
+              Historial de Facturas
             </MDTypography>
           </MDBox>
           <MDBox display="flex" gap={2} justifyContent="space-between" alignItems="center">
@@ -69,7 +62,7 @@ const ShippingsHistory = () => {
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
-                      <Search />
+                      <Search color="text"/>
                     </InputAdornment>
                   ),
                 }}
@@ -77,7 +70,7 @@ const ShippingsHistory = () => {
               />
             </MDBox>
             <MDBox>
-              <AddShippingButton />
+              <AddBillButton />
             </MDBox>
           </MDBox>
         </MDBox>
@@ -85,18 +78,18 @@ const ShippingsHistory = () => {
           <MDBox pt={1} pb={2} px={2}>
             <MDBox display="flex" justifyContent="flex-end" pt={1}>
               <MDTypography variant="caption" fontWeight="medium" align="right">
-                {shippings.length} envios encontrados
+                {search.length} facturas encontradas
               </MDTypography>
             </MDBox>
             <MDBox component="ul" display="flex" flexDirection="column" p={0} m={0}>
               {
-                sortShippings(shippings).map(data => (
-                  <ShippingDetails
-                    key={data._id}
-                    title={`${data.products.length} Productos Enviados`}
-                    shippingData={data}
-                    onEdit={e => handleEditShipping(data)}
-                    onDelete={e => handleDeleteShipping(data)}
+                sortBills(search).map(bill => (
+                  <BillDetails
+                    key={bill._id}
+                    title={bill.provider.name}
+                    billData={bill}
+                    onEdit={e => handleEditBill(bill)}
+                    onDelete={e => handleDeleteBill(bill)}
                   />
                 ))
               }
@@ -105,12 +98,12 @@ const ShippingsHistory = () => {
         </SimpleBar>
       </Card>
       {
-        editShipping && (
-          <ShippingModalForm shippingData={editShipping} open={!!editShipping} close={closeEditShipping} onSubmit={console.log} />
+        editBill && (
+          <BillModalForm billData={editBill} open={!!editBill} close={closeEditBill} onSubmit={console.log} />
         )
       }
     </>
   );
 }
 
-export default ShippingsHistory;
+export default memo(BillingHistory, isEqual);

@@ -14,6 +14,11 @@ const { borderRadius } = borders;
 
 const autocomplete = {
   styleOverrides: {
+    inputRoot: { //Testing match height in modal forms
+      padding: pxToRem(5),
+      paddingTop: pxToRem(4),
+    },
+    
     popper: {
       boxShadow: lg,
       padding: pxToRem(8),
