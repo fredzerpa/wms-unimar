@@ -168,7 +168,10 @@ const Dashboard = () => {
                   date="Ultimo envio fue hace 3 dias"
                   chart={{
                     labels: LAST_SIX_MONTHS_LABELS,
-                    datasets: { label: "Envios", data: dataConfig.shippings.lastSixthMonths.map(month => month?.shippings?.length) },
+                    datasets: {
+                      label: "Envios",
+                      data: dataConfig.shippings.lastSixthMonths.map(month => month?.shippings?.length)
+                    },
                   }}
                 />
               </MDBox>
@@ -183,12 +186,16 @@ const Dashboard = () => {
                   height="100%"
                   chart={{
                     labels: LAST_SIX_MONTHS_LABELS,
-                    datasets: { data: [6150, 5140, 8300, 6220, 7500, 5250, 6100, 6230, 7500] },
+                    datasets: {
+                      data: dataConfig.bills.lastSixthMonths.map(month =>
+                        month.bills.reduce((total, bill) => total + bill.total.usd, 0)
+                      )
+                    },
                     options: {
                       plugins: {
                         tooltip: {
                           callbacks: {
-                            label: ({ raw }) => formatCurrency(raw)
+                            label: ({ raw }) => formatCurrency(raw),
                           }
                         }
                       }
