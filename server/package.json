@@ -1,0 +1,43 @@
+{
+  "name": "wms-tiendas-montana",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "keywords": [
+    "tiendas-montana",
+    "wms-tiendas-montana",
+    "wms"
+  ],
+  "author": "Fred Zerpa",
+  "license": "MIT",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.449.0",
+    "@meanie/mongoose-upsert-many": "^2.2.0",
+    "axios": "^1.6.1",
+    "bcryptjs": "^2.4.3",
+    "compression": "^1.7.4",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-fileupload": "^1.4.2",
+    "express-history-api-fallback": "^2.2.1",
+    "form-data-to-object": "^0.2.0",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "luxon": "^3.4.4",
+    "mongoose": "^8.0.0",
+    "nanoid": "^3.3.7",
+    "node-cron": "^3.0.3",
+    "response-time": "^2.3.2",
+    "winston": "^3.11.0",
+    "winston-daily-rotate-file": "^4.7.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}

@@ -1,0 +1,219 @@
+import { useMemo, useState } from "react";
+
+import MDTypography from "components/MDTypography";
+import InventoryRecordModalForm from "components/Modals/InventoryRecordForm";
+import AddItemButton from "./AddItemButton";
+import DataTable from "components/Tables/DataTable";
+import MDBox from "components/MDBox";
+
+// Context
+import { useInventory } from "context/inventory.context";
+
+// Utils
+import { formatInventoryEntryData } from "./utils/functions.utils";
+
+const TableTopToolbar = () => {
+  const [openItemModalForm, setOpenItemModalForm] = useState(false);
+  const { createInventoryRecord } = useInventory();
+
+  const handleAddItemClick = e => setOpenItemModalForm(true);
+  const closeInventoryRecordModalForm = e => setOpenItemModalForm(false);
+
+  const handleCreateInventoryRecord = async newProductData => await createInventoryRecord(newProductData);
+
+  return (
+    <MDBox mr={2}>
+      <AddItemButton tooltipPlacement="bottom" color="secondary" onClick={handleAddItemClick} />
+      {
+        openItemModalForm && (
+          <InventoryRecordModalForm
+            open={openItemModalForm}
+            close={closeInventoryRecordModalForm}
+            onSubmit={handleCreateInventoryRecord}
+          />
+        )
+      }
+    </MDBox>
+  )
+}
+
+const formatColumnHeader = ({ column }) => (<MDTypography variant="h6">{column.columnDef.header}</MDTypography>)
+const formatColumnCell = ({ cell }) => (<MDTypography variant="button" color="text" fontWeight="light">{cell.getValue() ?? ""}</MDTypography>)
+
+const InventoryDataTable = ({ ...rest }) => {
+  const {
+    inventory,
+    deleteInventoryRecordById,
+    updateInventoryRecordById,
+  } = useInventory();
+
+  const [selectedProduct, setSelectedItem] = useState(null);
+  const closeInventoryRecordModalForm = e => setSelectedItem(null);
+
+  const dataTableColumns = useMemo(() => [
+    {
+      accessorKey: "_id",
+      header: "ID",
+      Header: formatColumnHeader,
+      Cell: formatColumnCell,
+      toggleVisibility: false,
+      enableHiding: false,
+      disableFilters: true,
+      enableGlobalFilter: false,
+    },
+    {
+      accessorKey: "entryDate",
+      header: "Fecha de Ingreso",
+      Header: formatColumnHeader,
+      Cell: formatColumnCell,
+      size: 250,
+      muiTableHeadCellProps: {
+        align: "center",
+      },
+      muiTableBodyCellProps: {
+        align: "center",
+      },
+    },
+    {
+      accessorKey: "product.code",
+      header: "Codigo",
+      Header: formatColumnHeader,
+      Cell: formatColumnCell,
+      muiTableHeadCellProps: {
+        align: "center",
+      },
+      muiTableBodyCellProps: {
+        align: "center",
+      },
+    },
+    {
+      accessorKey: "product.name",
+      header: "Nombre",
+      Header: formatColumnHeader,
+      Cell: formatColumnCell,
+      muiTableHeadCellProps: {
+        align: "center",
+      },
+      muiTableBodyCellProps: {
+        align: "center",
+      },
+    },
+    {
+      accessorKey: "product.type.label",
+      header: "Tipo",
+      Header: formatColumnHeader,
+      Cell: formatColumnCell,
+      muiTableHeadCellProps: {
+        align: "center",
+      },
+      muiTableBodyCellProps: {
+        align: "center",
+      },
+    },
+    {
+      accessorKey: "product.typeClass",
+      header: "Clase",
+      Header: formatColumnHeader,
+      Cell: formatColumnCell,
+      muiTableHeadCellProps: {
+        align: "center",
+      },
+      muiTableBodyCellProps: {
+        align: "center",
+      },
+    },
+    {
+      accessorKey: "product.size.label",
+      header: "Medida",
+      Header: formatColumnHeader,
+      Cell: formatColumnCell,
+      muiTableHeadCellProps: {
+        align: "center",
+      },
+      muiTableBodyCellProps: {
+        align: "center",
+      },
+    },
+    {
+      accessorKey: "onStock",
+      header: "Cantidad",
+      Header: formatColumnHeader,
+      Cell: formatColumnCell,
+      muiTableHeadCellProps: {
+        align: "center",
+      },
+      muiTableBodyCellProps: {
+        align: "center",
+      },
+    },
+    {
+      accessorKey: "slot",
+      header: "Lote",
+      Header: formatColumnHeader,
+      Cell: formatColumnCell,
+      muiTableHeadCellProps: {
+        align: "center",
+      },
+      muiTableBodyCellProps: {
+        align: "center",
+      },
+    },
+    {
+      accessorKey: "expirationDate",
+      header: "Fecha de Vencimiento",
+      Header: formatColumnHeader,
+      Cell: formatColumnCell,
+      size: 250,
+      muiTableHeadCellProps: {
+        align: "center",
+      },
+      muiTableBodyCellProps: {
+        align: "center",
+      },
+    },
+
+  ], []);
+
+  const handleTableRowClick = (event, { row, table }) => {
+    const recordData = row.original;
+    setSelectedItem(recordData);
+  }
+
+  const handleUpdateInventoryRecord = async updatedRecord => {
+    const { _id, ...updatedData } = updatedRecord;
+    return await updateInventoryRecordById(_id, updatedData)
+  }
+
+  const handleDeleteInventoryRecord = async record => {
+    return await deleteInventoryRecordById(record._id);
+  }
+
+  return (
+    <>
+      <DataTable
+        columns={dataTableColumns}
+        data={formatInventoryEntryData(inventory)}
+        isLoading={false}
+        enableFullScreenToggle={false}
+        enableMultiSort
+        isMultiSortEvent={() => true}
+        onRowClick={handleTableRowClick}
+        customTopToolbarComponents={TableTopToolbar}
+        {...rest}
+      />
+      {
+        !!selectedProduct && (
+          <InventoryRecordModalForm
+            recordData={selectedProduct}
+            open={!!selectedProduct}
+            close={closeInventoryRecordModalForm}
+            onSubmit={handleUpdateInventoryRecord}
+            onDelete={handleDeleteInventoryRecord}
+          />
+        )
+      }
+    </>
+  );
+}
+
+export default InventoryDataTable;
