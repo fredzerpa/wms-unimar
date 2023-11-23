@@ -12,7 +12,8 @@
     "install-client": "npm install --prefix client",
     "install-server": "npm install --prefix server",
     "install": "npm run install-server && npm run install-client",
-    "deploy": "npm run build --prefix client && npm start --prefix server"
+    "deploy": "npm run build --prefix client && npm start --prefix server",
+    "deploy-linux": "npm run build-linux --prefix client && npm start --prefix server"
   },
   "keywords": [],
   "author": "",
