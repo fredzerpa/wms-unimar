@@ -2,13 +2,9 @@
   "name": "wms-unimar",
   "version": "1.0.0",
   "private": true,
-  "author": "Fred Zerpa",
+  "author": "reinado sifontes",
   "license": "MIT",
   "description": "Warehouse Management System using the UI template of React version of Material Dashboard 2 created by Creative Tim",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/fredzerpa/wms-unimar.git"
-  },
   "dependencies": {
     "@emotion/react": "11.10.8",
     "@emotion/styled": "11.10.8",

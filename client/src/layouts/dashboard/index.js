@@ -110,8 +110,8 @@ const Dashboard = () => {
                 title="Gastos"
                 count={formatCurrency(dataConfig.bills.currentMonth)}
                 percentage={(() => {
-                  const target = dataConfig.bills.currentMonth.length;
-                  const source = dataConfig.bills.formerMonth.length;
+                  const target = dataConfig.bills.currentMonth;
+                  const source = dataConfig.bills.formerMonth;
                   const diff = getDiff(target, source);
 
                   return {
@@ -123,7 +123,8 @@ const Dashboard = () => {
               />
             </MDBox>
           </Grid>
-          <Grid xs={12} md={6} lg={3}>
+          {/* TODO: Add */}
+          {/* <Grid xs={12} md={6} lg={3}>
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
                 color="primary"
@@ -154,7 +155,7 @@ const Dashboard = () => {
                 }}
               />
             </MDBox>
-          </Grid>
+          </Grid> */}
         </Grid>
         <MDBox mt={4.5}>
           <Grid container spacing={3}>
