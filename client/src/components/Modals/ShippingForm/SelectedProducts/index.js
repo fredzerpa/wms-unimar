@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Close } from "@mui/icons-material";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
@@ -11,22 +11,26 @@ import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
 import MDInput from "components/MDInput";
 import MDTypography from "components/MDTypography";
+import { getProductTotalStockBySizes } from "../utils/functions.utils";
 
 const Product = ({ isEditing, productData, onDataChange, onProductRemove, errors }) => {
   const [controller] = useMaterialUIController();
   const { darkMode } = controller;
 
-  const { stocked, ...rest } = productData;
-  const [orderDetail, setOrderDetail] = useState({ quantity: 0, size: null, ...rest, stocked });
+  const { onStock, ...rest } = productData;
+  const productStocksBySizes = useMemo(() => getProductTotalStockBySizes(productData), [productData]);
+  const [orderDetail, setOrderDetail] = useState({ quantity: 0, size: null, stocked: productStocksBySizes, ...rest });
 
   useEffect(() => {
     const { stocked: stockedOrderDetail, ...restOrderDetail } = orderDetail;
 
+    console.log({ productStocksBySizes, productData })
+
     return onDataChange({
       ...restOrderDetail,
-      type: restOrderDetail.type.value
+      type: restOrderDetail.type.value,
     })
-  }, [onDataChange, orderDetail])
+  }, [onDataChange, orderDetail, productData, productStocksBySizes])
 
   return (
     <MDBox
@@ -69,20 +73,20 @@ const Product = ({ isEditing, productData, onDataChange, onProductRemove, errors
               onInvalid={e => e.target.setCustomValidity("Escoja una medida")}
               onSelect={e => e.target.setCustomValidity("")}
             >
-              <MenuItem value="quarterGallon" disabled={!stocked["quarterGallon"] > 0} sx={{ my: 0.5 }}>
-                1&frasl;4 Galon {!stocked["quarterGallon"] > 0 && "(Fuera de Stock)"}
+              <MenuItem value="quarterGallon" disabled={!productStocksBySizes["quarterGallon"] > 0} sx={{ my: 0.5 }}>
+                1&frasl;4 Galon {!productStocksBySizes["quarterGallon"] > 0 && "(Fuera de Stock)"}
               </MenuItem>
-              <MenuItem value="oneGallon" disabled={!stocked["oneGallon"] > 0} sx={{ my: 0.5 }}>
-                1 Galon {!stocked["oneGallon"] > 0 && "(Fuera de Stock)"}
+              <MenuItem value="oneGallon" disabled={!productStocksBySizes["oneGallon"] > 0} sx={{ my: 0.5 }}>
+                1 Galon {!productStocksBySizes["oneGallon"] > 0 && "(Fuera de Stock)"}
               </MenuItem>
-              <MenuItem value="fourGallons" disabled={!stocked["fourGallons"] > 0} sx={{ my: 0.5 }}>
-                4 Galones {!stocked["fourGallons"] > 0 && "(Fuera de Stock)"}
+              <MenuItem value="fourGallons" disabled={!productStocksBySizes["fourGallons"] > 0} sx={{ my: 0.5 }}>
+                4 Galones {!productStocksBySizes["fourGallons"] > 0 && "(Fuera de Stock)"}
               </MenuItem>
-              <MenuItem value="fiveGallons" disabled={!stocked["fiveGallons"] > 0} sx={{ my: 0.5 }}>
-                5 Galones {!stocked["fiveGallons"] > 0 && "(Fuera de Stock)"}
+              <MenuItem value="fiveGallons" disabled={!productStocksBySizes["fiveGallons"] > 0} sx={{ my: 0.5 }}>
+                5 Galones {!productStocksBySizes["fiveGallons"] > 0 && "(Fuera de Stock)"}
               </MenuItem>
-              <MenuItem value="kit" disabled={!stocked["kit"] > 0} sx={{ my: 0.5 }}>
-                Kit (bicomponente) {!stocked["kit"] > 0 && "(Fuera de Stock)"}
+              <MenuItem value="kit" disabled={!productStocksBySizes["kit"] > 0} sx={{ my: 0.5 }}>
+                Kit (bicomponente) {!productStocksBySizes["kit"] > 0 && "(Fuera de Stock)"}
               </MenuItem>
             </Select>
           </FormControl>
@@ -96,11 +100,11 @@ const Product = ({ isEditing, productData, onDataChange, onProductRemove, errors
             required
             disabled={!orderDetail?.size}
             helperText={orderDetail?.size &&
-              `Maximo ${isEditing ? orderDetail.stocked[orderDetail?.size] + orderDetail.quantity : stocked[orderDetail?.size]}`
+              `Maximo ${isEditing ? orderDetail.stocked[orderDetail?.size] + orderDetail.quantity : productStocksBySizes[orderDetail?.size]}`
             }
             onChange={e => {
               const value = Number(e.target.value);
-              const onStock = (isEditing ? orderDetail.stocked[orderDetail?.size] + orderDetail.quantity : stocked[orderDetail?.size]);
+              const onStock = (isEditing ? orderDetail.stocked[orderDetail?.size] + orderDetail.quantity : productStocksBySizes[orderDetail?.size]);
               if (value > onStock) return;
 
               const stockedDiff = orderDetail.quantity - value;

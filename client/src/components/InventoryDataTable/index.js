@@ -2,40 +2,13 @@ import { useMemo, useState } from "react";
 
 import MDTypography from "components/MDTypography";
 import InventoryRecordModalForm from "components/Modals/InventoryRecordForm";
-import AddItemButton from "./AddItemButton";
 import DataTable from "components/Tables/DataTable";
-import MDBox from "components/MDBox";
 
 // Context
 import { useInventory } from "context/inventory.context";
 
 // Utils
 import { formatInventoryEntryData } from "./utils/functions.utils";
-
-const TableTopToolbar = () => {
-  const [openItemModalForm, setOpenItemModalForm] = useState(false);
-  const { createInventoryRecord } = useInventory();
-
-  const handleAddItemClick = e => setOpenItemModalForm(true);
-  const closeInventoryRecordModalForm = e => setOpenItemModalForm(false);
-
-  const handleCreateInventoryRecord = async newProductData => await createInventoryRecord(newProductData);
-
-  return (
-    <MDBox mr={2}>
-      <AddItemButton tooltipPlacement="bottom" color="secondary" onClick={handleAddItemClick} />
-      {
-        openItemModalForm && (
-          <InventoryRecordModalForm
-            open={openItemModalForm}
-            close={closeInventoryRecordModalForm}
-            onSubmit={handleCreateInventoryRecord}
-          />
-        )
-      }
-    </MDBox>
-  )
-}
 
 const formatColumnHeader = ({ column }) => (<MDTypography variant="h6">{column.columnDef.header}</MDTypography>)
 const formatColumnCell = ({ cell }) => (<MDTypography variant="button" color="text" fontWeight="light">{cell.getValue() ?? ""}</MDTypography>)
@@ -147,7 +120,7 @@ const InventoryDataTable = ({ ...rest }) => {
       },
     },
     {
-      accessorKey: "slot",
+      accessorKey: "product.slot",
       header: "Lote",
       Header: formatColumnHeader,
       Cell: formatColumnCell,
@@ -198,7 +171,6 @@ const InventoryDataTable = ({ ...rest }) => {
         enableMultiSort
         isMultiSortEvent={() => true}
         onRowClick={handleTableRowClick}
-        customTopToolbarComponents={TableTopToolbar}
         {...rest}
       />
       {

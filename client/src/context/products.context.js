@@ -18,7 +18,7 @@ export const ProductsProvider = ({ children }) => {
       const { data: products } = await productApiInstance().getAllProducts();
       return products
     } catch (err) {
-      setErrors(...err.response.data);
+      setErrors(...err?.response?.data);
 
     } finally {
       setLoadingProducts(false);
@@ -41,7 +41,7 @@ export const ProductsProvider = ({ children }) => {
       const { data } = await productApiInstance().getProductById(productId);
       return data;
     } catch (err) {
-      setErrors(...err.response.data);
+      setErrors(...err?.response?.data);
     } finally {
       setLoadingProducts(false);
     }
@@ -53,7 +53,7 @@ export const ProductsProvider = ({ children }) => {
       await loadProducts();
       return data;
     } catch (err) {
-      setErrors(...err.response.data);
+      setErrors(...err?.response?.data);
     }
   }, [loadProducts, productApiInstance])
 
@@ -63,7 +63,7 @@ export const ProductsProvider = ({ children }) => {
       await loadProducts()
       return data;
     } catch (err) {
-      setErrors(...err.response.data);
+      setErrors(...err?.response?.data);
     }
   }, [productApiInstance, loadProducts])
 
@@ -73,13 +73,14 @@ export const ProductsProvider = ({ children }) => {
       await loadProducts()
       return data;
     } catch (err) {
-      setErrors(...err.response.data);
+      setErrors(...err?.response?.data);
     }
   }, [loadProducts, productApiInstance])
 
   return (
     <ProductsContext.Provider value={{
       products,
+      loadProducts,
       getProductById,
       createProduct,
       updateProductById,

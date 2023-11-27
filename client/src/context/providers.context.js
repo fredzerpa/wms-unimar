@@ -18,7 +18,7 @@ export const ProvidersProvider = ({ children }) => {
       const { data: providers } = await providerApiInstance().getAllProviders();
       return providers
     } catch (err) {
-      setErrors(...err.response.data);
+      setErrors(...err?.response?.data);
     } finally {
       setLoadingProviders(false);
     }
@@ -40,7 +40,7 @@ export const ProvidersProvider = ({ children }) => {
       const { data } = await providerApiInstance().getProviderById(providerId);
       return data;
     } catch (err) {
-      setErrors(...err.response.data);
+      setErrors(...err?.response?.data);
     } finally {
       setLoadingProviders(false);
     }
@@ -66,7 +66,7 @@ export const ProvidersProvider = ({ children }) => {
       await loadProviders()
       return data;
     } catch (err) {
-      setErrors(...err.response.data);
+      setErrors(...err?.response?.data);
     }
   }, [providerApiInstance, loadProviders])
 
@@ -76,7 +76,7 @@ export const ProvidersProvider = ({ children }) => {
       await loadProviders()
       return data;
     } catch (err) {
-      setErrors(...err.response.data);
+      setErrors(...err?.response?.data);
     }
   }, [loadProviders, providerApiInstance])
 
@@ -84,6 +84,7 @@ export const ProvidersProvider = ({ children }) => {
     <ProvidersContext.Provider
       value={{
         providers,
+        loadProviders,
         getProviderById,
         createProvider,
         updateProviderById,

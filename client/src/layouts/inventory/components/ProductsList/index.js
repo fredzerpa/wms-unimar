@@ -77,14 +77,19 @@ const Product = ({ productData, ...props }) => {
       }}
       {...props}
     >
-      <Grid xs={6}>
+      <Grid xs={6} sm={4}>
         <MDTypography variant="button" align="center" fontWeight="bold" component="p">
           {productData.name}
         </MDTypography>
       </Grid>
-      <Grid xs={6}>
+      <Grid xs={6} sm={4} display="flex" justifyContent="center">
         <MDTypography variant="button" align="center" fontWeight="bold" component="p">
           {productData.code}
+        </MDTypography>
+      </Grid>
+      <Grid xs={6} sm={4} display="flex" justifyContent="center">
+        <MDTypography variant="button" align="center" fontWeight="bold" component="p">
+          {productData.slot}
         </MDTypography>
       </Grid>
     </Grid >
@@ -186,10 +191,17 @@ const ProductsList = ({ open, close }) => {
             {
               list.length ?
                 (
-                  <MDBox display="flex" justifyContent="space-around" mb={0.5}>
-                    <MDTypography variant="caption">Nombre</MDTypography>
-                    <MDTypography variant="caption">Codigo</MDTypography>
-                  </MDBox>
+                  <Grid container width="100%" mb={0.5} px={2}>
+                    <Grid xs={6} sm={4}>
+                      <MDTypography align="center" variant="caption" component="p">Nombre</MDTypography>
+                    </Grid>
+                    <Grid xs={6} sm={4} display="flex" justifyContent="center">
+                      <MDTypography align="center" variant="caption" component="p">Codigo</MDTypography>
+                    </Grid>
+                    <Grid xs={6} sm={4} display="flex" justifyContent="center">
+                      <MDTypography align="center" variant="caption" component="p">Lote</MDTypography>
+                    </Grid>
+                  </Grid>
                 )
                 :
                 (

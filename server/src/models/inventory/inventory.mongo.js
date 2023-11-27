@@ -2,11 +2,19 @@ const mongoose = require('mongoose');
 
 const inventorySchema = new mongoose.Schema({
   product: {
+    _id: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+    },
     name: {
       type: String,
       required: true,
     },
     code: {
+      type: String,
+      required: true,
+    },
+    slot: {
       type: String,
       required: true,
     },
@@ -40,15 +48,19 @@ const inventorySchema = new mongoose.Schema({
     type: String,
     required: false,
   },
-  slot: {
-    type: String,
-    required: true,
-  },
   observations: {
     type: String,
     required: false,
   }
 });
+
+// We remove sensitive data when sending it through our API to the client.
+inventorySchema.set('toJSON', {
+  transform: function (doc, ret, opt) {
+    delete ret.__v;
+  }
+});
+
 
 // Conecta inventorySchema con "inventory" colleccion
 module.exports = mongoose.model('Inventory', inventorySchema);

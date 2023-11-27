@@ -18,7 +18,7 @@ export const InventoryProvider = ({ children }) => {
       const { data: inventorys } = await inventoryApiInstance().getAllInventoryRecords();
       return inventorys
     } catch (err) {
-      setErrors(...err.response.data);
+      setErrors(...err?.response?.data);
     } finally {
       setLoadingInventory(false);
     }
@@ -40,7 +40,7 @@ export const InventoryProvider = ({ children }) => {
       const { data } = await inventoryApiInstance().getInventoryRecordById(inventoryId);
       return data;
     } catch (err) {
-      setErrors(...err.response.data);
+      setErrors(...err?.response?.data);
 
     } finally {
       setLoadingInventory(false);
@@ -53,7 +53,7 @@ export const InventoryProvider = ({ children }) => {
       await loadInventory();
       return data;
     } catch (err) {
-      setErrors(...err.response.data);
+      setErrors(...err?.response?.data);
 
     }
   }, [loadInventory, inventoryApiInstance])
@@ -64,7 +64,7 @@ export const InventoryProvider = ({ children }) => {
       await loadInventory()
       return data;
     } catch (err) {
-      setErrors(...err.response.data);
+      setErrors(...err?.response?.data);
     }
   }, [inventoryApiInstance, loadInventory])
 
@@ -74,7 +74,7 @@ export const InventoryProvider = ({ children }) => {
       await loadInventory()
       return data;
     } catch (err) {
-      setErrors(...err.response.data);
+      setErrors(...err?.response?.data);
     }
   }, [loadInventory, inventoryApiInstance])
 
@@ -82,6 +82,7 @@ export const InventoryProvider = ({ children }) => {
     <InventoryRecordsContext.Provider
       value={{
         inventory,
+        loadInventory,
         getInventoryRecordById,
         createInventoryRecord,
         updateInventoryRecordById,

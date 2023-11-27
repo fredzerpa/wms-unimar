@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 // Libraries
 import { Autocomplete, Card, Modal } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
@@ -29,6 +29,8 @@ import InputDocumentId from "./InputDocumentId";
 import { formatOnSubmitBillForm, formatBillFormEntryData, formatProductsForSelection } from "./utils/functions.utils";
 import { useProviders } from "context/providers.context";
 import { enqueueSnackbar } from "notistack";
+import { Lock } from "@mui/icons-material";
+import GetPasswordConsent from "components/GetPasswordConsent";
 
 
 const INITIAL_VALUES = {
@@ -45,7 +47,6 @@ const INITIAL_VALUES = {
   },
   convertionRate: {
     rate: 0,
-    date: DateTime.now(),
   },
   products: {
     selected: [],
@@ -54,7 +55,7 @@ const INITIAL_VALUES = {
   observations: "",
 }
 
-const BillModalForm = ({ billData, open, close, onSubmit }) => {
+const BillModalForm = ({ billData, open, close, onSubmit, onDelete }) => {
   const { user: userSession } = useAuth();
   const { products } = useProducts();
   const { providers, loadingProviders } = useProviders();
@@ -67,6 +68,8 @@ const BillModalForm = ({ billData, open, close, onSubmit }) => {
   const selectedProducts = watch("products.selected");
   const documentIdType = watch("provider.documentId.type");
   const watchObservations = watch("observations");
+
+  useEffect(() => { console.log(getValues()) }, [getValues]);
 
   const productsForSelection = useMemo(() => formatProductsForSelection(products), [products]);
 
@@ -85,6 +88,26 @@ const BillModalForm = ({ billData, open, close, onSubmit }) => {
     }
   };
 
+  const handleBillDelete = async e => {
+    try {
+      const consent = await GetPasswordConsent({
+        title: `Eliminar ${billData.code}`,
+        description: "Ingrese su clave para eliminar la factura",
+      });
+
+      if (consent?.error || !consent) throw new Error(consent?.message ?? "Contraseña incorrecta");
+
+      const response = await onDelete(billData);
+      if (!response?.error) enqueueSnackbar("Se ha eliminado la factura exitosamente", { variant: "success" })
+
+      handleClose();
+    } catch (err) {
+      if (err.target?.innerText.toLowerCase() === "cancelar") return; // Clicked "cancel" on password consent
+      console.error(err);
+      enqueueSnackbar(err.message, { variant: "error" })
+    }
+  }
+
   const handleClose = (event, reason) => {
     if (reason === "backdropClick" || reason === "escapeKeyDown") return; // Do not close modal by accident
     reset();
@@ -92,17 +115,40 @@ const BillModalForm = ({ billData, open, close, onSubmit }) => {
   }
 
   const handleProductRemove = useCallback(productData => {
-    const newSelectedProducts = selectedProducts.filter(product => product._id !== productData._id)
-    setValue("products.selected", newSelectedProducts)
-  }, [selectedProducts, setValue]);
+    const orderProducts = getValues("products.order")
+    console.log({ productData, selectedProducts, orderProducts })
+    const updatedSelectedProducts = selectedProducts.filter(product => {
+      const productKey = product.name + product.code + product.type + product.typeClass;
+      const productDataKey = productData.name + productData.code + productData.type.value + productData.typeClass;
+      return productKey !== productDataKey
+    })
+    console.log(updatedSelectedProducts)
+    setValue("products.selected", updatedSelectedProducts)
+
+    const updatedOrderProducts = orderProducts.filter(product => {
+      const productKey = product.name + product.code + product.type + product.typeClass;
+      const productDataKey = productData.name + productData.code + productData.type.value + productData.typeClass;
+      return productKey !== productDataKey
+    })
+    console.log(updatedOrderProducts)
+    setValue("products.order", updatedOrderProducts)
+
+
+  }, [getValues, selectedProducts, setValue]);
 
   const handleSelectedProductsDataChange = useCallback(newProductData => {
-    const orderProducts = getValues("products.order");
-    const isProductAlreadySaved = orderProducts.find(product => product._id === newProductData._id);
+    const orderProducts = getValues("products.order")
+    const isProductAlreadySaved = orderProducts.find(product => {
+      const productKey = product.name + product.code + product.type + product.typeClass;
+      const productDataKey = newProductData.name + newProductData.code + newProductData.type + newProductData.typeClass;
+      return productKey === productDataKey
+    });
 
     const updatedOrderProducts = !isProductAlreadySaved ? [...orderProducts, newProductData] : (
       orderProducts.map(product => {
-        if (product._id !== newProductData._id) return product;
+        const productKey = product.name + product.code + product.type + product.typeClass;
+        const productDataKey = newProductData.name + newProductData.code + newProductData.type + newProductData.typeClass;
+        if (productKey !== productDataKey) return product;
         return newProductData;
       })
     )
@@ -120,7 +166,7 @@ const BillModalForm = ({ billData, open, close, onSubmit }) => {
         encType="multipart/form-data"
         onSubmit={handleSubmit(onFormSubmit)}
         sx={theme => ({
-          width: "550px",
+          width: "600px",
           maxWidth: "100%",
           position: "absolute",
           overflow: "hidden",
@@ -330,23 +376,16 @@ const BillModalForm = ({ billData, open, close, onSubmit }) => {
                           isNotZero: v => v !== 0 || "No puede ser 0",
                           hasSpaces: v => /\S/g.test(v) || "Evite el uso de espacios en blanco",
                           hasSpecialChars: v => {
-                            const isValid = !/\W/gi.test(v?.replaceAll(/\+/gi, ""));
-                            return isValid || "Evite usar caracteres especiales exceptuando la suma \"+\"";
+                            const isValid = !/\W/gi.test(`${v}`?.replaceAll(/[.]/gi, ""));
+                            return isValid || "Evite usar caracteres especiales exceptuando el punto \".\"";
                           },
-                          startsWithPlusSign: v => {
-                            let isValid = true;
-                            if (v.includes("+")) isValid = !v.split("+")[0].length;
-
-                            return isValid || "El simbolo de suma '+' debe estar al inicio";
-                          },
-                          hasLetters: v => !isNaN(v.replaceAll(/\+/gi, "")) || "Evite el uso de letras",
+                          hasLetters: v => !isNaN(`${v}`.replaceAll(/[+.]/gi, "")) || "Evite el uso de letras",
                         }
                       })}
                       error={!!errors?.convertionRate?.rate}
-                      placeholder="Telefono del proveedor"
                       sx={{ input: { textAlign: "right" } }}
                       InputProps={{
-                        startAdornment: "Bs. ",
+                        startAdornment: <MDTypography variant="caption">Bs.</MDTypography>,
                       }}
                     />
                     {
@@ -383,10 +422,7 @@ const BillModalForm = ({ billData, open, close, onSubmit }) => {
                             }}
                             renderTags={() => null}
                             filterSelectedOptions
-                            onChange={(event, newValue) => {
-                              console.log(newValue)
-                              return onChange(newValue)
-                            }}
+                            onChange={(event, newValue) => onChange(newValue)}
                             isOptionEqualToValue={(option, value) => {
                               const optionKey = option.code + option.name + option.type + option.typeClass;
                               const valueKey = value.code + value.name + value.type + value.typeClass;
@@ -455,9 +491,23 @@ const BillModalForm = ({ billData, open, close, onSubmit }) => {
                   }
                 </MDBox>
 
-                <MDBox mt={3} mb={1} display="flex" justifyContent="flex-end" gap={3} width="100%">
-                  <MDButton loading={isSubmitting} variant="contained" onClick={handleClose} sx={{ alignSelf: "center" }}>Cancelar</MDButton>
-                  <MDButton loading={isSubmitting} color="info" variant="gradient" type="submit">Guardar</MDButton>
+                {/* Buttons */}
+                <MDBox mt={3} mb={1} display="flex" justifyContent="flex-between" width="100%">
+                  <MDBox width="100%">
+                    {
+                      isEditingBill && userSession?.privileges?.inventory?.delete &&
+                      (
+                        <MDButton loading={isSubmitting} color="error" variant="gradient" onClick={handleBillDelete}>
+                          <Lock sx={{ mr: 1 }} />
+                          Eliminar
+                        </MDButton>
+                      )
+                    }
+                  </MDBox>
+                  <MDBox display="flex" justifyContent="flex-end" gap={3} width="100%">
+                    <MDButton color="dark" variant="text" onClick={close} sx={{ alignSelf: "center" }}>Cancelar</MDButton>
+                    <MDButton loading={isSubmitting} color="info" variant="gradient" type="submit">Guardar</MDButton>
+                  </MDBox>
                 </MDBox>
 
               </MDBox>

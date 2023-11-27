@@ -41,30 +41,25 @@ export const addLabelsToProducts = products => {
   return formattedData
 }
 
-export const formatSelectedProductsData = products => {
+export const getProductTotalStockBySizes = products => {
   if (lodash.isEmpty(products)) return products;
 
   const formatProductData = data => {
     if (data?.stocked) return data;
-    
+
     const { onStock, ...rest } = data;
 
-    const groupedSizes = onStock?.reduce((groups, product) => {
-      const isSizeGrouped = !!groups[product.size.value];
-
+    const groupedStocksBySizes = onStock?.reduce((groups, product) => {
       return {
         ...groups,
-        [product.size.value]: isSizeGrouped ? groups[product.size.value] + product.stock : product.stock
+        [product.size.value]: (groups[product.size.value] ?? 0) + product.stock,
       }
     }, {})
 
-    return {
-      ...rest,
-      stocked: groupedSizes
-    }
+    return groupedStocksBySizes;
   }
 
-  return products.map(formatProductData);
+  return Array.isArray(products) ? products.map(formatProductData) : formatProductData(products);
 }
 
 export const formatOnSubmitShippingsForm = formData => {
@@ -110,12 +105,13 @@ export const formatInventoryByStock = inventory => {
   const productsOnStock = inventory.filter(record => record.onStock > 0);
 
   return [...productsOnStock.reduce((groupedProducts, inventoryRecord) => {
-    const { product, onStock: stock, shipped, ...rest } = inventoryRecord;
-    const { name, code, ...productProps } = addLabelsToProducts(product);
+    const { product, onStock: stock, shipped, _id, ...rest } = inventoryRecord;
+    const { name, code, _id: productRefId, ...productProps } = addLabelsToProducts(product);
 
     const currentRecordStockData = {
       ...rest,
       ...productProps,
+      inventoryRefId: _id,
       stock,
     }
 
@@ -132,6 +128,7 @@ export const formatInventoryByStock = inventory => {
       groupedProducts.set(name, {
         name,
         code,
+        _id: productRefId,
         onStock: [currentRecordStockData]
       })
     }

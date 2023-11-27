@@ -1,3 +1,4 @@
+const { upsertInventoryRecordsByFields } = require('../../models/inventory/inventory.model');
 const {
   getShippings,
   getShippingById,
@@ -6,6 +7,8 @@ const {
   deleteShippingById,
   upsertShippingsByBundle,
 } = require('../../models/shippings/shippings.model');
+const { customAlphabet } = require("nanoid");
+const nanoid = customAlphabet("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", 12)
 
 const httpGetShippings = async (req, res) => {
   const { search } = req.query;
@@ -37,10 +40,12 @@ const httpGetShipping = async (req, res) => {
 }
 
 const httpCreateShipping = async (req, res) => {
-  const recordData = req.body;
-
-
   try {
+    const recordData = req.body;
+    recordData.code = nanoid();
+    
+    // await upsertInventoryRecordsByFields(["code", "name", "type", ])
+
     return res.status(201).json(await createShipping(recordData));
   } catch (error) {
     return res.status(502).json({ // DB Threw error

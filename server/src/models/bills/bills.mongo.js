@@ -1,7 +1,4 @@
 const mongoose = require('mongoose');
-const { customAlphabet } = require("nanoid");
-const nanoid = customAlphabet("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", 12)
-
 const amountSchema = require('../schemas/amounts.schema');
 
 const billSchema = new mongoose.Schema({
@@ -16,6 +13,15 @@ const billSchema = new mongoose.Schema({
     required: true,
   },
   products: [{
+    inventoryRefId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Inventory",
+      required: false,
+    },
+    _id: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+    },
     name: {
       type: String,
       required: true,
@@ -45,11 +51,16 @@ const billSchema = new mongoose.Schema({
       required: true,
     },
     discount: {
-      type: amountSchema,
-      required: true,
+      type: Number, // Represents de discount percentage in number
+      required: false,
+      default: 0,
     },
     subtotal: {
       type: amountSchema,
+      required: true,
+    },
+    expirationDate: {
+      type: String,
       required: true,
     },
   }],
@@ -74,15 +85,10 @@ const billSchema = new mongoose.Schema({
   },
 });
 
-billSchema.pre('save', async function (next) {
-  // We only encrypt the key if it has been modified or is new.
-  if (!this.isModified('code')) return next();
-
-  try {
-    this.code = nanoid();
-    return next();
-  } catch (err) {
-    return next(err);
+// We remove sensitive data when sending it through our API to the client.
+billSchema.set('toJSON', {
+  transform: function (doc, ret, opt) {
+    delete ret.__v;
   }
 });
 

@@ -17,5 +17,12 @@ const providerSchema = new mongoose.Schema({
   },
 });
 
+// We remove sensitive data when sending it through our API to the client.
+providerSchema.set('toJSON', {
+  transform: function (doc, ret, opt) {
+    delete ret.__v;
+  }
+});
+
 // Conecta providerSchema con "providers" colleccion
 module.exports = mongoose.model('Provider', providerSchema);

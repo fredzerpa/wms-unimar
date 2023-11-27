@@ -19,7 +19,7 @@ export const addProductsLabel = rawData => {
     }
   }
 
-  const formatData = ({ onStock, ...data }) => {
+  const formatData = (data) => {
     const typeLabel = PRODUCTS_PARAMS_LABELS_SCHEMA.type[data.type];
     const sizeLabel = PRODUCTS_PARAMS_LABELS_SCHEMA.size[data.size];
 
@@ -33,6 +33,7 @@ export const addProductsLabel = rawData => {
         value: data.size,
         label: sizeLabel,
       },
+      expirationDate: DateTime.fromFormat(data.expirationDate, "dd/MM/yyyy"),
     };
   }
 
@@ -44,19 +45,40 @@ export const addProductsLabel = rawData => {
 export const formatOnSubmitBillForm = formData => {
   if (lodash.isEmpty(formData)) return {};
 
-  const totalUsd = formData.products.order.reduce((total, product) => total + product.subtotal.usd, 0);
+  const { convertionRate } = formData;
+  const usdToBs = usd => usd * Number(convertionRate.rate);
 
+  const products = formData.products.order.map(product => ({
+    ...product,
+    expirationDate: product.expirationDate.toFormat("dd/MM/yyyy"),
+    unitCost: {
+      ...product.unitCost,
+      bs: usdToBs(product.unitCost.usd)
+    },
+    subtotal: {
+      ...product.subtotal,
+      bs: usdToBs(product.subtotal.usd)
+    },
+  }));
+
+  const total = products.reduce((total, product) => {
+    return {
+      usd: total.usd + product.subtotal.usd,
+      bs: total.bs + product.subtotal.bs,
+    }
+  }, { usd: 0, bs: 0 });
+
+  
+  
   return {
     ...formData,
+    products,
+    total,
     date: formData.date.toFormat("dd/MM/yyyy"),
-    products: formData.products.order,
-    total: {
-      usd: totalUsd
-    },
     provider: formData.provider._id,
     convertionRate: {
       ...formData.convertionRate,
-      date: formData.convertionRate.date.toFormat("dd/MM/yyyy"),
+      date: formData.date.toFormat("dd/MM/yyyy"),
     }
   }
 }
@@ -67,7 +89,10 @@ export const formatBillFormEntryData = (formData) => {
   return {
     ...formData,
     date: DateTime.fromFormat(formData?.date, "dd/MM/yyyy"),
-    products: addProductsLabel(formData?.products),
+    products: {
+      selected: addProductsLabel(formData?.products),
+      order: formData?.products,
+    }
   }
 }
 

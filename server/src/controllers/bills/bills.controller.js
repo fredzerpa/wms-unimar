@@ -6,6 +6,9 @@ const {
   deleteBillById,
   upsertBillsByBundle,
 } = require('../../models/bills/bills.model');
+const { upsertInventoryRecords, createInventoryRecord, updateInventoryRecordById } = require('../../models/inventory/inventory.model');
+const { customAlphabet } = require("nanoid");
+const nanoid = customAlphabet("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", 12)
 
 const httpGetBills = async (req, res) => {
   const { search } = req.query;
@@ -37,11 +40,34 @@ const httpGetBill = async (req, res) => {
 }
 
 const httpCreateBill = async (req, res) => {
-  const recordData = req.body;
+  const billData = req.body;
 
+  billData.code = nanoid();
+
+  const productsForInventory = billData.products.map(product => {
+    const { quantity, expirationDate, discount, subtotal, unitCost, ...rest } = product;
+    return {
+      product: rest,
+      onStock: quantity,
+      entryDate: billData.date,
+      expirationDate,
+    }
+  })
+  const createdInventoryRecords = await createInventoryRecord(productsForInventory);
+
+  billData.products = billData.products.map(product => {
+    const createdRecord = createdInventoryRecords.find(record => (
+      record?.product.name + record?.product.type + record?.product?.typeClass === product.name + product.type + product?.typeClass
+    ));
+
+    return {
+      ...product,
+      inventoryRefId: createdRecord._id,
+    }
+  })
 
   try {
-    return res.status(201).json(await createBill(recordData));
+    return res.status(201).json(await createBill(billData));
   } catch (error) {
     return res.status(502).json({ // DB Threw error
       error: 'Failed to create new Bill',
@@ -51,11 +77,13 @@ const httpCreateBill = async (req, res) => {
 }
 
 const httpUpdateBill = async (req, res) => {
-  const recordId = req.params.id;
-  const updateData = req.body;
+  const billId = req.params.id;
+  const billData = req.body;
+
+  const updatedProducts = await updateInventoryRecordById()
 
   try {
-    return res.status(200).json(await updateBillById(recordId, updateData));
+    return res.status(200).json(await updateBillById(billId, billData));
   } catch (error) {
     return res.status(502).json({ // DB Threw error
       error: 'Failed to update Bill',
@@ -65,10 +93,10 @@ const httpUpdateBill = async (req, res) => {
 }
 
 const httpDeleteBill = async (req, res) => {
-  const recordId = req.params.id;
+  const billId = req.params.id;
 
   try {
-    return res.status(200).json(await deleteBillById(recordId));
+    return res.status(200).json(await deleteBillById(billId));
   } catch (error) {
     return res.status(502).json({ // DB Threw error
       error: 'Failed to delete Bill',

@@ -95,12 +95,12 @@ const App = () => {
   return (
     <ThemeProvider theme={darkMode ? themeDark : theme}>
       <AuthProvider userData={null}>
-        <InventoryProvider>
-          <ShippingsProvider>
-            <BillsProvider>
-              <ProductsProvider>
-                <ProvidersProvider>
-                  <StoresProvider>
+        <ProductsProvider>
+          <InventoryProvider>
+            <ProvidersProvider>
+              <BillsProvider>
+                <StoresProvider>
+                  <ShippingsProvider>
 
                     <MountPoint /> {/* Confirmation Context Provider */}
                     <CssBaseline />
@@ -123,12 +123,12 @@ const App = () => {
                       <Route path="*" element={<Navigate to="/dashboard" />} />
                     </Routes>
 
-                  </StoresProvider>
-                </ProvidersProvider>
-              </ProductsProvider>
-            </BillsProvider>
-          </ShippingsProvider>
-        </InventoryProvider>
+                  </ShippingsProvider>
+                </StoresProvider>
+              </BillsProvider>
+            </ProvidersProvider>
+          </InventoryProvider>
+        </ProductsProvider>
       </AuthProvider>
     </ThemeProvider>
   );

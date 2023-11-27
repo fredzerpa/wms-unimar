@@ -18,7 +18,7 @@ export const BillsProvider = ({ children }) => {
       const { data: bills } = await billApiInstance().getAllBills();
       return bills
     } catch (err) {
-      setErrors(...err.response.data);
+      setErrors(...err?.response?.data);
     } finally {
       setLoadingBills(false);
     }
@@ -40,7 +40,7 @@ export const BillsProvider = ({ children }) => {
       const { data } = await billApiInstance().getBillById(billId);
       return data;
     } catch (err) {
-      setErrors(...err.response.data);
+      setErrors(...err?.response?.data);
     } finally {
       setLoadingBills(false);
     }
@@ -66,7 +66,7 @@ export const BillsProvider = ({ children }) => {
       await loadBills()
       return data;
     } catch (err) {
-      setErrors(...err.response.data);
+      setErrors(...err?.response?.data);
     }
   }, [billApiInstance, loadBills])
 
@@ -76,7 +76,7 @@ export const BillsProvider = ({ children }) => {
       await loadBills()
       return data;
     } catch (err) {
-      setErrors(...err.response.data);
+      setErrors(...err?.response?.data);
     }
   }, [loadBills, billApiInstance])
 
@@ -84,6 +84,7 @@ export const BillsProvider = ({ children }) => {
     <BillsContext.Provider
       value={{
         bills,
+        loadBills,
         getBillById,
         createBill,
         updateBillById,

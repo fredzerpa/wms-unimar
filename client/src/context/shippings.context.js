@@ -18,7 +18,7 @@ export const ShippingsProvider = ({ children }) => {
       const { data: shippings } = await shippingApiInstance().getAllShippings();
       return shippings
     } catch (err) {
-      setErrors(...err.response.data);
+      setErrors(...err?.response?.data);
     } finally {
       setLoadingShippings(false);
     }
@@ -40,7 +40,7 @@ export const ShippingsProvider = ({ children }) => {
       const { data } = await shippingApiInstance().getShippingById(shippingId);
       return data;
     } catch (err) {
-      setErrors(...err.response.data);
+      setErrors(...err?.response?.data);
     } finally {
       setLoadingShippings(false);
     }
@@ -66,7 +66,7 @@ export const ShippingsProvider = ({ children }) => {
       await loadShippings()
       return data;
     } catch (err) {
-      setErrors(...err.response.data);
+      setErrors(...err?.response?.data);
     }
   }, [shippingApiInstance, loadShippings])
 
@@ -76,7 +76,7 @@ export const ShippingsProvider = ({ children }) => {
       await loadShippings()
       return data;
     } catch (err) {
-      setErrors(...err.response.data);
+      setErrors(...err?.response?.data);
     }
   }, [loadShippings, shippingApiInstance])
 
@@ -84,6 +84,7 @@ export const ShippingsProvider = ({ children }) => {
     <ShippingsContext.Provider
       value={{
         shippings,
+        loadShippings,
         getShippingById,
         createShipping,
         updateShippingById,

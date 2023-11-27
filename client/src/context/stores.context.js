@@ -18,7 +18,7 @@ export const StoresProvider = ({ children }) => {
       const { data: stores } = await storeApiInstance().getAllStores();
       return stores
     } catch (err) {
-      setErrors(...err.response.data);
+      setErrors(...err?.response?.data);
     } finally {
       setLoadingStores(false);
     }
@@ -40,7 +40,7 @@ export const StoresProvider = ({ children }) => {
       const { data } = await storeApiInstance().getStoreById(storeId);
       return data;
     } catch (err) {
-      setErrors(...err.response.data);
+      setErrors(...err?.response?.data);
     } finally {
       setLoadingStores(false);
     }
@@ -66,7 +66,7 @@ export const StoresProvider = ({ children }) => {
       await loadStores()
       return data;
     } catch (err) {
-      setErrors(...err.response.data);
+      setErrors(...err?.response?.data);
     }
   }, [storeApiInstance, loadStores])
 
@@ -76,7 +76,7 @@ export const StoresProvider = ({ children }) => {
       await loadStores()
       return data;
     } catch (err) {
-      setErrors(...err.response.data);
+      setErrors(...err?.response?.data);
     }
   }, [loadStores, storeApiInstance])
 
@@ -84,6 +84,7 @@ export const StoresProvider = ({ children }) => {
     <StoresContext.Provider
       value={{
         stores,
+        loadStores,
         getStoreById,
         createStore,
         updateStoreById,

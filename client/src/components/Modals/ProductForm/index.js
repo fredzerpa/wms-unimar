@@ -27,6 +27,7 @@ const INITIAL_VALUES = {
   _id: null,
   name: "",
   code: "",
+  slot: "",
 };
 
 const ProductModalForm = ({ productData, open, close, onSubmit, onDelete }) => {
@@ -117,7 +118,7 @@ const ProductModalForm = ({ productData, open, close, onSubmit, onDelete }) => {
                 <Grid container spacing={2}>
 
                   {/* Name */}
-                  <Grid xs={7}>
+                  <Grid xs={12}>
                     <MDTypography ml={1} component="label" variant="caption" fontWeight="bold" textTransform="capitalize">
                       Nombre del Producto
                       <MDTypography color="error" component="span" fontWeight="light" fontSize="small">*</MDTypography>
@@ -141,7 +142,7 @@ const ProductModalForm = ({ productData, open, close, onSubmit, onDelete }) => {
                   </Grid>
 
                   {/* Code */}
-                  <Grid xs={5}>
+                  <Grid xs={6}>
                     <MDTypography ml={1} component="label" variant="caption" fontWeight="bold" textTransform="capitalize">
                       Codigo
                       <MDTypography color="error" component="span" fontWeight="light" fontSize="small">*</MDTypography>
@@ -159,6 +160,30 @@ const ProductModalForm = ({ productData, open, close, onSubmit, onDelete }) => {
                       !!errors?.code && (
                         <MDTypography ml={1} fontSize="small" color="error" fontWeight="light">
                           {errors?.code.message}
+                        </MDTypography>
+                      )
+                    }
+                  </Grid>
+
+                  {/* Slot */}
+                  <Grid xs={6}>
+                    <MDTypography ml={1} component="label" variant="caption" fontWeight="bold" textTransform="capitalize">
+                      Lote
+                      <MDTypography color="error" component="span" fontWeight="light" fontSize="small">*</MDTypography>
+                    </MDTypography>
+                    <MDInput
+                      {...register("slot", { required: "Este campo es obligatorio" })}
+                      error={!!errors?.slot}
+                      placeholder="Lote del articulo"
+                      fullWidth
+                      inputProps={{
+                        readOnly: !userSession?.privileges?.inventory?.upsert,
+                      }}
+                    />
+                    {
+                      !!errors?.slot && (
+                        <MDTypography ml={1} fontSize="small" color="error" fontWeight="light">
+                          {errors?.slot.message}
                         </MDTypography>
                       )
                     }

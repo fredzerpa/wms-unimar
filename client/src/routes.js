@@ -30,6 +30,7 @@ import Inventory from "layouts/inventory";
 import Icon from "@mui/material/Icon";
 import Shippings from "layouts/shippings";
 import SignIn from "layouts/authentication/sign-in";
+import SignOut from "layouts/authentication/sign-out";
 
 const routes = [
   {
@@ -79,6 +80,16 @@ const routes = [
     route: "/auth/sign-in",
     icon: <Icon fontSize="small">login</Icon>,
     component: <SignIn />,
+    protected: false,
+    hidden: true,
+  },
+  {
+    type: "collapse",
+    name: "Cerrar Sesion",
+    key: "sign-out",
+    route: "/auth/sign-out",
+    icon: <Icon fontSize="small">logout</Icon>,
+    component: <SignOut />,
     protected: false,
     hidden: true,
   },

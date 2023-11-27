@@ -115,9 +115,9 @@ const Configurator = () => {
         px={3}
       >
         <MDBox>
-          <MDTypography variant="h5">Material UI Configurator</MDTypography>
+          <MDTypography variant="h5">Configuracion de Estilos</MDTypography>
           <MDTypography variant="body2" color="text">
-            See our dashboard options.
+            Estilizate a tu gusto.
           </MDTypography>
         </MDBox>
 
@@ -140,7 +140,7 @@ const Configurator = () => {
 
       <MDBox pt={0.5} pb={3} px={3}>
         <MDBox>
-          <MDTypography variant="h6">Sidenav Colors</MDTypography>
+          <MDTypography variant="h6">Colores del Navegador</MDTypography>
 
           <MDBox mb={0.5}>
             {sidenavColors.map((color) => (
@@ -186,9 +186,9 @@ const Configurator = () => {
         </MDBox>
 
         <MDBox mt={3} lineHeight={1}>
-          <MDTypography variant="h6">Sidenav Type</MDTypography>
+          <MDTypography variant="h6">Tipo de Navegador</MDTypography>
           <MDTypography variant="button" color="text">
-            Choose between different sidenav types.
+            Escoje entre diferentes estilos de navegadores
           </MDTypography>
 
           <MDBox
@@ -210,7 +210,7 @@ const Configurator = () => {
                   : sidenavTypeButtonsStyles
               }
             >
-              Dark
+              Oscuro
             </MDButton>
             <MDBox sx={{ mx: 1, width: "8rem", minWidth: "8rem" }}>
               <MDButton
@@ -225,7 +225,7 @@ const Configurator = () => {
                     : sidenavTypeButtonsStyles
                 }
               >
-                Transparent
+                Transparente
               </MDButton>
             </MDBox>
             <MDButton
@@ -240,7 +240,7 @@ const Configurator = () => {
                   : sidenavTypeButtonsStyles
               }
             >
-              White
+              Blanco
             </MDButton>
           </MDBox>
         </MDBox>
@@ -251,13 +251,13 @@ const Configurator = () => {
           mt={3}
           lineHeight={1}
         >
-          <MDTypography variant="h6">Navbar Fixed</MDTypography>
+          <MDTypography variant="h6">Cabezal Fijo</MDTypography>
 
           <Switch checked={fixedNavbar} onChange={handleFixedNavbar} />
         </MDBox>
         <Divider />
         <MDBox display="flex" justifyContent="space-between" alignItems="center" lineHeight={1}>
-          <MDTypography variant="h6">Light / Dark</MDTypography>
+          <MDTypography variant="h6">Tema Claro / Oscuro</MDTypography>
 
           <Switch checked={darkMode} onChange={handleDarkMode} />
         </MDBox>

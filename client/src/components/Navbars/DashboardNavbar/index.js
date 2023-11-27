@@ -46,6 +46,10 @@ const DashboardNavbar = ({ absolute, light, isMini }) => {
   const route = useLocation().pathname.split("/").slice(1);
   const navigate = useNavigate();
 
+  const handleLogout = () => {
+    navigate("/auth/sign-out");
+  };
+
 
   useEffect(() => {
     // Setting the navbar type
@@ -61,7 +65,7 @@ const DashboardNavbar = ({ absolute, light, isMini }) => {
     }
 
     /** 
-     The event listener that's calling the handleTransparentNavbar function when 
+     The event listener that"s calling the handleTransparentNavbar function when 
      scrolling the window.
     */
     // window.addEventListener("scroll", handleTransparentNavbar); // TODO: fix bug of re-render
@@ -86,15 +90,15 @@ const DashboardNavbar = ({ absolute, light, isMini }) => {
       open={!!openMenu}
       onClose={handleCloseMenu}
       onClick={handleCloseMenu}
-      transformOrigin={{ horizontal: 'center', vertical: 'top' }}
-      anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
+      transformOrigin={{ horizontal: "center", vertical: "top" }}
+      anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
     >
-      <MenuItem onClick={() => navigate('/profile')}>
+      <MenuItem onClick={() => navigate("/profile")}>
         <ListItemIcon>
           <Person fontSize="small" />
         </ListItemIcon>
         <ListItemText
-          primary='Perfil'
+          primary="Perfil"
           primaryTypographyProps={{
             variant: "button", textTransform: "capitalize", fontWeight: "regular"
           }}
@@ -102,12 +106,12 @@ const DashboardNavbar = ({ absolute, light, isMini }) => {
         />
       </MenuItem>
       <Divider />
-      <MenuItem onClick={null}>
+      <MenuItem onClick={handleLogout}>
         <ListItemIcon>
           <Logout fontSize="small" />
         </ListItemIcon>
         <ListItemText
-          primary='Cerrar Sesion'
+          primary="Cerrar Sesion"
           primaryTypographyProps={{
             variant: "button", textTransform: "capitalize", fontWeight: "regular"
           }}

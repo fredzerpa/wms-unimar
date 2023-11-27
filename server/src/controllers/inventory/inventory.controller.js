@@ -4,7 +4,7 @@ const {
   createInventoryRecord,
   updateInventoryRecordById,
   deleteInventoryRecordById,
-  upsertInventoryRecordsByBundle,
+  upsertInventoryRecords,
 } = require('../../models/inventory/inventory.model');
 
 const httpGetInventoryRecords = async (req, res) => {
@@ -88,7 +88,7 @@ const httpCreateInventoryRecordsByBundle = async (req, res) => {
     });
 
   try {
-    return res.status(201).json(await upsertInventoryRecordsByBundle(bundle));
+    return res.status(201).json(await upsertInventoryRecords(bundle));
   } catch (error) {
     return res.status(502).json({ // DB Threw error
       error: 'Failed to create bundle of Inventory Record',

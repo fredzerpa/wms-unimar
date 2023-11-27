@@ -13,10 +13,14 @@ import BillDetails from "layouts/billing/components/BillDetails";
 import AddBillButton from "../AddBillButton";
 import BillModalForm from "components/Modals/BillForm";
 import DebouncedInput from "components/DebouncedInput";
+
+// Context
 import { useBills } from "context/bills.context";
+import { useInventory } from "context/inventory.context";
 
 const BillingHistory = () => {
   const { bills, createBill, updateBillById, deleteBillById } = useBills();
+  const { loadInventory } = useInventory();
   const [search, setSearch] = useState(bills);
   const [editBill, setEditBill] = useState(null);
 
@@ -27,9 +31,20 @@ const BillingHistory = () => {
     setEditBill(billData);
   }
 
-  const handleCreateBill = async billData => createBill(billData);
-  const handleUpdateBill = async billData => updateBillById(billData._id, billData);
-  const handleDeleteBill = async billData => deleteBillById(billData._id);
+  const handleCreateBill = async billData => {
+    await createBill(billData);
+    await loadInventory();
+  }
+  const handleUpdateBill = async billData => {
+    console.log(billData);
+    // await updateBillById(billData._id, billData);
+    // await loadInventory();
+  }
+  const handleDeleteBill = async billData => {
+    const response = await deleteBillById(billData._id);
+    console.log(response);
+    await loadInventory();
+  }
 
   const handleSearch = useCallback(search => {
     const filteredData = bills.filter(billData => {
@@ -91,7 +106,7 @@ const BillingHistory = () => {
                 sortBills(search).map(bill => (
                   <BillDetails
                     key={bill._id}
-                    title={bill.provider.name}
+                    title={`#${bill.code}`}
                     billData={bill}
                     onEdit={e => handleEditBill(bill)}
                     onDelete={e => handleDeleteBill(bill)}
@@ -104,7 +119,13 @@ const BillingHistory = () => {
       </Card>
       {
         editBill && (
-          <BillModalForm billData={editBill} open={!!editBill} close={closeEditBill} onSubmit={handleUpdateBill} />
+          <BillModalForm
+            billData={editBill}
+            open={!!editBill}
+            close={closeEditBill}
+            onSubmit={handleUpdateBill}
+            onDelete={handleDeleteBill}
+          />
         )
       }
     </>

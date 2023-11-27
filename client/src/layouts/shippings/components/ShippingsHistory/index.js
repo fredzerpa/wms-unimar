@@ -32,6 +32,7 @@ const ShippingsHistory = () => {
 
   const handleEditShipping = shippingData => setEditShipping(shippingData);
   const handleUpdateShipping = async shippingData => updateShippingById(shippingData._id, shippingData);
+  // const handleUpdateShipping = async shippingData => console.log(shippingData);
   const handleDeleteShipping = async shippingData => deleteShippingById(shippingData._id);
 
   const handleSearch = useCallback(search => {

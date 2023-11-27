@@ -29,11 +29,11 @@ import SelectedProducts from "./SelectedProducts";
 import GetPasswordConsent from "components/GetPasswordConsent";
 
 // Utils
-import { formatOnSubmitShippingsForm, formatSelectedProductsData, formatShippingsFormEntryData, formatInventoryByStock, formatStockForSelection } from "./utils/functions.utils";
+import { formatOnSubmitShippingsForm, formatShippingsFormEntryData, formatInventoryByStock, formatStockForSelection } from "./utils/functions.utils";
 
 
 const INITIAL_VALUES = {
-  id: null,
+  _id: null,
   code: "",
   date: DateTime.now(),
   store: null,
@@ -86,6 +86,7 @@ const ShippingModalForm = ({ shippingData, open, close, onSubmit, onDelete }) =>
   }
 
   const onFormSubmit = async data => {
+    // console.log(formatOnSubmitShippingsForm(data));
     try {
       const response = await onSubmit(formatOnSubmitShippingsForm(data));
       const submitMessage = isEditingShipping ? "Se ha actualizado el producto exitosamente" : "Se creado el producto exitosamente"
@@ -112,13 +113,14 @@ const ShippingModalForm = ({ shippingData, open, close, onSubmit, onDelete }) =>
     const shippingProducts = getValues("products.shipping");
     const isOnShipping = shippingProducts.find(product => product?.code === newProductData.code);
 
+    console.log({ newProductData })
+
     const updatedShippingProducts = isOnShipping ?
       shippingProducts.map(product => {
         return product.code === newProductData.code ? newProductData : product
       })
       :
       [...shippingProducts, newProductData]
-
 
     setValue("products.shipping", updatedShippingProducts);
   }, [getValues, setValue])
@@ -358,7 +360,7 @@ const ShippingModalForm = ({ shippingData, open, close, onSubmit, onDelete }) =>
                       />
                     </MDBox>
                     <SelectedProducts
-                      products={formatSelectedProductsData(selectedProducts)}
+                      products={selectedProducts}
                       onProductsDataChange={handleSelectedProductsDataChange}
                       onProductRemove={handleSelectedProductRemove}
                       isEditing={isEditingShipping}

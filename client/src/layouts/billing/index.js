@@ -1,6 +1,5 @@
 // Libraries
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
-import { Info } from "luxon";
 import lodash from "lodash";
 
 import MDBox from "components/MDBox";
@@ -16,12 +15,15 @@ import { useBills } from "context/bills.context";
 
 import { formatCurrency } from "utils/functions.utils";
 import ProvidersList from "./components/ProvidersList";
+import { useMemo } from "react";
+import { WEEK_LABELS_SHORT, getBillsGroupedByWeekdays, sumTotalBills } from "./utils/functions.utils";
 
 const Billing = () => {
   const { bills } = useBills();
-  console.log(bills)
 
-  const WEEK_LABELS = Info.weekdays('short', { locale: "es-ES" }).map(lodash.capitalize);
+
+  const WEEK_LABELS = useMemo(() => WEEK_LABELS_SHORT.map(lodash.capitalize), [])
+  const thisWeekBills = useMemo(() => getBillsGroupedByWeekdays(bills), [bills])
 
   return (
     <DashboardLayout>
@@ -44,7 +46,7 @@ const Billing = () => {
                 height="100%"
                 chart={{
                   labels: WEEK_LABELS,
-                  datasets: { data: [6150, 5140, 8300, 6220, 7500, 5250, 6100] },
+                  datasets: { data: thisWeekBills.map(({ bills }) => sumTotalBills(bills)) },
                   options: {
                     plugins: {
                       tooltip: {

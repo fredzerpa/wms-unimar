@@ -21,7 +21,7 @@ import GetPasswordConsent from "components/GetPasswordConsent";
 import { enqueueSnackbar } from "notistack";
 
 const BillDetails = ({ title, billData, noGutter, onEdit, onDelete }) => {
-  const { date, products, total } = billData;
+  const { date, products, total, provider } = billData;
 
   const [controller] = useMaterialUIController();
   const { darkMode } = controller;
@@ -99,6 +99,14 @@ const BillDetails = ({ title, billData, noGutter, onEdit, onDelete }) => {
             </MDTypography>
           </MDTypography>
         </MDBox>
+        <MDBox mb={1} lineHeight={0}>
+          <MDTypography variant="caption" color="text">
+            Proveedor:&nbsp;&nbsp;&nbsp;
+            <MDTypography variant="caption" fontWeight="medium">
+              {provider?.name}
+            </MDTypography>
+          </MDTypography>
+        </MDBox>
         <MDBox mt={1}>
           <Accordion sx={{ background: "transparent", boxShadow: "none" }}>
             <AccordionSummary
@@ -146,6 +154,11 @@ const BillDetails = ({ title, billData, noGutter, onEdit, onDelete }) => {
                             Costo
                           </MDTypography>
                         </TableCell>
+                        <TableCell align="right" width="10%">
+                          <MDTypography variant="button" fontWeight="medium">
+                            Descuento
+                          </MDTypography>
+                        </TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
@@ -188,6 +201,11 @@ const BillDetails = ({ title, billData, noGutter, onEdit, onDelete }) => {
                             <TableCell align="right">
                               <MDTypography variant="caption">
                                 $ {product.unitCost.usd}
+                              </MDTypography>
+                            </TableCell>
+                            <TableCell align="center">
+                              <MDTypography variant="caption">
+                                % {product.discount}
                               </MDTypography>
                             </TableCell>
                           </TableRow>

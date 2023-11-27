@@ -17,5 +17,13 @@ const storeSchema = new mongoose.Schema({
   }
 });
 
+// We remove sensitive data when sending it through our API to the client.
+storeSchema.set('toJSON', {
+  transform: function (doc, ret, opt) {
+    delete ret.__v;
+  }
+});
+
+
 // Conecta storeSchema con "stores" colleccion
 module.exports = mongoose.model('Store', storeSchema);

@@ -1,5 +1,10 @@
+import { todayDT } from "layouts/dashboard/utils/dashboard.utils";
 import lodash from "lodash"
+import { DateTime, Info } from "luxon";
 
+export const sumTotalBills = array => Number(array.reduce((total, bill) => total + bill.total.usd, 0).toFixed(2));
+
+export const WEEK_LABELS_SHORT = Info.weekdays('short', { locale: "es-ES" });
 
 export const formatInventoryRawData = rawData => {
   const PRODUCTS_PARAMS_LABELS_SCHEMA = {
@@ -111,4 +116,35 @@ export const formatSelectionProducts = products => {
   const formattedData = Array.isArray(products) ? products.map(formatData) : formatData(products);
 
   return formattedData
+}
+
+export const getBillsByWeekNumber = (bills, weekNumber) => {
+  if (lodash.isEmpty(bills) || !weekNumber) return []
+
+  const weekDT = todayDT.set({ weekNumber }).startOf("week");
+  const nextWeekDT = todayDT.set({ weekNumber }).plus({ weeks: 1 }).startOf("week");
+
+  const filteredBills = bills.filter(bill => {
+    const billDT = DateTime.fromFormat(bill.date, "dd/MM/yyyy");
+    const isFromTheWeekNumber = billDT.diff(weekDT).as("milliseconds") > 0 && billDT.diff(nextWeekDT).as("milliseconds") < 0;
+    return isFromTheWeekNumber;
+  })
+
+  return filteredBills;
+}
+
+export const getBillsGroupedByWeekdays = bills => {
+  if (lodash.isEmpty(bills)) return []
+
+  const INITIAL_VALUE = WEEK_LABELS_SHORT.map(label => ({ label, bills: [] }))
+  const weekdaysBills = getBillsByWeekNumber(bills, todayDT.weekNumber).reduce((weekdays, bill) => {
+    const billDT = DateTime.fromFormat(bill.date, "dd/MM/yyyy").setLocale("es-ES");
+
+    const index = weekdays.findIndex(weekday => weekday.label.toLowerCase() === billDT.weekdayShort.toLowerCase())
+    weekdays[index].bills.push(bill);
+
+    return weekdays;
+  }, INITIAL_VALUE)
+
+  return weekdaysBills;
 }

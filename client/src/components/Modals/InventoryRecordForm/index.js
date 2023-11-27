@@ -31,12 +31,12 @@ import { useProducts } from "context/products.context";
 
 const INITIAL_VALUES = {
   _id: null,
-  slot: "",
   entryDate: DateTime.now(),
   expirationDate: DateTime.now(),
   product: {
     name: null,
     code: "",
+    slot: "",
     size: {
       value: "",
       label: "",
@@ -150,11 +150,11 @@ const InventoryRecordModalForm = ({ recordData, open, close, onSubmit, onDelete 
                       <MDTypography color="error" component="span" fontWeight="light" fontSize="small">*</MDTypography>
                     </MDTypography>
                     <MDInput
-                      {...register("slot", { required: "Este campo es obligatorio" })}
+                      {...register("product.slot", { required: "Este campo es obligatorio" })}
                       error={!!errors?.slot}
                       fullWidth
                       inputProps={{
-                        readOnly: !userSession?.privileges?.inventory?.upsert,
+                        readOnly: true,
                       }}
                     />
                     {

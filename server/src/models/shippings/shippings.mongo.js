@@ -1,7 +1,4 @@
 const mongoose = require('mongoose');
-const { customAlphabet } = require("nanoid");
-const nanoid = customAlphabet("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", 12)
-
 
 const shippingSchema = new mongoose.Schema({
   code: {
@@ -10,6 +7,15 @@ const shippingSchema = new mongoose.Schema({
     unique: true,
   },
   products: [{
+    inventoryRefId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Inventory",
+      required: false,
+    },
+    _id: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+    },
     name: {
       type: String,
       required: true,
@@ -49,17 +55,13 @@ const shippingSchema = new mongoose.Schema({
   },
 });
 
-shippingSchema.pre('save', async function (next) {
-  // We only encrypt the key if it has been modified or is new.
-  if (!this.isModified('code')) return next();
-
-  try {
-    this.code = nanoid();
-    return next();
-  } catch (err) {
-    return next(err);
+// We remove sensitive data when sending it through our API to the client.
+shippingSchema.set('toJSON', {
+  transform: function (doc, ret, opt) {
+    delete ret.__v;
   }
 });
+
 
 // Conecta shippingSchema con "shipping" colleccion
 module.exports = mongoose.model('Shipping', shippingSchema);
