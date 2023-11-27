@@ -6,7 +6,7 @@ export const todayDT = DateTime.now().setLocale("es-ES");
 
 export const LAST_SIX_MONTHS_LABELS = Info.months("short", { locale: "es-ES" }).filter((month, idx) => idx >= todayDT.month - 6 && idx < todayDT.month).map(lodash.capitalize);
 
-export const sumTotalBills = array => Number(array.reduce((total, bill) => total + bill.total.usd, 0).toFixed(2));
+export const sumBillsTotal = array => Number(array.reduce((total, bill) => total + bill.total.usd, 0).toFixed(2));
 
 export const getShippingsByWeekNumber = (shippings, weekNumber) => {
   if (lodash.isEmpty(shippings) || !weekNumber) return []
@@ -21,18 +21,6 @@ export const getShippingsByWeekNumber = (shippings, weekNumber) => {
   })
 
   return filteredShippings;
-}
-
-export const getTotalCostByMonth = (bills, monthNumber) => {
-  if (lodash.isEmpty(bills)) return []
-
-  const filteredBillsByMonth = bills.filter(bill => {
-    const billDT = DateTime.fromFormat(bill.date, "dd/MM/yyyy");
-    const monthBills = billDT.month === monthNumber;
-    return billDT.year === todayDT.year && monthBills;
-  });
-
-  return sumTotalBills(filteredBillsByMonth);
 }
 
 // El @target es el nuevo valor que buscamos calcular su diferencia con
@@ -84,7 +72,7 @@ export const getInventoryGroupedByClass = inventory => {
   console.log(inventory)
   return inventory.reduce((groups, { product }) => {
     if (!product.typeClass) return groups;
-    
+
     return {
       ...groups,
       [product.typeClass]: [...groups[product.typeClass], product]

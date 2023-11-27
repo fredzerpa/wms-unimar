@@ -1,10 +1,6 @@
 // @mui material components
 import { Card } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
-import { Link } from "react-router-dom";
-
-// Assets
-import colors from "assets/theme/base/colors";
 
 import MDBox from "components/MDBox";
 import InventoryDataTable from "components/InventoryDataTable";
@@ -14,7 +10,6 @@ import ReportsBarChart from "components/Charts/BarCharts/ReportsBarChart";
 import ReportsLineChart from "components/Charts/LineCharts/ReportsLineChart";
 import ComplexStatisticsCard from "components/Cards/StatisticsCards/ComplexStatisticsCard";
 import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
-import MDTypography from "components/MDTypography";
 import PieChart from "components/Charts/PieChart";
 
 // Utils
@@ -27,8 +22,8 @@ import {
   getLastSixMonthsShippings,
   getShippingsByMonth,
   getShippingsByWeekNumber,
-  getTotalCostByMonth,
   sortOrdersOverview,
+  sumBillsTotal,
   todayDT,
 } from "./utils/dashboard.utils";
 
@@ -53,8 +48,8 @@ const Dashboard = () => {
       lastSixthMonths: getLastSixMonthsShippings(shippings),
     },
     bills: {
-      currentMonth: getTotalCostByMonth(bills, todayDT.month),
-      formerMonth: getTotalCostByMonth(bills, todayDT.minus({ months: 1 }).month),
+      currentMonth: getShippingsByMonth(bills, todayDT.month),
+      formerMonth: getShippingsByMonth(bills, todayDT.minus({ months: 1 }).month),
       lastSixthMonths: getLastSixMonthsBills(bills),
     },
     inventory: {
@@ -108,9 +103,9 @@ const Dashboard = () => {
                 color="success"
                 icon="attach_money"
                 title="Gastos"
-                count={formatCurrency(dataConfig.bills.currentMonth)}
+                count={formatCurrency(sumBillsTotal(dataConfig.bills.currentMonth))}
                 percentage={(() => {
-                  const target = dataConfig.bills.currentMonth;
+                  const target = sumBillsTotal(dataConfig.bills.currentMonth);
                   const source = dataConfig.bills.formerMonth;
                   const diff = getDiff(target, source);
 
@@ -234,7 +229,7 @@ const Dashboard = () => {
                 />
               </Card>
             </Grid>
-            {/* <Grid xs={12} md={6} lg={4}>
+            <Grid xs={12} md={6} lg={4}>
               {
                 (() => {
                   const target = dataConfig.shippings.currentMonth.length + dataConfig.bills.currentMonth.length;
@@ -253,7 +248,7 @@ const Dashboard = () => {
                   )
                 })()
               }
-            </Grid> */}
+            </Grid>
           </Grid>
         </MDBox>
       </MDBox>
