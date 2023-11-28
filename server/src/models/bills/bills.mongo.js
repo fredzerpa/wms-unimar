@@ -9,61 +9,69 @@ const billSchema = new mongoose.Schema({
   },
   provider: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Provider",
+    ref: 'Provider',
     required: true,
   },
-  products: [{
-    inventoryRefId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Inventory",
-      required: false,
-    },
-    _id: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-    },
-    name: {
-      type: String,
-      required: true,
-    },
-    code: {
-      type: String,
-      required: true,
-    },
-    type: {
-      type: String,
-      required: true,
-    },
-    typeClass: {
-      type: String,
-      required: false, // Can be null because of the "type" "industrialAndMarine"
-    },
-    size: {
-      type: String,
-      required: true,
-    },
-    quantity: {
-      type: Number,
-      required: true,
-    },
-    unitCost: {
-      type: amountSchema,
-      required: true,
-    },
-    discount: {
-      type: Number, // Represents de discount percentage in number
-      required: false,
-      default: 0,
-    },
-    subtotal: {
-      type: amountSchema,
-      required: true,
-    },
-    expirationDate: {
-      type: String,
-      required: true,
-    },
-  }],
+  products: {
+    type: [{
+      inventoryRefId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Inventory',
+        required: false,
+      },
+      _id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product',
+        required: true,
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+      code: {
+        type: String,
+        required: true,
+      },
+      slot: {
+        type: String,
+        required: true,
+      },
+      type: {
+        type: String,
+        required: true,
+      },
+      typeClass: {
+        type: String,
+        required: false, // Can be null because of the 'type' 'industrialAndMarine'
+      },
+      size: {
+        type: String,
+        required: true,
+      },
+      quantity: {
+        type: Number,
+        required: true,
+      },
+      unitCost: {
+        type: amountSchema,
+        required: true,
+      },
+      discount: {
+        type: Number, // Represents de discount percentage in number
+        required: false,
+        default: 0,
+      },
+      subtotal: {
+        type: amountSchema,
+        required: true,
+      },
+      expirationDate: {
+        type: String,
+        required: true,
+      },
+    }],
+    default: [],
+  },
   convertionRate: {
     rate: {
       type: Number,
@@ -92,5 +100,5 @@ billSchema.set('toJSON', {
   }
 });
 
-// Conecta billSchema con "bill" colleccion
+// Conecta billSchema con 'bill' colleccion
 module.exports = mongoose.model('Bill', billSchema);

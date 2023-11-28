@@ -48,6 +48,12 @@ const Billing = () => {
                   labels: WEEK_LABELS,
                   datasets: { data: thisWeekBills.map(({ bills }) => sumTotalBills(bills)) },
                   options: {
+                    scales: {
+                      y: {
+                        min: 0,
+                        ticks: { beginAtZero: true }
+                      }
+                    },
                     plugins: {
                       tooltip: {
                         callbacks: {

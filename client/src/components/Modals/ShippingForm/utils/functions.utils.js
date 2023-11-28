@@ -41,20 +41,29 @@ export const addLabelsToProducts = products => {
   return formattedData
 }
 
-export const getProductTotalStockBySizes = products => {
+export const getProductsWithStockBySizes = products => {
   if (lodash.isEmpty(products)) return products;
 
   const formatProductData = data => {
-    if (data?.stocked) return data;
+    if (!!data?.stocked) return data;
 
     const { onStock, ...rest } = data;
 
     const groupedStocksBySizes = onStock?.reduce((groups, product) => {
+      const { size, stock, ...productProps } = product;
+      const { stocked: stockedGroups, ...groupsProps } = groups;
       return {
-        ...groups,
-        [product.size.value]: (groups[product.size.value] ?? 0) + product.stock,
+        ...groupsProps,
+        ...productProps,
+        stocked: {
+          ...stockedGroups,
+          [size.value]: (stockedGroups?.[size.value] ?? 0) + stock,
+        }
       }
-    }, {})
+    }, {
+      ...rest,
+      stocked: {}
+    })
 
     return groupedStocksBySizes;
   }
@@ -73,16 +82,24 @@ export const formatOnSubmitShippingsForm = formData => {
   }
 }
 
-export const formatShippingsFormEntryData = (formData) => {
+export const formatShippingsFormEntryData = (formData, productsForShipping = []) => {
   if (lodash.isEmpty(formData)) return {};
 
-  const selectedProducts = addLabelsToProducts(formData?.products).map(product => {
+  const selectedProducts = addLabelsToProducts(formData?.products)?.map(product => {
     const { quantity, size, ...rest } = product;
+
+    const productOnStock = productsForShipping?.reduce((productOnStock, shippingProduct) => {
+      const productKey = product.name + product.code + product.type.value + product.typeClass;
+      const productDataKey = shippingProduct.name + shippingProduct.code + shippingProduct.type.value + shippingProduct.typeClass;
+      if (productKey !== productDataKey) return productOnStock;
+      const productStocksBySizes = getProductsWithStockBySizes(shippingProduct)
+      return productOnStock + (productStocksBySizes.stocked?.[product.size.value] ?? 0);
+    }, 0)
 
     return {
       ...rest,
       stocked: {
-        [size.value]: quantity,
+        [size.value]: quantity + productOnStock,
       },
       size: size.value,
       quantity,

@@ -45,7 +45,7 @@ const DEFAULT_VALUES = {
 
 const ProfileInfoCard = ({ title, info, onSubmit: onActionSubmit }) => {
   const [editMode, setEditMode] = useState(false);
-  const { register, handleSubmit, getValues, reset } = useForm({
+  const { register, handleSubmit, getValues, reset, formState: { errors } } = useForm({
     defaultValues: defaultsDeep(formatUserEntryData(info), DEFAULT_VALUES)
   });
 
@@ -103,16 +103,25 @@ const ProfileInfoCard = ({ title, info, onSubmit: onActionSubmit }) => {
                 (
                   Object.entries(value).map(([childKey, childValue]) => {
                     return (
-                      <MDInput
-                        key={childKey}
-                        {...register(`${key}.value.${childKey}.value`)}
-                        size="small"
-                        placeholder={getValues(key).value[childKey].label}
-                        InputProps={{
-                          readOnly: !isEditable,
-                        }}
-                        fullWidth
-                      />
+                      <MDBox width="100%">
+                        <MDInput
+                          key={childKey}
+                          {...register(`${key}.value.${childKey}.value`)}
+                          size="small"
+                          placeholder={getValues(key).value[childKey].label}
+                          InputProps={{
+                            readOnly: !isEditable,
+                          }}
+                          fullWidth
+                        />
+                        {
+                          !!errors?.[key]?.value?.[childKey]?.value && (
+                            <MDTypography fontSize="small" color="error" fontWeight="light">
+                              {errors?.[key]?.value.message}
+                            </MDTypography>
+                          )
+                        }
+                      </MDBox>
                     )
                   })
                 )
@@ -145,19 +154,43 @@ const ProfileInfoCard = ({ title, info, onSubmit: onActionSubmit }) => {
             getValues(key).label
           }
         </MDTypography>
-        <MDBox display="flex">
+        <MDBox width="100%">
           {
             editMode ?
               (
-                <MDInput
-                  {...register(`${key}.value`)}
-                  size="small"
-                  readOnly={!(isEditable && editMode)}
-                  fullWidth
-                  InputProps={{
-                    readOnly: !(isEditable && editMode),
-                  }}
-                />
+                <>
+                  <MDInput
+                    {...register(`${key}.value`, {
+                      validate: key === "phone" && {
+                        hasSpaces: v => (/\S/g.test(v) || !v.length) || "Evite el uso de espacios en blanco",
+                        hasSpecialChars: v => {
+                          const isValid = !/\W/gi.test(v.replaceAll(/\+/gi, ""));
+                          return isValid || "Evite usar caracteres especiales exceptuando la suma \"+\"";
+                        },
+                        startsWithPlusSign: v => {
+                          let isValid = true;
+                          if (v.includes("+")) isValid = !v.split("+")[0].length;
+
+                          return isValid || "El simbolo de suma '+' debe estar al inicio";
+                        },
+                        hasLetters: v => !isNaN(v.replaceAll(/\+/gi, "")) || "Evite el uso de letras",
+                      }
+                    })}
+                    size="small"
+                    readOnly={!(isEditable && editMode)}
+                    fullWidth
+                    InputProps={{
+                      readOnly: !(isEditable && editMode),
+                    }}
+                  />
+                  {
+                    !!errors?.[key]?.value && (
+                      <MDTypography fontSize="small" color="error" fontWeight="light">
+                        {errors?.[key]?.value.message}
+                      </MDTypography>
+                    )
+                  }
+                </>
               )
               :
               (
@@ -174,9 +207,8 @@ const ProfileInfoCard = ({ title, info, onSubmit: onActionSubmit }) => {
                 </MDTypography>
               )
           }
-
         </MDBox>
-      </MDBox>
+      </MDBox >
     )
   });
 

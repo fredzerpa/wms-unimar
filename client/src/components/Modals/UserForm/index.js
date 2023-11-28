@@ -402,7 +402,22 @@ const UserFormModal = ({ title = "", open, close, user, onSubmit }) => {
                     </MDTypography>
                   </MDBox>
                   <MDInput
-                    {...register("phones.main")}
+                    {...register("phone.main", {
+                      validate: {
+                        hasSpaces: v => (/\S/g.test(v) || !v.length) || "Evite el uso de espacios en blanco",
+                        hasSpecialChars: v => {
+                          const isValid = !/\W/gi.test(v.replaceAll(/\+/gi, ""));
+                          return isValid || "Evite usar caracteres especiales exceptuando la suma \"+\"";
+                        },
+                        startsWithPlusSign: v => {
+                          let isValid = true;
+                          if (v.includes("+")) isValid = !v.split("+")[0].length;
+
+                          return isValid || "El simbolo de suma '+' debe estar al inicio";
+                        },
+                        hasLetters: v => !isNaN(v.replaceAll(/\+/gi, "")) || "Evite el uso de letras",
+                      }
+                    })}
                     fullWidth
                     type="tel"
                     placeholder="Telefono"
@@ -410,6 +425,7 @@ const UserFormModal = ({ title = "", open, close, user, onSubmit }) => {
                       readOnly: !userSession?.privileges?.users?.upsert,
                     }}
                   />
+                  {!!errors?.phone?.main && <MDTypography fontSize="small" color="error" fontWeight="light">{errors?.phone?.main.message}</MDTypography>}
                 </MDBox>
               </MDBox>
 

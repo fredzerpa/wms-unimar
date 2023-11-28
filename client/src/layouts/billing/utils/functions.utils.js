@@ -121,12 +121,12 @@ export const formatSelectionProducts = products => {
 export const getBillsByWeekNumber = (bills, weekNumber) => {
   if (lodash.isEmpty(bills) || !weekNumber) return []
 
-  const weekDT = todayDT.set({ weekNumber }).startOf("week");
-  const nextWeekDT = todayDT.set({ weekNumber }).plus({ weeks: 1 }).startOf("week");
+  const weekDT = DateTime.now().set({ weekNumber }).startOf("week");
+  const nextWeekDT = DateTime.now().set({ weekNumber }).plus({ weeks: 1 }).startOf("week");
 
   const filteredBills = bills.filter(bill => {
     const billDT = DateTime.fromFormat(bill.date, "dd/MM/yyyy");
-    const isFromTheWeekNumber = billDT.diff(weekDT).as("milliseconds") > 0 && billDT.diff(nextWeekDT).as("milliseconds") < 0;
+    const isFromTheWeekNumber = billDT.diff(weekDT).as("days") >= 0 && billDT.diff(nextWeekDT).as("days") < 0;
     return isFromTheWeekNumber;
   })
 
@@ -145,6 +145,7 @@ export const getBillsGroupedByWeekdays = bills => {
 
     return weekdays;
   }, INITIAL_VALUE)
+
 
   return weekdaysBills;
 }

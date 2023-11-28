@@ -9,11 +9,12 @@ const shippingSchema = new mongoose.Schema({
   products: [{
     inventoryRefId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Inventory",
+      ref: 'Inventory',
       required: false,
     },
     _id: {
       type: mongoose.Schema.Types.ObjectId,
+      ref: 'Product',
       required: true,
     },
     name: {
@@ -30,7 +31,7 @@ const shippingSchema = new mongoose.Schema({
     },
     typeClass: {
       type: String,
-      required: false, // Can be null because of the "type" "industrialAndMarine"
+      required: false, // Can be null because of the 'type' 'industrialAndMarine'
     },
     size: {
       type: String,
@@ -63,5 +64,5 @@ shippingSchema.set('toJSON', {
 });
 
 
-// Conecta shippingSchema con "shipping" colleccion
+// Conecta shippingSchema con 'shipping' colleccion
 module.exports = mongoose.model('Shipping', shippingSchema);

@@ -27,7 +27,6 @@ const BillingHistory = () => {
   const closeEditBill = () => setEditBill(null);
 
   const handleEditBill = billData => {
-    console.log(billData)
     setEditBill(billData);
   }
 
@@ -36,13 +35,11 @@ const BillingHistory = () => {
     await loadInventory();
   }
   const handleUpdateBill = async billData => {
-    console.log(billData);
-    // await updateBillById(billData._id, billData);
-    // await loadInventory();
+    await updateBillById(billData._id, billData);
+    await loadInventory();
   }
   const handleDeleteBill = async billData => {
-    const response = await deleteBillById(billData._id);
-    console.log(response);
+    await deleteBillById(billData._id);
     await loadInventory();
   }
 

@@ -155,7 +155,7 @@ const ShippingDetails = ({ title, shippingData, noGutter, onEdit, onDelete }) =>
                       {
                         addLabelsToProducts(products)?.map(product => (
                           <TableRow
-                            key={product?.code}
+                            key={product.name + product.code + product.type.value + product.typeClass}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                           >
                             {/* Code */}

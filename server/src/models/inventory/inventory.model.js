@@ -1,11 +1,11 @@
-const inventory = require("./inventory.mongo");
+const inventory = require('./inventory.mongo');
 
 const getInventoryRecords = async () => {
-  return await inventory.find();
+  return await inventory.find().populate(['shipped']);
 }
 
 const getInventoryRecordById = async (recordId) => {
-  return await inventory.findById(recordId);
+  return await inventory.findById(recordId).populate('shipped');
 }
 
 const createInventoryRecord = async (recordData) => {
@@ -20,6 +20,10 @@ const deleteInventoryRecordById = async (recordId) => {
   return await inventory.findByIdAndDelete(recordId);
 }
 
+const deleteInventoryRecordsByFilter = async (filter) => {
+  return await inventory.deleteMany(filter);
+}
+
 // @bundle: Array[Object{InventoryRecord}]
 // Recibe un array de objetos donde crea un key con los matchfields para encontrarlo en la coleccion
 const upsertInventoryRecords = async (bundle) => {
@@ -31,7 +35,7 @@ const upsertInventoryRecords = async (bundle) => {
 
 // @bundle: Array[Object{InventoryRecord}]
 // Recibe un array de objetos donde crea un key con los matchfields para encontrarlo en la coleccion
-const upsertInventoryRecordsByFields = async (fields = ["_id"], bundle) => {
+const upsertInventoryRecordsByFields = async (bundle, fields = ['_id']) => {
   return await inventory.upsertMany(bundle, {
     matchFields: fields, // Compara los docs mediante este campo
     ensureModel: true, // Valida la data por el Schema
@@ -45,6 +49,7 @@ module.exports = {
   createInventoryRecord,
   updateInventoryRecordById,
   deleteInventoryRecordById,
+  deleteInventoryRecordsByFilter,
   upsertInventoryRecords,
   upsertInventoryRecordsByFields,
 };

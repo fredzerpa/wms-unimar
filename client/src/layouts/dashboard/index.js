@@ -167,6 +167,14 @@ const Dashboard = () => {
                       label: "Envios",
                       data: dataConfig.shippings.lastSixthMonths.map(month => month?.shippings?.length)
                     },
+                    options: {
+                      scales: {
+                        y: {
+                          min: 0,
+                          ticks: { beginAtZero: true }
+                        }
+                      },
+                    }
                   }}
                 />
               </MDBox>
@@ -187,6 +195,12 @@ const Dashboard = () => {
                       )
                     },
                     options: {
+                      scales: {
+                        y: {
+                          min: 0,
+                          ticks: { beginAtZero: true }
+                        }
+                      },
                       plugins: {
                         tooltip: {
                           callbacks: {

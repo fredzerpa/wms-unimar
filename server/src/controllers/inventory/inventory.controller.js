@@ -1,3 +1,4 @@
+const { updateBillById, getBillById } = require('../../models/bills/bills.model');
 const {
   getInventoryRecords,
   getInventoryRecordById,
@@ -39,7 +40,6 @@ const httpGetInventoryRecord = async (req, res) => {
 const httpCreateInventoryRecord = async (req, res) => {
   const recordData = req.body;
 
-
   try {
     return res.status(201).json(await createInventoryRecord(recordData));
   } catch (error) {
@@ -52,10 +52,44 @@ const httpCreateInventoryRecord = async (req, res) => {
 
 const httpUpdateInventoryRecord = async (req, res) => {
   const recordId = req.params.id;
-  const updateData = req.body;
+  const recordData = req.body;
 
   try {
-    return res.status(200).json(await updateInventoryRecordById(recordId, updateData));
+    const billToUpdate = (await getBillById(recordData.billRefId))?.toObject();
+    const updatedBillProducts = billToUpdate?.products.map(product => {
+      if (product.inventoryRefId.toString() !== recordData._id) return product;
+      const { expirationDate, onStock, product: recordProduct } = recordData;
+      const { size } = recordProduct;
+
+      const usdToBs = usd => usd * Number(billToUpdate.convertionRate.rate);
+
+      const subtotalUsd = (product.unitCost.usd * Number(onStock)) - (product.unitCost.usd * Number(onStock) * product.discount * 0.01)
+      const subtotal = {
+        ...product.subtotal,
+        usd: subtotalUsd,
+        bs: usdToBs(subtotalUsd)
+      };
+
+      return {
+        ...product,
+        expirationDate,
+        size,
+        quantity: Number(onStock),
+        subtotal,
+      }
+    });
+
+    const billTotal = updatedBillProducts?.reduce((total, product) => {
+      return {
+        usd: total.usd + product.subtotal.usd,
+        bs: total.bs + product.subtotal.bs,
+      }
+    }, { usd: 0, bs: 0 });
+
+
+    await updateBillById(recordData.billRefId, { products: updatedBillProducts, total: billTotal });
+
+    return res.status(200).json(await updateInventoryRecordById(recordId, recordData));
   } catch (error) {
     return res.status(502).json({ // DB Threw error
       error: 'Failed to update Inventory Record',
@@ -68,6 +102,19 @@ const httpDeleteInventoryRecord = async (req, res) => {
   const recordId = req.params.id;
 
   try {
+    const recordToDelete = await getInventoryRecordById(recordId);
+    const billToUpdate = (await getBillById(recordToDelete.billRefId))?.toObject();
+    const updatedBillProducts = billToUpdate?.products.filter(product => product.inventoryRefId.toString() !== recordId);
+    const billTotal = updatedBillProducts?.reduce((total, product) => {
+      return {
+        usd: total.usd + product.subtotal.usd,
+        bs: total.bs + product.subtotal.bs,
+      }
+    }, { usd: 0, bs: 0 });
+
+
+    await updateBillById(recordToDelete.billRefId, { products: updatedBillProducts, total: billTotal });
+
     return res.status(200).json(await deleteInventoryRecordById(recordId));
   } catch (error) {
     return res.status(502).json({ // DB Threw error

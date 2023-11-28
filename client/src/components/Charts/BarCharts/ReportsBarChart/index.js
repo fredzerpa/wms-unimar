@@ -1,11 +1,8 @@
 import { memo, useMemo } from "react";
-
-// porp-types is a library for typechecking of props
+import lodash from "lodash";
 import PropTypes from "prop-types";
-
-// react-chartjs-2 components
 import { Bar } from "react-chartjs-2";
-
+import isEqual from "react-fast-compare";
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -18,11 +15,10 @@ import MDTypography from "components/MDTypography";
 
 // ReportsBarChart configurations
 import configs from "components/Charts/BarCharts/ReportsBarChart/configs";
-import isEqual from "react-fast-compare";
-
 
 const ReportsBarChart = ({ color, title, description, date, chart }) => {
   const { data, options } = configs(chart.labels || [], chart.datasets || {});
+  const chartOptions = lodash.merge(options, chart.options)
 
   return (
     <Card sx={{ height: "100%" }}>
@@ -39,10 +35,10 @@ const ReportsBarChart = ({ color, title, description, date, chart }) => {
               mt={-5}
               height="12.5rem"
             >
-              <Bar data={data} options={options} redraw />
+              <Bar data={data} options={chartOptions} redraw />
             </MDBox>
           ),
-          [color, data, options]
+          [chartOptions, color, data]
         )}
         <MDBox pt={3} pb={1} px={1}>
           <MDTypography variant="h6" textTransform="capitalize">

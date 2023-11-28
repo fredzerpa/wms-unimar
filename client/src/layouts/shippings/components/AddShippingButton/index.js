@@ -10,12 +10,9 @@ import ShippingModalForm from "components/Modals/ShippingForm";
 
 // Context
 import { useMaterialUIController } from "context";
-import { useShippings } from "context/shippings.context";
 
 
-const AddShippingButton = ({ tooltipLabel, tooltipPlacement, ...rest }) => {
-  const { createShipping } = useShippings();
-
+const AddShippingButton = ({ tooltipLabel, tooltipPlacement, createShipping, ...rest }) => {
   const [controller] = useMaterialUIController();
   const { darkMode } = controller;
 

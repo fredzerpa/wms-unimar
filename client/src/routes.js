@@ -59,7 +59,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "shippings",
+    name: "Envios",
     key: "shippings",
     icon: <Icon fontSize="small">local_shipping</Icon>,
     route: "/shippings",

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 // Libraries
 import { Autocomplete, Card, Modal } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
@@ -69,8 +69,6 @@ const BillModalForm = ({ billData, open, close, onSubmit, onDelete }) => {
   const documentIdType = watch("provider.documentId.type");
   const watchObservations = watch("observations");
 
-  useEffect(() => { console.log(getValues()) }, [getValues]);
-
   const productsForSelection = useMemo(() => formatProductsForSelection(products), [products]);
 
   const isEditingBill = !lodash.isEmpty(billData);
@@ -116,13 +114,11 @@ const BillModalForm = ({ billData, open, close, onSubmit, onDelete }) => {
 
   const handleProductRemove = useCallback(productData => {
     const orderProducts = getValues("products.order")
-    console.log({ productData, selectedProducts, orderProducts })
     const updatedSelectedProducts = selectedProducts.filter(product => {
-      const productKey = product.name + product.code + product.type + product.typeClass;
+      const productKey = product.name + product.code + product.type.value + product.typeClass;
       const productDataKey = productData.name + productData.code + productData.type.value + productData.typeClass;
       return productKey !== productDataKey
     })
-    console.log(updatedSelectedProducts)
     setValue("products.selected", updatedSelectedProducts)
 
     const updatedOrderProducts = orderProducts.filter(product => {
@@ -130,7 +126,6 @@ const BillModalForm = ({ billData, open, close, onSubmit, onDelete }) => {
       const productDataKey = productData.name + productData.code + productData.type.value + productData.typeClass;
       return productKey !== productDataKey
     })
-    console.log(updatedOrderProducts)
     setValue("products.order", updatedOrderProducts)
 
 

@@ -54,7 +54,7 @@ const ShippingModalForm = ({ shippingData, open, close, onSubmit, onDelete }) =>
   const productsForShipping = useMemo(() => formatStockForSelection(stockedProducts), [stockedProducts]);
 
   const { register, control, handleSubmit, watch, setValue, getValues, formState: { errors, isDirty, isSubmitting } } = useForm({
-    defaultValues: lodash.defaultsDeep(formatShippingsFormEntryData(shippingData), INITIAL_VALUES),
+    defaultValues: lodash.defaultsDeep(formatShippingsFormEntryData(shippingData, productsForShipping), INITIAL_VALUES),
   });
   const [controller] = useMaterialUIController();
   const { darkMode } = controller;
@@ -63,7 +63,6 @@ const ShippingModalForm = ({ shippingData, open, close, onSubmit, onDelete }) =>
   const watchObservations = watch("observations");
 
   const isEditingShipping = useMemo(() => !lodash.isEmpty(shippingData), [shippingData]);
-
 
   const handleShippingDelete = async event => {
     try {
@@ -86,7 +85,6 @@ const ShippingModalForm = ({ shippingData, open, close, onSubmit, onDelete }) =>
   }
 
   const onFormSubmit = async data => {
-    // console.log(formatOnSubmitShippingsForm(data));
     try {
       const response = await onSubmit(formatOnSubmitShippingsForm(data));
       const submitMessage = isEditingShipping ? "Se ha actualizado el producto exitosamente" : "Se creado el producto exitosamente"
@@ -105,19 +103,34 @@ const ShippingModalForm = ({ shippingData, open, close, onSubmit, onDelete }) =>
   }
 
   const handleSelectedProductRemove = useCallback(productData => {
-    const newSelectedProducts = selectedProducts.filter(product => product.code !== productData.code)
-    setValue("products.selected", newSelectedProducts)
-  }, [selectedProducts, setValue]);
+    const updatedSelectedProducts = selectedProducts.filter(product => {
+      const productKey = product.name + product.code + product.type.value + product.typeClass;
+      const productDataKey = productData.name + productData.code + productData.type.value + productData.typeClass;
+      return productKey !== productDataKey
+    })
+    setValue("products.selected", updatedSelectedProducts)
+
+    const shippingProducts = getValues("products.shipping");
+    const updatedShippingProducts = shippingProducts.filter(product => {
+      const productKey = product.name + product.code + product.type + product.typeClass;
+      const productDataKey = productData.name + productData.code + productData.type.value + productData.typeClass;
+      return productKey !== productDataKey
+    })
+    setValue("products.shipping", updatedShippingProducts)
+  }, [getValues, selectedProducts, setValue]);
 
   const handleSelectedProductsDataChange = useCallback(newProductData => {
     const shippingProducts = getValues("products.shipping");
-    const isOnShipping = shippingProducts.find(product => product?.code === newProductData.code);
+    const shippingIndex = shippingProducts.findIndex(product => {
+      const productKey = product.name + product.code + product.type + product.typeClass;
+      const productDataKey = newProductData.name + newProductData.code + newProductData.type + newProductData.typeClass;
+      return productKey === productDataKey
+    });
 
-    console.log({ newProductData })
-
+    const isOnShipping = shippingIndex >= 0;
     const updatedShippingProducts = isOnShipping ?
-      shippingProducts.map(product => {
-        return product.code === newProductData.code ? newProductData : product
+      shippingProducts.map((product, idx) => {
+        return idx === shippingIndex ? newProductData : product
       })
       :
       [...shippingProducts, newProductData]
@@ -328,7 +341,7 @@ const ShippingModalForm = ({ shippingData, open, close, onSubmit, onDelete }) =>
                               const optionLabel = `
                                 [${code}] ${name} - ${type.label} 
                                 ${typeClass ? `"${typeClass}"` : ""} 
-                                ${onStock.length ? "" : "(Sin Stock)"}
+                                ${onStock?.length ? "" : "(Sin Stock)"}
                               `;
 
                               return optionLabel;
@@ -363,12 +376,11 @@ const ShippingModalForm = ({ shippingData, open, close, onSubmit, onDelete }) =>
                       products={selectedProducts}
                       onProductsDataChange={handleSelectedProductsDataChange}
                       onProductRemove={handleSelectedProductRemove}
-                      isEditing={isEditingShipping}
                     />
                     {
-                      !!errors?.products && (
+                      !!errors?.products?.selected && (
                         <MDTypography ml={1} fontSize="small" color="error" fontWeight="light">
-                          {errors?.products.message}
+                          {errors?.products?.selected.message}
                         </MDTypography>
                       )
                     }

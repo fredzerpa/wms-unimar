@@ -1,3 +1,4 @@
+const { default: mongoose } = require('mongoose');
 const {
   getBills,
   getBillById,
@@ -6,7 +7,7 @@ const {
   deleteBillById,
   upsertBillsByBundle,
 } = require('../../models/bills/bills.model');
-const { upsertInventoryRecords, createInventoryRecord, updateInventoryRecordById } = require('../../models/inventory/inventory.model');
+const { createInventoryRecord, deleteInventoryRecordsByFilter, upsertInventoryRecordsByFields } = require('../../models/inventory/inventory.model');
 const { customAlphabet } = require("nanoid");
 const nanoid = customAlphabet("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", 12)
 
@@ -42,18 +43,21 @@ const httpGetBill = async (req, res) => {
 const httpCreateBill = async (req, res) => {
   const billData = req.body;
 
+  billData._id = new mongoose.Types.ObjectId();
   billData.code = nanoid();
 
-  const productsForInventory = billData.products.map(product => {
+  const inventoryRecordsToCreate = billData.products.map(product => {
     const { quantity, expirationDate, discount, subtotal, unitCost, ...rest } = product;
     return {
       product: rest,
       onStock: quantity,
       entryDate: billData.date,
       expirationDate,
+      billRefId: billData._id,
     }
   })
-  const createdInventoryRecords = await createInventoryRecord(productsForInventory);
+
+  const createdInventoryRecords = await createInventoryRecord(inventoryRecordsToCreate);
 
   billData.products = billData.products.map(product => {
     const createdRecord = createdInventoryRecords.find(record => (
@@ -80,9 +84,50 @@ const httpUpdateBill = async (req, res) => {
   const billId = req.params.id;
   const billData = req.body;
 
-  const updatedProducts = await updateInventoryRecordById()
-
   try {
+    const formerBillData = (await getBillById(billId))?.toObject();
+
+    // Update Bill products in the Inventory
+    const inventoryRecordsForUpdate = billData.products.map(product => {
+      const { inventoryRefId, quantity, expirationDate, discount, subtotal, unitCost, ...rest } = product;
+      return {
+        _id: inventoryRefId,
+        product: rest,
+        onStock: quantity,
+        entryDate: billData.date,
+        expirationDate,
+        billRefId: billData._id,
+      }
+
+    })
+
+    const inventoryRecordsToCreate = inventoryRecordsForUpdate.filter(record => !record._id);
+    const inventoryRecordsToUpdate = inventoryRecordsForUpdate.filter(record => !!record._id);
+    const inventoryRecordsIdsToDelete = formerBillData?.products.reduce((ids, product) => {
+      const productExists = !!inventoryRecordsForUpdate.find(record => record._id === product.inventoryRefId.toString())
+      return productExists ? ids : [...ids, product.inventoryRefId.toString()];
+    }, [])
+
+    // Create Records
+    const createdInventoryRecords = await createInventoryRecord(inventoryRecordsToCreate);
+    const updatedInventoryRecords = await upsertInventoryRecordsByFields(inventoryRecordsToUpdate);
+    const deletedInventoryRecords = await deleteInventoryRecordsByFilter({ _id: inventoryRecordsIdsToDelete });
+
+    billData.products = billData.products.map(product => {
+      if (!!product.inventoryRefId) return product;
+
+      const createdRecord = createdInventoryRecords.find(record => (
+        record?.product.name + record?.product.type + record?.product?.typeClass === product.name + product.type + product?.typeClass
+      ));
+
+      return {
+        ...product,
+        inventoryRefId: createdRecord._id,
+      }
+    })
+
+
+
     return res.status(200).json(await updateBillById(billId, billData));
   } catch (error) {
     return res.status(502).json({ // DB Threw error
@@ -94,8 +139,19 @@ const httpUpdateBill = async (req, res) => {
 
 const httpDeleteBill = async (req, res) => {
   const billId = req.params.id;
-
   try {
+    const billData = await getBillById(billId);
+
+    // Update Bill products in the Inventory
+    const filter = billData.products.reduce((filter, product) => {
+      return {
+        _id: [...filter._id, product.inventoryRefId],
+      };
+    }, { _id: [] })
+
+    await deleteInventoryRecordsByFilter(filter);
+
+
     return res.status(200).json(await deleteBillById(billId));
   } catch (error) {
     return res.status(502).json({ // DB Threw error

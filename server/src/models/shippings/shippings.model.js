@@ -1,11 +1,11 @@
-const shippings = require("./shippings.mongo");
+const shippings = require('./shippings.mongo');
 
 const getShippings = async () => {
-  return await shippings.find().populate("store");
+  return await shippings.find().populate('store');
 }
 
 const getShippingById = async (shippingId) => {
-  return await shippings.findById(shippingId).populate("store");
+  return await shippings.findById(shippingId).populate('store');
 }
 
 const createShipping = async (shippingData) => {

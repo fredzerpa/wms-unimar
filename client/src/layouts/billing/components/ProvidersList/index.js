@@ -19,6 +19,7 @@ import MDBox from "components/MDBox";
 import DebouncedInput from "components/DebouncedInput";
 import MDButton from "components/MDButton";
 import ProviderModalForm from "components/Modals/ProviderForm";
+import { useAuth } from "context/auth.context";
 
 
 const AddProviderButton = ({ createProvider }) => {
@@ -99,6 +100,7 @@ const Provider = ({ providerData, ...props }) => {
 }
 
 const ProvidersList = () => {
+  const { user: userSession } = useAuth();
   const { providers, createProvider, updateProviderById, deleteProviderById } = useProviders();
   const [list, setList] = useState([]);
   const [editProvider, setEditProvider] = useState(null);
@@ -147,7 +149,7 @@ const ProvidersList = () => {
           </MDTypography>
         </MDBox>
         <MDBox display="flex" justifyContent="flex-end">
-          <AddProviderButton createProvider={createProvider} />
+          {userSession?.privileges?.billing?.upsert && <AddProviderButton createProvider={createProvider} />}
         </MDBox>
         <Divider />
         <SimpleBar

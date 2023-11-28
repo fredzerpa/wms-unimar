@@ -62,6 +62,7 @@ const InventoryRecordModalForm = ({ recordData, open, close, onSubmit, onDelete 
 
   const isEditingProduct = useMemo(() => !lodash.isEmpty(recordData), [recordData]);
 
+
   const watchTypeSelection = watch("product.type.value");
   const watchObservations = watch("observations");
 
@@ -189,7 +190,7 @@ const InventoryRecordModalForm = ({ recordData, open, close, onSubmit, onDelete 
                             },
                           }}
                           sx={{ width: "100%" }}
-                          readOnly={!userSession?.privileges?.inventory?.upsert}
+                          readOnly={true}
                         />
                       )}
                       rules={{
@@ -224,10 +225,12 @@ const InventoryRecordModalForm = ({ recordData, open, close, onSubmit, onDelete 
                           loading={loadingProducts}
                           options={products.map(product => product.name)}
                           getOptionLabel={(option) => option ?? ""}
+                          readOnly
                           noOptionsText="No hay productos registrados"
                           onChange={(e, productName) => {
                             const selectedProduct = products.find(product => product.name === productName);
                             setValue("product.code", selectedProduct.code);
+                            setValue("product.slot", selectedProduct.slot);
 
                             return field.onChange(selectedProduct.name);
                           }}
@@ -237,7 +240,6 @@ const InventoryRecordModalForm = ({ recordData, open, close, onSubmit, onDelete 
                               {...params}
                               placeholder="Ej: Gris Claro"
                               error={!!errors?.product?.name}
-                              readOnly={!userSession?.privileges?.inventory?.upsert}
                               InputProps={{
                                 ...params.InputProps,
                                 endAdornment: null,
@@ -294,7 +296,7 @@ const InventoryRecordModalForm = ({ recordData, open, close, onSubmit, onDelete 
                           {...field}
                           error={!!errors?.product?.type}
                           fullWidth
-                          readOnly={!userSession?.privileges?.inventory?.upsert}
+                          readOnly={true}
                         >
                           <MenuItem value="architectural" sx={{ my: 0.5 }}>Arquitectonico</MenuItem>
                           <MenuItem value="enamel" sx={{ my: 0.5 }}>Esmalte</MenuItem>
@@ -329,7 +331,7 @@ const InventoryRecordModalForm = ({ recordData, open, close, onSubmit, onDelete 
                           value={value ?? ""}
                           error={!!errors?.product?.typeClass}
                           fullWidth
-                          readOnly={!userSession?.privileges?.inventory?.upsert}
+                          readOnly={true}
                           disabled={!watchTypeSelection || watchTypeSelection === "industrialAndMarine"}
                           onClickCapture={(event) => {
                             if (!watchTypeSelection) {

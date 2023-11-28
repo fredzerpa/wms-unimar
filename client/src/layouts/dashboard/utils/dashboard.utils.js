@@ -69,7 +69,6 @@ export const getLastSixMonthsShippings = shippings => {
 }
 
 export const getInventoryGroupedByClass = inventory => {
-  console.log(inventory)
   return inventory.reduce((groups, { product }) => {
     if (!product.typeClass) return groups;
 

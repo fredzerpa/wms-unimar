@@ -4,6 +4,7 @@ const inventorySchema = new mongoose.Schema({
   product: {
     _id: {
       type: mongoose.Schema.Types.ObjectId,
+      ref: 'Product',
       required: true,
     },
     name: {
@@ -35,8 +36,14 @@ const inventorySchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  billRefId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Bill',
+    required: true,
+  },
   shipped: {
     type: [mongoose.Schema.Types.ObjectId],
+    ref: 'Shipping',
     required: false,
     default: [],
   },

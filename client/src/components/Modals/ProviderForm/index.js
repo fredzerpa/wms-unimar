@@ -221,7 +221,7 @@ const ProviderModalForm = ({ providerData, open, close, onSubmit, onDelete }) =>
                 <MDBox mt={3} mb={1} display="flex" justifyContent="flex-between" width="100%">
                   <MDBox width="100%">
                     {
-                      isEditingProduct && userSession?.privileges?.shippings?.delete &&
+                      isEditingProduct && userSession?.privileges?.billing?.delete &&
                       (
                         <MDButton loading={isSubmitting} color="error" variant="gradient" onClick={handleProductDelete}>
                           <Lock sx={{ mr: 1 }} />
@@ -232,7 +232,14 @@ const ProviderModalForm = ({ providerData, open, close, onSubmit, onDelete }) =>
                   </MDBox>
                   <MDBox display="flex" justifyContent="flex-end" gap={3} width="100%">
                     <MDButton color="dark" variant="text" onClick={close} sx={{ alignSelf: "center" }}>Cancelar</MDButton>
-                    <MDButton loading={isSubmitting} disabled={!isDirty} color="info" variant="gradient" type="submit">Guardar</MDButton>
+                    {
+                      isEditingProduct && userSession?.privileges?.billing?.upsert &&
+                      (
+                        <MDButton loading={isSubmitting} disabled={!isDirty} color="info" variant="gradient" type="submit">
+                          Guardar
+                        </MDButton>
+                      )
+                    }
                   </MDBox>
                 </MDBox>
 

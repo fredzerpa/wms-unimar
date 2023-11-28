@@ -6,6 +6,7 @@ import DataTable from "components/Tables/DataTable";
 
 // Context
 import { useInventory } from "context/inventory.context";
+import { useBills } from "context/bills.context";
 
 // Utils
 import { formatInventoryEntryData } from "./utils/functions.utils";
@@ -19,6 +20,7 @@ const InventoryDataTable = ({ ...rest }) => {
     deleteInventoryRecordById,
     updateInventoryRecordById,
   } = useInventory();
+  const { loadBills } = useBills();
 
   const [selectedProduct, setSelectedItem] = useState(null);
   const closeInventoryRecordModalForm = e => setSelectedItem(null);
@@ -153,12 +155,13 @@ const InventoryDataTable = ({ ...rest }) => {
   }
 
   const handleUpdateInventoryRecord = async updatedRecord => {
-    const { _id, ...updatedData } = updatedRecord;
-    return await updateInventoryRecordById(_id, updatedData)
+    await updateInventoryRecordById(updatedRecord._id, updatedRecord);
+    await loadBills();
   }
 
   const handleDeleteInventoryRecord = async record => {
-    return await deleteInventoryRecordById(record._id);
+    await deleteInventoryRecordById(record._id);
+    await loadBills();
   }
 
   return (

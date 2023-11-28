@@ -16,10 +16,12 @@ import DebouncedInput from "components/DebouncedInput";
 
 // Context
 import { useShippings } from "context/shippings.context";
+import { useInventory } from "context/inventory.context";
 
 
 const ShippingsHistory = () => {
-  const { shippings, updateShippingById, deleteShippingById } = useShippings();
+  const { shippings, createShipping, updateShippingById, deleteShippingById } = useShippings();
+  const { loadInventory } = useInventory();
   const [filteredShippings, setFilteredShippings] = useState([]);
   const [editShipping, setEditShipping] = useState(null);
 
@@ -31,9 +33,18 @@ const ShippingsHistory = () => {
   }, [shippings])
 
   const handleEditShipping = shippingData => setEditShipping(shippingData);
-  const handleUpdateShipping = async shippingData => updateShippingById(shippingData._id, shippingData);
-  // const handleUpdateShipping = async shippingData => console.log(shippingData);
-  const handleDeleteShipping = async shippingData => deleteShippingById(shippingData._id);
+  const handleCreateShipping = async shippingData => {
+    await createShipping(shippingData);
+    await loadInventory();
+  }
+  const handleUpdateShipping = async shippingData => {
+    await updateShippingById(shippingData._id, shippingData);
+    await loadInventory();
+  }
+  const handleDeleteShipping = async shippingData => {
+    await deleteShippingById(shippingData._id);
+    await loadInventory();
+  }
 
   const handleSearch = useCallback(search => {
     const filteredData = shippings.filter(shippingData => {
@@ -78,7 +89,7 @@ const ShippingsHistory = () => {
               />
             </MDBox>
             <MDBox>
-              <AddShippingButton />
+              <AddShippingButton createShipping={handleCreateShipping} />
             </MDBox>
           </MDBox>
         </MDBox>
@@ -93,7 +104,7 @@ const ShippingsHistory = () => {
               {
                 sortShippings(filteredShippings).map((data, idx, arr) => (
                   <ShippingDetails
-                    key={data._id}
+                    key={data.code}
                     title={`Orden #${data.code}`}
                     shippingData={data}
                     onEdit={e => handleEditShipping(data)}
@@ -113,6 +124,7 @@ const ShippingsHistory = () => {
             open={!!editShipping}
             close={closeEditShipping}
             onSubmit={handleUpdateShipping}
+            onDelete={handleDeleteShipping}
           />
         )
       }
