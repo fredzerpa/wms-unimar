@@ -47,7 +47,7 @@ const BillingHistory = () => {
     const filteredData = bills.filter(billData => {
       const { provider, date, products } = billData
 
-      const detailedData = [provider.name, date, ...products.flatMap(({ code, name }) => [code, name])];
+      const detailedData = [billData.code, provider.name, date, ...products.flatMap(({ code, name }) => [code, name])];
       const regex = new RegExp(search, "gi");
       return detailedData.filter(data => regex.test(data)).length
     })
@@ -86,9 +86,13 @@ const BillingHistory = () => {
                 onChange={handleSearch}
               />
             </MDBox>
-            <MDBox>
-              <AddBillButton createBill={handleCreateBill} />
-            </MDBox>
+            {
+              userSession?.privileges?.billing?.upsert && (
+                <MDBox>
+                  <AddBillButton createBill={handleCreateBill} />
+                </MDBox>
+              )
+            }
           </MDBox>
         </MDBox>
         <SimpleBar style={{ maxHeight: "600px" }}>
@@ -106,7 +110,7 @@ const BillingHistory = () => {
                     title={`#${bill.code}`}
                     billData={bill}
                     onEdit={handleEditBill}
-                    onDelete={userSession?.privileges?.billing?.delete ? handleDeleteBill : null}                    
+                    onDelete={userSession?.privileges?.billing?.delete ? handleDeleteBill : null}
                     readOnly={!userSession?.privileges?.billing?.upsert}
                     noGutter={arr.length === (idx + 1)}
                   />

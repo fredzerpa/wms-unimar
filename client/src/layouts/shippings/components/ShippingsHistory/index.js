@@ -90,9 +90,13 @@ const ShippingsHistory = () => {
                 onChange={handleSearch}
               />
             </MDBox>
-            <MDBox>
-              <AddShippingButton createShipping={handleCreateShipping} />
-            </MDBox>
+            {
+              userSession?.privileges?.shippings?.upsert && (
+                <MDBox>
+                  <AddShippingButton createShipping={handleCreateShipping} />
+                </MDBox>
+              )
+            }
           </MDBox>
         </MDBox>
         <SimpleBar style={{ maxHeight: "600px" }}>

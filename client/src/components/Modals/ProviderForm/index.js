@@ -205,10 +205,10 @@ const ProviderModalForm = ({ providerData, open, close, onSubmit, onDelete }) =>
                           selectValue={documentIdType}
                           onSelectChange={value => setValue("documentId.type", value)}
                           selectProps={{
-                            readOnly: true,
+                            readOnly: !userSession?.privileges?.billing?.upsert,
                           }}
                           inputProps={{
-                            readOnly: userSession?.privileges?.billing?.upsert
+                            readOnly: !userSession?.privileges?.billing?.upsert
                           }}
                         />
                       )}
