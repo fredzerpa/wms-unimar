@@ -20,6 +20,7 @@ root.render(
         maxSnack={3}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
         disableWindowBlurListener
+        dense
         style={{
           width: "350px",
           height: "80px",

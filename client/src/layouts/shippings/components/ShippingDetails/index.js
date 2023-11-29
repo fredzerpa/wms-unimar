@@ -164,6 +164,14 @@ const ShippingDetails = ({ title, shippingData, noGutter, onEdit, onDelete, read
                             Cantidad
                           </MDTypography>
                         </TableCell>
+
+                        {/* TODO: add */}
+                        {/* Inventory Code */}
+                        {/* <TableCell align="center" width="10%">
+                          <MDTypography variant="button" fontWeight="medium">
+                            # Inventario
+                          </MDTypography>
+                        </TableCell> */}
                       </TableRow>
                     </TableHead>
                     <TableBody>
@@ -214,6 +222,14 @@ const ShippingDetails = ({ title, shippingData, noGutter, onEdit, onDelete, read
                                 {product?.quantity}
                               </MDTypography>
                             </TableCell>
+
+                            {/* TODO: add */}
+                            {/* Quantity */}
+                            {/* <TableCell align="center">
+                              <MDTypography variant="caption">
+                                {product?.inventoryRef?.code}
+                              </MDTypography>
+                            </TableCell> */}
                           </TableRow>
                         ))
                       }

@@ -63,16 +63,20 @@ const Product = ({ productData, onDataChange, onProductRemove, errors, readOnly 
       mb={2}
       sx={{ position: "relative" }}
     >
-      <MDButton
-        iconOnly
-        size="small"
-        circular
-        color="primary"
-        sx={{ position: "absolute", top: -12, right: -10 }}
-        onClick={e => onProductRemove(productData)}
-      >
-        <Close />
-      </MDButton>
+      {
+        !readOnly && (
+          <MDButton
+            iconOnly
+            size="small"
+            circular
+            color="primary"
+            sx={{ position: "absolute", top: -12, right: -10 }}
+            onClick={e => onProductRemove(productData)}
+          >
+            <Close />
+          </MDButton>
+        )
+      }
       <MDBox display="flex" justifyContent="space-between" alignItems="center" mb={1}>
         <MDBox>
           <MDTypography variant="button" fontWeight="bold" >

@@ -1,0 +1,1 @@
+Los archivos guardados en esta carpeta son archivos temporales para uso exclusivo de un DUMP o RESTORE API.

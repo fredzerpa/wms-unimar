@@ -146,6 +146,18 @@ const InventoryDataTable = ({ ...rest }) => {
         align: "center",
       },
     },
+    {
+      accessorKey: "billRef.code",
+      header: "# Factura",
+      Header: formatColumnHeader,
+      Cell: formatColumnCell,
+      muiTableHeadCellProps: {
+        align: "center",
+      },
+      muiTableBodyCellProps: {
+        align: "center",
+      },
+    },
 
   ], []);
 

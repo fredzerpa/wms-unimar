@@ -50,28 +50,28 @@ const httpCreateUser = async (req, res) => {
 
   try {
     // TODO: add image creation
-    // if (imageFile) {
-    //   const imageExt = imageFile.name.split('.').at(-1);
-    //   const imageName = `${randomUUID()}.${imageExt}`;
+    if (imageFile) {
+      const imageExt = imageFile.name.split('.').at(-1);
+      const imageName = `${randomUUID()}.${imageExt}`;
 
-    //   const uploadUserImage = await uploadFileToBucket({
-    //     filePath: imageFile.data,
-    //     keyName: imageName,
-    //     bucketName: 'elangel-datahub-images',
-    //   }, {
-    //     ContentEncoding: imageFile.encoding,
-    //     ContentType: imageFile.mimetype
-    //   })
+      const uploadUserImage = await uploadFileToBucket({
+        filePath: imageFile.data,
+        keyName: imageName,
+        bucketName: 'elangel-datahub-images',
+      }, {
+        ContentEncoding: imageFile.encoding,
+        ContentType: imageFile.mimetype
+      })
 
-    //   if (!uploadUserImage.ok) {
-    //     return res.status().json({
-    //       error: '',
-    //       message: uploadUserImage.error,
-    //     })
-    //   }
+      if (!uploadUserImage.ok) {
+        return res.status().json({
+          error: '',
+          message: uploadUserImage.error,
+        })
+      }
 
-    //   userData.imageUrl = `https://elangel-datahub-images.s3.amazonaws.com/${imageName}`
-    // }
+      userData.imageUrl = `https://elangel-datahub-images.s3.amazonaws.com/${imageName}`
+    }
     const userCreated = await createUser(userData);
     return res.status(201).json(userCreated);
   } catch (error) {
@@ -117,36 +117,36 @@ const httpUpdateUserByEmail = async (req, res) => {
   try {
     // TODO: update image url
     // Si se envio una imagen nueva entonces se guarda la imagen en AWS y se registra su URL
-    // if (imageFile) {
-    //   const imageExt = imageFile.name.split('.').at(-1);
-    //   const imageName = `${randomUUID()}.${imageExt}`;
+    if (imageFile) {
+      const imageExt = imageFile.name.split('.').at(-1);
+      const imageName = `${randomUUID()}.${imageExt}`;
 
-    //   const uploadUserImage = await uploadFileToBucket({
-    //     filePath: imageFile.data,
-    //     keyName: imageName,
-    //     bucketName: 'elangel-datahub-images',
-    //   }, {
-    //     ContentEncoding: imageFile.encoding,
-    //     ContentType: imageFile.mimetype
-    //   })
+      const uploadUserImage = await uploadFileToBucket({
+        filePath: imageFile.data,
+        keyName: imageName,
+        bucketName: 'elangel-datahub-images',
+      }, {
+        ContentEncoding: imageFile.encoding,
+        ContentType: imageFile.mimetype
+      })
 
-    //   if (!uploadUserImage.ok) throw new Error(uploadUserImage.error);
+      if (!uploadUserImage.ok) throw new Error(uploadUserImage.error);
 
-    //   updateData.imageUrl = `https://elangel-datahub-images.s3.amazonaws.com/${imageName}`
-    // }
+      updateData.imageUrl = `https://elangel-datahub-images.s3.amazonaws.com/${imageName}`
+    }
 
-    // // Eliminamos la imagen de AWS S3 si fue eliminada por el cliente
-    // const userToUpdate = await getUserByEmail(email);
-    // if (userToUpdate?.imageUrl?.includes('elangel-datahub-images') && updateData.imageUrl === "") { // * En events se actualiza solamente los privilegios por lo que se usa ===
-    //   await deleteFileFromBucket({
-    //     keyName: userToUpdate.imageUrl.split('/').at(-1),
-    //     bucketName: 'elangel-datahub-images',
-    //   });
-    // }
+    // Eliminamos la imagen de AWS S3 si fue eliminada por el cliente
+    const userToUpdate = await getUserByEmail(email);
+    if (userToUpdate?.imageUrl?.includes('elangel-datahub-images') && updateData.imageUrl === "") { // * En events se actualiza solamente los privilegios por lo que se usa ===
+      await deleteFileFromBucket({
+        keyName: userToUpdate.imageUrl.split('/').at(-1),
+        bucketName: 'elangel-datahub-images',
+      });
+    }
 
     if (updateData?.password) updateData.password = await encrypt(updateData.password);
     else delete updateData.password; // Si no hemos enviado una contraseña entonces la eliminamos
-    
+
     const userUpdated = await updateUserByEmail(email, updateData);
 
     return res.status(200).json(userUpdated);
@@ -171,31 +171,31 @@ const httpUpdateSelfUser = async (req, res) => {
 
   try {
     // TODO: add image file
-    // if (imageFile) {
-    //   const imageExt = imageFile.name.split('.').at(-1);
-    //   const imageName = `${randomUUID()}.${imageExt}`;
+    if (imageFile) {
+      const imageExt = imageFile.name.split('.').at(-1);
+      const imageName = `${randomUUID()}.${imageExt}`;
 
-    //   const uploadUserImage = await uploadFileToBucket({
-    //     filePath: imageFile.data,
-    //     keyName: imageName,
-    //     bucketName: 'elangel-datahub-images',
-    //   }, {
-    //     ContentEncoding: imageFile.encoding,
-    //     ContentType: imageFile.mimetype
-    //   })
+      const uploadUserImage = await uploadFileToBucket({
+        filePath: imageFile.data,
+        keyName: imageName,
+        bucketName: 'elangel-datahub-images',
+      }, {
+        ContentEncoding: imageFile.encoding,
+        ContentType: imageFile.mimetype
+      })
 
-    //   if (!uploadUserImage.ok) throw new Error(uploadUserImage.error);
+      if (!uploadUserImage.ok) throw new Error(uploadUserImage.error);
 
-    //   updateData.imageUrl = `https://elangel-datahub-images.s3.amazonaws.com/${imageName}`
-    // }
+      updateData.imageUrl = `https://elangel-datahub-images.s3.amazonaws.com/${imageName}`
+    }
 
-    // // * En la ruta 'events' se actualiza solamente los privilegios por lo que se usa ===
-    // if (userProfile?.imageUrl?.includes('elangel-datahub-images') && updateData.imageUrl === "") {
-    //   await deleteFileFromBucket({
-    //     keyName: userProfile.imageUrl.split('/').at(-1),
-    //     bucketName: 'elangel-datahub-images',
-    //   });
-    // }
+    // * En la ruta 'events' se actualiza solamente los privilegios por lo que se usa ===
+    if (userProfile?.imageUrl?.includes('elangel-datahub-images') && updateData.imageUrl === "") {
+      await deleteFileFromBucket({
+        keyName: userProfile.imageUrl.split('/').at(-1),
+        bucketName: 'elangel-datahub-images',
+      });
+    }
 
     const userUpdated = (await updateUserByEmail(userProfile.email, updateData)).toJSON();
 
@@ -245,13 +245,13 @@ const httpDeleteUserByEmail = async (req, res) => {
     const deletedUser = await deleteUserByEmail(email)
     // TODO: add image delete
     // Si posee una imagen en nuestro AWS la eliminamos
-    // const imageStoredInBucket = deletedUser?.imageUrl?.includes('elangel-datahub-images');
-    // if (imageStoredInBucket) {
-    //   await deleteFileFromBucket({
-    //     keyName: deletedUser.imageUrl.split('/').at(-1),
-    //     bucketName: 'elangel-datahub-images',
-    //   });
-    // }
+    const imageStoredInBucket = deletedUser?.imageUrl?.includes('elangel-datahub-images');
+    if (imageStoredInBucket) {
+      await deleteFileFromBucket({
+        keyName: deletedUser.imageUrl.split('/').at(-1),
+        bucketName: 'elangel-datahub-images',
+      });
+    }
     return res.status(200).json(deletedUser);
   } catch (error) {
     return res.status(502).json({ // Base de datos tiro un error

@@ -1,11 +1,12 @@
 const inventory = require('./inventory.mongo');
 
+
 const getInventoryRecords = async () => {
-  return await inventory.find().populate(['shipped']);
+  return await inventory.find().populate(['billRef', 'shipped']);
 }
 
 const getInventoryRecordById = async (recordId) => {
-  return await inventory.findById(recordId).populate('shipped');
+  return await inventory.findById(recordId).populate(['billRef', 'shipped']);
 }
 
 const createInventoryRecord = async (recordData) => {

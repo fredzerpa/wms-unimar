@@ -40,7 +40,6 @@ const Dashboard = () => {
   const { shippings } = useShippings();
   const { inventory } = useInventory();
 
-
   const dataConfig = useMemo(() => ({
     shippings: {
       currentWeek: getShippingsByWeekNumber(shippings, todayDT.weekNumber),

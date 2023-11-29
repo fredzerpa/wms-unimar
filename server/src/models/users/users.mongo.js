@@ -134,7 +134,6 @@ userSchema.methods.comparePassword = async function (password) {
 userSchema.set('toJSON', {
   transform: function (doc, ret, opt) {
     delete ret.password;
-    delete ret._id;
     delete ret.__v;
   }
 });

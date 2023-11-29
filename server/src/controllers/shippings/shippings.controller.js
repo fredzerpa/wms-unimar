@@ -10,6 +10,7 @@ const {
 } = require('../../models/shippings/shippings.model');
 const { customAlphabet } = require("nanoid");
 const nanoid = customAlphabet("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", 12)
+const { DateTime } = require('luxon');
 
 const httpGetShippings = async (req, res) => {
   const { search } = req.query;
@@ -41,17 +42,23 @@ const httpGetShipping = async (req, res) => {
 }
 
 const httpCreateShipping = async (req, res) => {
+  const { userProfile } = res.locals;
+
   try {
     const shippingData = req.body;
 
     shippingData._id = new mongoose.Types.ObjectId();
     shippingData.code = nanoid();
+    shippingData.metadata = {
+      issuedAt: DateTime.now().setLocale("es-ES").toLocaleString(DateTime.DATETIME_SHORT_WITH_SECONDS),
+      issuedBy: userProfile._id
+    }
 
     const updatedInventoryRecordsForShipping = (await Promise.allSettled(shippingData.products.map(async product => {
-      const { inventoryRefId, quantity } = product;
-      const { onStock } = await getInventoryRecordById(inventoryRefId);
+      const { inventoryRef, quantity } = product;
+      const { onStock } = await getInventoryRecordById(inventoryRef);
       return {
-        _id: inventoryRefId,
+        _id: inventoryRef,
         onStock: onStock - quantity,
         shipped: [shippingData._id],
       }
@@ -76,24 +83,24 @@ const httpUpdateShipping = async (req, res) => {
     const formerShippingData = await getShippingById(shippingId);
 
     const inventoryRecordsIdToCheck = new Set([
-      ...shippingData.products.map(product => product.inventoryRefId),
-      ...formerShippingData.products.map(product => product.inventoryRefId.toString()),
+      ...shippingData.products.map(product => product.inventoryRef),
+      ...formerShippingData.products.map(product => product.inventoryRef.toString()),
     ]);
 
     // Update Shipping products in the Inventory
     const inventoryRecordsForUpdate = await shippingData.products.reduce(async (recordForUpdate, product, idx, arr) => {
-      const { inventoryRefId, quantity } = product;
-      const formerInventoryRecordData = await getInventoryRecordById(inventoryRefId);
-      const formerProductShippedQuantity = formerShippingData?.products.find(shippedProduct => shippedProduct.inventoryRefId.toString() === product.inventoryRefId)?.quantity ?? 0;
+      const { inventoryRef, quantity } = product;
+      const formerInventoryRecordData = await getInventoryRecordById(inventoryRef);
+      const formerProductShippedQuantity = formerShippingData?.products.find(shippedProduct => shippedProduct.inventoryRef.toString() === product.inventoryRef)?.quantity ?? 0;
 
       // This way we can check for any missing Inventory Record left out
-      inventoryRecordsIdToCheck.delete(inventoryRefId);
+      inventoryRecordsIdToCheck.delete(inventoryRef);
 
 
       const update = [...await recordForUpdate];
       const recordShippingsIds = [...new Set([...formerInventoryRecordData?.shipped?.map(({ _id }) => _id.toString()), shippingId])]
       update.push({
-        _id: inventoryRefId,
+        _id: inventoryRef,
         onStock: formerProductShippedQuantity + formerInventoryRecordData.onStock - quantity,
         shipped: recordShippingsIds,
       })
@@ -102,7 +109,7 @@ const httpUpdateShipping = async (req, res) => {
       if (idx + 1 === arr.length && inventoryRecordsIdToCheck.size > 0) {
         const updateForDeletedShippingsProducts = (await Promise.allSettled([...inventoryRecordsIdToCheck].map(async inventoryId => {
           const deletedShippedProductData = formerShippingData.products.find(shippedProduct => (
-            inventoryId === shippedProduct.inventoryRefId.toString()
+            inventoryId === shippedProduct.inventoryRef.toString()
           ));
 
           const formerInventoryRecordData = await getInventoryRecordById(inventoryId);
@@ -141,11 +148,11 @@ const httpDeleteShipping = async (req, res) => {
 
     // Get inventory records with data updated from the deletion of the Shipping
     const inventoryRecordsUpdated = (await Promise.allSettled(formerShippingData.products.map(async product => {
-      const { inventoryRefId, quantity } = product;
-      const formerInventoryRecordData = await getInventoryRecordById(inventoryRefId);
+      const { inventoryRef, quantity } = product;
+      const formerInventoryRecordData = await getInventoryRecordById(inventoryRef);
 
       return {
-        _id: inventoryRefId,
+        _id: inventoryRef,
         onStock: formerInventoryRecordData.onStock + quantity,
         shipped: formerInventoryRecordData.shipped?.filter(shipping => shipping._id.toString() !== shippingId)
       }

@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const inventorySchema = new mongoose.Schema({
+  code: {
+    type: String,
+    unique: true,
+    required: false,
+  },
   product: {
     _id: {
       type: mongoose.Schema.Types.ObjectId,
@@ -36,7 +41,7 @@ const inventorySchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  billRefId: {
+  billRef: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Bill',
     required: true,

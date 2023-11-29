@@ -10,6 +10,7 @@ const {
 const { createInventoryRecord, deleteInventoryRecordsByFilter, upsertInventoryRecordsByFields } = require('../../models/inventory/inventory.model');
 const { customAlphabet } = require("nanoid");
 const nanoid = customAlphabet("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", 12)
+const { DateTime } = require('luxon');
 
 const httpGetBills = async (req, res) => {
   const { search } = req.query;
@@ -41,10 +42,16 @@ const httpGetBill = async (req, res) => {
 }
 
 const httpCreateBill = async (req, res) => {
+  const { userProfile } = res.locals;
   const billData = req.body;
+
 
   billData._id = new mongoose.Types.ObjectId();
   billData.code = nanoid();
+  billData.metadata = {
+    issuedAt: DateTime.now().setLocale("es-ES").toLocaleString(DateTime.DATETIME_SHORT_WITH_SECONDS),
+    issuedBy: userProfile._id
+  }
 
   const inventoryRecordsToCreate = billData.products.map(product => {
     const { quantity, expirationDate, discount, subtotal, unitCost, ...rest } = product;
@@ -53,20 +60,18 @@ const httpCreateBill = async (req, res) => {
       onStock: quantity,
       entryDate: billData.date,
       expirationDate,
-      billRefId: billData._id,
+      billRef: billData._id,
     }
   })
 
   const createdInventoryRecords = await createInventoryRecord(inventoryRecordsToCreate);
 
   billData.products = billData.products.map(product => {
-    const createdRecord = createdInventoryRecords.find(record => (
-      record?.product.name + record?.product.type + record?.product?.typeClass === product.name + product.type + product?.typeClass
-    ));
+    const createdRecord = createdInventoryRecords.find(record => record?.product?._id?.toString() === product?._id);
 
     return {
       ...product,
-      inventoryRefId: createdRecord._id,
+      inventoryRef: createdRecord._id,
     }
   })
 
@@ -89,14 +94,14 @@ const httpUpdateBill = async (req, res) => {
 
     // Update Bill products in the Inventory
     const inventoryRecordsForUpdate = billData.products.map(product => {
-      const { inventoryRefId, quantity, expirationDate, discount, subtotal, unitCost, ...rest } = product;
+      const { inventoryRef, quantity, expirationDate, discount, subtotal, unitCost, ...rest } = product;
       return {
-        _id: inventoryRefId,
+        _id: inventoryRef,
         product: rest,
         onStock: quantity,
         entryDate: billData.date,
         expirationDate,
-        billRefId: billData._id,
+        billRef: billData._id,
       }
 
     })
@@ -104,8 +109,8 @@ const httpUpdateBill = async (req, res) => {
     const inventoryRecordsToCreate = inventoryRecordsForUpdate.filter(record => !record._id);
     const inventoryRecordsToUpdate = inventoryRecordsForUpdate.filter(record => !!record._id);
     const inventoryRecordsIdsToDelete = formerBillData?.products.reduce((ids, product) => {
-      const productExists = !!inventoryRecordsForUpdate.find(record => record._id === product.inventoryRefId.toString())
-      return productExists ? ids : [...ids, product.inventoryRefId.toString()];
+      const productExists = !!inventoryRecordsForUpdate.find(record => record._id === product.inventoryRef.toString())
+      return productExists ? ids : [...ids, product.inventoryRef.toString()];
     }, [])
 
     // Create Records
@@ -114,7 +119,7 @@ const httpUpdateBill = async (req, res) => {
     const deletedInventoryRecords = await deleteInventoryRecordsByFilter({ _id: inventoryRecordsIdsToDelete });
 
     billData.products = billData.products.map(product => {
-      if (!!product.inventoryRefId) return product;
+      if (!!product.inventoryRef) return product;
 
       const createdRecord = createdInventoryRecords.find(record => (
         record?.product.name + record?.product.type + record?.product?.typeClass === product.name + product.type + product?.typeClass
@@ -122,7 +127,7 @@ const httpUpdateBill = async (req, res) => {
 
       return {
         ...product,
-        inventoryRefId: createdRecord._id,
+        inventoryRef: createdRecord._id,
       }
     })
 
@@ -145,7 +150,7 @@ const httpDeleteBill = async (req, res) => {
     // Update Bill products in the Inventory
     const filter = billData.products.reduce((filter, product) => {
       return {
-        _id: [...filter._id, product.inventoryRefId],
+        _id: [...filter._id, product.inventoryRef],
       };
     }, { _id: [] })
 

@@ -61,6 +61,17 @@ const Provider = ({ providerData, ...props }) => {
   const [controller] = useMaterialUIController();
   const { darkMode } = controller;
 
+  const { name, phone, documentId } = providerData;
+  const { type, number } = documentId;
+  const formatRIFNumber = number => {
+    const splittedNumber = number.split("");
+    const lastRIFDigit = splittedNumber.pop();
+
+    const formattedNumber = splittedNumber.join("") + "-" + lastRIFDigit;
+
+    return formattedNumber;
+  }
+
   return (
     <Grid
       container
@@ -80,19 +91,19 @@ const Provider = ({ providerData, ...props }) => {
       <Grid xs={6}>
         <MDTypography variant="caption">Nombre</MDTypography>
         <MDTypography variant="button" fontWeight="bold" component="p">
-          {providerData.name}
+          {name}
         </MDTypography>
       </Grid>
       <Grid xs={6}>
         <MDTypography variant="caption">Telefono</MDTypography>
         <MDTypography variant="button" fontWeight="bold" component="p">
-          {providerData.phone}
+          {phone}
         </MDTypography>
       </Grid>
       <Grid xs={12}>
-        <MDTypography variant="caption">{providerData.documentId.type}</MDTypography>
+        <MDTypography variant="caption">{type}</MDTypography>
         <MDTypography variant="button" fontWeight="bold" component="p">
-          {providerData.documentId.type === "RIF" && "J-"}{providerData.documentId.number}
+          {type === "RIF" && "J-"}{type === "RIF" ? formatRIFNumber(number) : number}
         </MDTypography>
       </Grid>
     </Grid >

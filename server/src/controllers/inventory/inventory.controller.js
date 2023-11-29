@@ -8,6 +8,7 @@ const {
   upsertInventoryRecords,
 } = require('../../models/inventory/inventory.model');
 
+
 const httpGetInventoryRecords = async (req, res) => {
   const { search } = req.query;
 
@@ -39,7 +40,7 @@ const httpGetInventoryRecord = async (req, res) => {
 
 const httpCreateInventoryRecord = async (req, res) => {
   const recordData = req.body;
-
+  
   try {
     return res.status(201).json(await createInventoryRecord(recordData));
   } catch (error) {
@@ -55,9 +56,9 @@ const httpUpdateInventoryRecord = async (req, res) => {
   const recordData = req.body;
 
   try {
-    const billToUpdate = (await getBillById(recordData.billRefId))?.toObject();
+    const billToUpdate = (await getBillById(recordData.billRef._id))?.toObject();
     const updatedBillProducts = billToUpdate?.products.map(product => {
-      if (product.inventoryRefId.toString() !== recordData._id) return product;
+      if (product.inventoryRef.toString() !== recordData._id) return product;
       const { expirationDate, onStock, product: recordProduct } = recordData;
       const { size } = recordProduct;
 
@@ -87,7 +88,7 @@ const httpUpdateInventoryRecord = async (req, res) => {
     }, { usd: 0, bs: 0 });
 
 
-    await updateBillById(recordData.billRefId, { products: updatedBillProducts, total: billTotal });
+    await updateBillById(recordData.billRef._id, { products: updatedBillProducts, total: billTotal });
 
     return res.status(200).json(await updateInventoryRecordById(recordId, recordData));
   } catch (error) {
@@ -103,8 +104,8 @@ const httpDeleteInventoryRecord = async (req, res) => {
 
   try {
     const recordToDelete = await getInventoryRecordById(recordId);
-    const billToUpdate = (await getBillById(recordToDelete.billRefId))?.toObject();
-    const updatedBillProducts = billToUpdate?.products.filter(product => product.inventoryRefId.toString() !== recordId);
+    const billToUpdate = (await getBillById(recordToDelete.billRef._id))?.toObject();
+    const updatedBillProducts = billToUpdate?.products.filter(product => product.inventoryRef.toString() !== recordId);
     const billTotal = updatedBillProducts?.reduce((total, product) => {
       return {
         usd: total.usd + product.subtotal.usd,
@@ -113,7 +114,7 @@ const httpDeleteInventoryRecord = async (req, res) => {
     }, { usd: 0, bs: 0 });
 
 
-    await updateBillById(recordToDelete.billRefId, { products: updatedBillProducts, total: billTotal });
+    await updateBillById(recordToDelete.billRef._id, { products: updatedBillProducts, total: billTotal });
 
     return res.status(200).json(await deleteInventoryRecordById(recordId));
   } catch (error) {

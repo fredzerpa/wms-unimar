@@ -72,7 +72,6 @@ const BillModalForm = ({ billData, open, close, onSubmit, onDelete }) => {
   const isEditingBill = !lodash.isEmpty(billData);
 
   const onFormSubmit = async data => {
-    console.log(formatOnSubmitBillForm(data))
     try {
       const response = await onSubmit(formatOnSubmitBillForm(data));
       const submitMessage = isEditingBill ? "Se ha actualizado la factura exitosamente" : "Se creado la factura exitosamente"

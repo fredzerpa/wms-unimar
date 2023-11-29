@@ -40,12 +40,27 @@ const SignIn = () => {
   const onSubmit = async ({ email, password, rememberMe }) => {
     try {
       const { data } = await AuthApi.loginWithEmailAndPassword({ email, password, session: rememberMe })
-      if (data.status >= 400) return enqueueSnackbar(data.message, { variant: "error" });
+      if (data.status >= 400) return enqueueSnackbar(data.message, {
+        variant: "error",
+        anchorOrigin: {
+          horizontal: "center", vertical: "top"
+        },
+        style: {
+          fontSize: "1.15rem"
+        }
+      });
       setUser(data);
       return navigate("/dashboard");
     } catch (err) {
-      if (err.response) return enqueueSnackbar(err.response.data.message, { variant: "error" });
-      return enqueueSnackbar("Ha ocurrido un error", { variant: "error" });
+      return enqueueSnackbar(err?.response?.data?.message ?? "Ha ocurrido un error", {
+        variant: "error",
+        anchorOrigin: {
+          horizontal: "center", vertical: "top"
+        },
+        style: {
+          fontSize: "1.15rem"
+        }
+      });
     }
   };
 
@@ -62,7 +77,7 @@ const SignIn = () => {
 
   return (
     <BasicLayout image={bgImage}>
-      <MDBox maxWidth={500}>
+      <MDBox maxWidth={500} mx="auto">
         <MDBox
           display="flex"
           justifyContent="center"

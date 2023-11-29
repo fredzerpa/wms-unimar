@@ -7,7 +7,7 @@ const shippingSchema = new mongoose.Schema({
     unique: true,
   },
   products: [{
-    inventoryRefId: {
+    inventoryRef: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Inventory',
       required: false,
@@ -53,6 +53,17 @@ const shippingSchema = new mongoose.Schema({
   date: {
     type: String,
     required: true,
+  },
+  metadata: {
+    issuedAt: {
+      type: String,
+      required: false,
+    },
+    issuedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: false,
+    },
   },
 });
 

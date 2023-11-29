@@ -120,7 +120,7 @@ const UserFormModal = ({ title = "", open, close, user, onSubmit }) => {
   const { user: userSession } = useAuth();
   const [visiblePassword, setVisiblePassword] = useState(false);
   const [expandAdvancedFeatures, setExpandAdvancedFeatures] = useState(false);
-  const { register, setValue, getValues, control, handleSubmit, reset, formState: { errors, isSubmitting, isDirty } } = useForm({
+  const { register, setValue, getValues, control, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm({
     defaultValues: lodash.defaultsDeep(
       { ...user, privileges: formatPrivilegesToModalSchema(user?.privileges || {}) },
       DEFAULT_VALUES
@@ -526,7 +526,7 @@ const UserFormModal = ({ title = "", open, close, user, onSubmit }) => {
               }
               <MDBox mb={2} display="flex" justifyContent="flex-end" gap={3}>
                 <MDButton color="dark" variant="text" onClick={close} sx={{ alignSelf: "center" }}>Cancelar</MDButton>
-                <MDButton loading={isSubmitting} disabled={!isDirty} color="info" variant="gradient" type="submit">Guardar</MDButton>
+                <MDButton loading={isSubmitting} color="info" variant="gradient" type="submit">Guardar</MDButton>
               </MDBox>
             </MDBox>
           </MDBox>

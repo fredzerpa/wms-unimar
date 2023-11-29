@@ -124,13 +124,13 @@ export const groupInventoryStockByProduct = inventory => {
   const productsOnStock = inventory.filter(record => record.onStock > 0);
 
   return [...productsOnStock.reduce((groupedProducts, inventoryRecord) => {
-    const { product, onStock: stock, shipped, _id: inventoryRefId, ...rest } = inventoryRecord;
+    const { product, onStock: stock, shipped, _id: inventoryRef, ...rest } = inventoryRecord;
     const { _id: productRefId, name, code, type, typeClass, ...productProps } = addLabelsToProducts(product);
 
     const currentRecordStockData = {
       ...rest,
       ...productProps,
-      inventoryRefId,
+      inventoryRef,
       stock,
     }
 

@@ -15,7 +15,7 @@ const UPLOAD_CONFIG = {
   bucketName: '', // Nombre del S3 Bucket
 }
 
-async function uploadFileToBucket(config = UPLOAD_CONFIG, options = { ContentEncoding: '', ContentType: '', ACL: '' }) {
+const uploadFileToBucket = async (config = UPLOAD_CONFIG, options = { ContentEncoding: '', ContentType: '', ACL: '' }) => {
   const uploadConfig = { ...UPLOAD_CONFIG, ...config };
 
   const command = new PutObjectCommand({
@@ -46,7 +46,7 @@ const DELETE_CONFIG = {
   bucketName: '', // Nombre del S3 Bucket
 }
 
-async function deleteFileFromBucket(config = DELETE_CONFIG) {
+const deleteFileFromBucket = async (config = DELETE_CONFIG) => {
   const deleteConfig = { ...DELETE_CONFIG, ...config };
 
   const command = new DeleteObjectCommand({
