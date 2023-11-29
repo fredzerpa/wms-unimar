@@ -19,7 +19,12 @@ root.render(
       <SnackbarProvider
         maxSnack={3}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-        disableWindowBlurListener={true}
+        disableWindowBlurListener
+        style={{
+          width: "350px",
+          height: "80px",
+          justifyContent: "center"
+        }}
       >
         <App />
       </SnackbarProvider>
