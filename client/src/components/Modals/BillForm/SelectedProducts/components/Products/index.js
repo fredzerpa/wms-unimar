@@ -16,7 +16,10 @@ import ButtonDatePicker from "components/ButtonDatePicker";
 
 
 const INITIAL_ORDER_DETAILS = {
+  _id: null,
   slot: "",
+  type: "",
+  typeClass: "",
   expirationDate: DateTime.now(),
   quantity: 0,
   size: null,
@@ -27,7 +30,8 @@ const INITIAL_ORDER_DETAILS = {
   discount: 0,
 }
 
-const Product = ({ productData, onDataChange, onProductRemove, errors }) => {
+const Product = ({ productData, onDataChange, onProductRemove, errors, readOnly }) => {
+
   const [controller] = useMaterialUIController();
   const { darkMode } = controller;
 
@@ -72,9 +76,7 @@ const Product = ({ productData, onDataChange, onProductRemove, errors }) => {
       <MDBox display="flex" justifyContent="space-between" alignItems="center" mb={1}>
         <MDBox>
           <MDTypography variant="button" fontWeight="bold" >
-            {!!productData?.slot && `[${productData?.slot}] `}
-            {productData?.name} - {productData?.type?.label}
-            {productData?.typeClass ? ` "${productData.typeClass}"` : null}
+            [{productData?.code}] {productData?.name} - {productData?.type?.label} "{productData.typeClass}"
           </MDTypography>
         </MDBox>
         <MDBox display="flex" alignItems="center">
@@ -82,10 +84,29 @@ const Product = ({ productData, onDataChange, onProductRemove, errors }) => {
             label={"Vence el: " + orderDetail?.expirationDate.toFormat("dd/MM/yyyy")}
             value={orderDetail?.expirationDate}
             onChange={(newValue) => setOrderDetail({ ...orderDetail, expirationDate: newValue })}
+            disabled={readOnly}
           />
         </MDBox>
       </MDBox>
-      <Grid container spacing={2}>
+      <Grid container spacing={1}>
+        {/* Slot */}
+        <Grid xsOffset={6} xs={6}>
+          <MDInput
+            label="Lote"
+            placeholder="Lote de producto"
+            fullWidth
+            required
+            value={orderDetail?.slot ?? 0}
+            onChange={e => {
+              const newValue = e.target.value;
+              return setOrderDetail({ ...orderDetail, slot: newValue })
+            }}
+            inputProps={{
+              readOnly,
+            }}
+          />
+        </Grid>
+
         {/* Quantity */}
         <Grid xs={6}>
           <MDInput
@@ -107,6 +128,7 @@ const Product = ({ productData, onDataChange, onProductRemove, errors }) => {
                 return e.target.setCustomValidity("Use numeros unicamente para expresar este valor");
               },
               onInput: e => e.target.setCustomValidity(""),
+              readOnly,
             }}
           />
         </Grid>
@@ -130,6 +152,7 @@ const Product = ({ productData, onDataChange, onProductRemove, errors }) => {
               SelectDisplayProps={{ style: { height: "100%" } }}
               onInvalid={e => e.target.setCustomValidity("Escoja una medida")}
               onSelect={e => e.target.setCustomValidity("")}
+              readOnly={readOnly}
             >
               <MenuItem value="quarterGallon" sx={{ my: 0.5 }}>
                 1&frasl;4 Galon
@@ -149,8 +172,7 @@ const Product = ({ productData, onDataChange, onProductRemove, errors }) => {
             </Select>
           </FormControl>
         </Grid>
-      </Grid>
-      <Grid container spacing={2}>
+
         {/* Discount */}
         <Grid xs={6}>
           <MDInput
@@ -168,6 +190,7 @@ const Product = ({ productData, onDataChange, onProductRemove, errors }) => {
               pattern: "[0-9]*",
               onInvalid: e => e.target.setCustomValidity("Use numeros unicamente para expresar este valor"),
               onInput: e => e.target.setCustomValidity(""),
+              readOnly,
             }}
             InputProps={{
               startAdornment: <MDTypography variant="caption">%</MDTypography>,
@@ -192,6 +215,7 @@ const Product = ({ productData, onDataChange, onProductRemove, errors }) => {
               pattern: "[0-9]*",
               onInvalid: e => e.target.setCustomValidity("Use numeros unicamente para expresar este valor"),
               onInput: e => e.target.setCustomValidity(""),
+              readOnly,
             }}
             InputProps={{
               startAdornment: <MDTypography variant="caption">$</MDTypography>,

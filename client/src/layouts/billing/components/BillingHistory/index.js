@@ -17,8 +17,11 @@ import DebouncedInput from "components/DebouncedInput";
 // Context
 import { useBills } from "context/bills.context";
 import { useInventory } from "context/inventory.context";
+import { useAuth } from "context/auth.context";
 
 const BillingHistory = () => {
+  const { user: userSession } = useAuth();
+
   const { bills, createBill, updateBillById, deleteBillById } = useBills();
   const { loadInventory } = useInventory();
   const [search, setSearch] = useState(bills);
@@ -26,10 +29,7 @@ const BillingHistory = () => {
 
   const closeEditBill = () => setEditBill(null);
 
-  const handleEditBill = billData => {
-    setEditBill(billData);
-  }
-
+  const handleEditBill = billData => setEditBill(billData);
   const handleCreateBill = async billData => {
     await createBill(billData);
     await loadInventory();
@@ -100,13 +100,15 @@ const BillingHistory = () => {
             </MDBox>
             <MDBox component="ul" display="flex" flexDirection="column" p={0} m={0}>
               {
-                sortBills(search).map(bill => (
+                sortBills(search).map((bill, idx, arr) => (
                   <BillDetails
                     key={bill._id}
                     title={`#${bill.code}`}
                     billData={bill}
-                    onEdit={e => handleEditBill(bill)}
-                    onDelete={e => handleDeleteBill(bill)}
+                    onEdit={handleEditBill}
+                    onDelete={userSession?.privileges?.billing?.delete ? handleDeleteBill : null}                    
+                    readOnly={!userSession?.privileges?.billing?.upsert}
+                    noGutter={arr.length === (idx + 1)}
                   />
                 ))
               }

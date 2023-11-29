@@ -49,7 +49,7 @@ const StoreModalForm = ({ storeData, open, close, onSubmit, onDelete }) => {
     shouldFocusError: true,
   });
 
-  const isEditingProduct = useMemo(() => !lodash.isEmpty(storeData), [storeData]);
+  const isEditingStore = useMemo(() => !lodash.isEmpty(storeData), [storeData]);
 
   const handleProductDelete = async e => {
     try {
@@ -76,7 +76,7 @@ const StoreModalForm = ({ storeData, open, close, onSubmit, onDelete }) => {
       const formattedData = formatStoreSubmitData(data);
       const response = await onSubmit(formattedData);
 
-      const submitMessage = isEditingProduct ? "Se ha actualizado el producto exitosamente" : "Se creado el producto exitosamente"
+      const submitMessage = isEditingStore ? "Se ha actualizado el producto exitosamente" : "Se creado el producto exitosamente"
       if (!response?.error) enqueueSnackbar(submitMessage, { variant: "success" })
 
       handleClose();
@@ -123,7 +123,11 @@ const StoreModalForm = ({ storeData, open, close, onSubmit, onDelete }) => {
           <LocalizationProvider dateAdapter={AdapterLuxon} adapterLocale="es-es">
             <MDBox p={3}>
               <MDTypography variant="h4" fontWeight="medium" textTransform="capitalize" gutterBottom>
-                {isEditingProduct ? "Editar Tienda" : "Nueva Tienda"}
+                {
+                  userSession?.privileges?.shippings?.upsert ?
+                    isEditingStore ? "Editar" : "Nueva"
+                    : "Detalles de"
+                } Tienda
               </MDTypography>
 
               <MDBox>
@@ -260,7 +264,7 @@ const StoreModalForm = ({ storeData, open, close, onSubmit, onDelete }) => {
                         </Select>
                       )}
                       rules={{
-                        required: "Este campo es requerido"
+                        required: "Este campo es obligatorio"
                       }}
                     />
                     {
@@ -286,7 +290,9 @@ const StoreModalForm = ({ storeData, open, close, onSubmit, onDelete }) => {
                           {...field}
                           fullWidth
                           error={!!errors?.address?.parts?.postalCode}
-                          readOnly={!userSession?.privileges?.shippings?.upsert}
+                          inputProps={{
+                            readOnly: !userSession?.privileges?.shippings?.upsert,
+                          }}
                         />
                       )}
                       rules={{
@@ -312,7 +318,7 @@ const StoreModalForm = ({ storeData, open, close, onSubmit, onDelete }) => {
                 <MDBox mt={3} mb={1} display="flex" justifyContent="flex-between" width="100%">
                   <MDBox width="100%">
                     {
-                      isEditingProduct && userSession?.privileges?.shippings?.delete &&
+                      isEditingStore && userSession?.privileges?.shippings?.delete &&
                       (
                         <MDButton loading={isSubmitting} color="error" variant="gradient" onClick={handleProductDelete}>
                           <Lock sx={{ mr: 1 }} />
@@ -323,7 +329,14 @@ const StoreModalForm = ({ storeData, open, close, onSubmit, onDelete }) => {
                   </MDBox>
                   <MDBox display="flex" justifyContent="flex-end" gap={3} width="100%">
                     <MDButton color="dark" variant="text" onClick={close} sx={{ alignSelf: "center" }}>Cancelar</MDButton>
-                    <MDButton loading={isSubmitting} disabled={!isDirty} color="info" variant="gradient" type="submit">Guardar</MDButton>
+                    {
+                      userSession?.privileges?.shippings?.upsert &&
+                      (
+                        <MDButton loading={isSubmitting} disabled={!isDirty} color="info" variant="gradient" type="submit">
+                          Guardar
+                        </MDButton>
+                      )
+                    }
                   </MDBox>
                 </MDBox>
 

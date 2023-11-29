@@ -1,6 +1,6 @@
 import lodash from "lodash"
 
-export const formatItemEntryData = rawData => {
+export const formatInventoryRecordEntryData = rawData => {
   if (lodash.isEmpty(rawData)) return rawData;
 
   return {

@@ -19,6 +19,7 @@ import MDBox from "components/MDBox";
 import DebouncedInput from "components/DebouncedInput";
 import MDButton from "components/MDButton";
 import StoreModalForm from "components/Modals/StoreForm";
+import { useAuth } from "context/auth.context";
 
 
 const AddStoreButton = ({ createStore }) => {
@@ -99,6 +100,7 @@ const Store = ({ storeData, ...props }) => {
 }
 
 const StoresList = () => {
+  const { user: userSession } = useAuth();
   const { stores, createStore, updateStoreById, deleteStoreById } = useStores();
   const [list, setList] = useState([]);
   const [editStore, setEditStore] = useState(null);
@@ -147,7 +149,11 @@ const StoresList = () => {
           </MDTypography>
         </MDBox>
         <MDBox display="flex" justifyContent="flex-end">
-          <AddStoreButton createStore={createStore} />
+          {
+            userSession?.privileges?.shippings?.upsert && (
+              <AddStoreButton createStore={createStore} />
+            )
+          }
         </MDBox>
         <Divider />
         <SimpleBar

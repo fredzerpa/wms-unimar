@@ -8,12 +8,14 @@ const productSchema = new mongoose.Schema({
   },
   code: {
     type: String,
-    unique: true,
     required: true,
   },
-  slot: {
+  type: {
     type: String,
-    unique: true,
+    required: true,
+  },
+  typeClass: {
+    type: String,
     required: true,
   },
 });

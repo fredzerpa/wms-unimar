@@ -80,6 +80,7 @@ export const getInventoryGroupedByClass = inventory => {
     A: [],
     B: [],
     C: [],
+    U: [],
   })
 }
 

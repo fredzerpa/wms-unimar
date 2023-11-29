@@ -31,11 +31,11 @@ const ComplexStatisticsCard = ({ color, title, count, percentage, icon, slotProp
             {icon}
           </Icon>
         </MDBox>
-        <MDBox textAlign="right" lineHeight={1.25}>
-          <MDTypography variant="button" fontWeight="light" color="text" {...slotProps?.title}>
+        <MDBox lineHeight={1.25}>
+          <MDTypography variant="button" align="right" fontWeight="light" color="text" {...slotProps?.title}>
             {title}
           </MDTypography>
-          <MDTypography variant="h4" {...slotProps?.count}>{count}</MDTypography>
+          <MDTypography variant="h4" align="right" {...slotProps?.count}>{count}</MDTypography>
         </MDBox>
       </MDBox>
       <Divider />

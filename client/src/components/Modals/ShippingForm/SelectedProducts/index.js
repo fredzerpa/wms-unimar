@@ -13,7 +13,7 @@ import MDInput from "components/MDInput";
 import MDTypography from "components/MDTypography";
 import { getProductsWithStockBySizes } from "../utils/functions.utils";
 
-const Product = ({ productData, onDataChange, onProductRemove, errors }) => {
+const Product = ({ productData, onDataChange, onProductRemove, readOnly, errors }) => {
   const [controller] = useMaterialUIController();
   const { darkMode } = controller;
 
@@ -39,19 +39,23 @@ const Product = ({ productData, onDataChange, onProductRemove, errors }) => {
       mb={2}
       sx={{ position: "relative" }}
     >
-      <MDButton
-        iconOnly
-        size="small"
-        circular
-        color="primary"
-        sx={{ position: "absolute", top: -12, right: -10 }}
-        onClick={e => onProductRemove(productData)}
-      >
-        <Close />
-      </MDButton>
+      {
+        !readOnly && (
+          <MDButton
+            iconOnly
+            size="small"
+            circular
+            color="primary"
+            sx={{ position: "absolute", top: -12, right: -10 }}
+            onClick={e => onProductRemove(productData)}
+          >
+            <Close />
+          </MDButton>
+        )
+      }
       <MDBox display="flex" justifyContent="space-between" alignItems="center" mb={1}>
         <MDTypography variant="button" fontWeight="bold">
-          {productData?.name} - {productData?.type.label} {productData?.typeClass ? `"${productData?.typeClass}"` : null}
+          [{productData?.code}] {productData?.name} - {productData?.type?.label} "{productData.typeClass}"
         </MDTypography>
       </MDBox>
       <Grid container spacing={2}>
@@ -65,10 +69,11 @@ const Product = ({ productData, onDataChange, onProductRemove, errors }) => {
               value={orderDetail?.size ?? ""}
               onChange={e => {
                 const selectedSize = e.target.value;
-                return setOrderDetail({ ...orderDetail, size: selectedSize })
+                return setOrderDetail({ ...orderDetail, size: selectedSize, quantity: 0 })
               }}
               onInvalid={e => e.target.setCustomValidity("Escoja una medida")}
               onSelect={e => e.target.setCustomValidity("")}
+              readOnly={readOnly}
             >
               <MenuItem value="quarterGallon" disabled={!orderDetail?.stocked?.["quarterGallon"] > 0} sx={{ my: 0.5 }}>
                 1&frasl;4 Galon {!orderDetail?.stocked?.["quarterGallon"] > 0 && "(Fuera de Stock)"}
@@ -96,7 +101,7 @@ const Product = ({ productData, onDataChange, onProductRemove, errors }) => {
             fullWidth
             required
             disabled={!orderDetail?.size}
-            helperText={orderDetail?.size &&
+            helperText={!readOnly && orderDetail?.size &&
               `Maximo ${orderDetail?.stocked?.[orderDetail?.size]}`
             }
             onChange={e => {
@@ -116,6 +121,7 @@ const Product = ({ productData, onDataChange, onProductRemove, errors }) => {
               pattern: "[0-9]*",
               onInvalid: e => e.target.setCustomValidity("Use numeros unicamente para expresar este valor"),
               onInput: e => e.target.setCustomValidity(""),
+              readOnly,
             }}
           />
         </Grid>
@@ -133,9 +139,9 @@ const SelectedProducts = ({ products, onProductsDataChange, ...rest }) => {
   return (
     <SimpleBar style={{ minHeight: 100, maxHeight: 400 }}>
       <MDBox p={1.5}>
-        {products.map(product =>
+        {products.map((product) =>
           <Product
-            key={product.name + product.code + product.type.value + product.typeClass}
+            key={product._id}
             productData={product}
             onDataChange={onProductsDataChange}
             {...rest}

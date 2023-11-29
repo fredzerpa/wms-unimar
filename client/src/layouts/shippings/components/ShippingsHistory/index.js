@@ -17,9 +17,11 @@ import DebouncedInput from "components/DebouncedInput";
 // Context
 import { useShippings } from "context/shippings.context";
 import { useInventory } from "context/inventory.context";
+import { useAuth } from "context/auth.context";
 
 
 const ShippingsHistory = () => {
+  const { user: userSession } = useAuth();
   const { shippings, createShipping, updateShippingById, deleteShippingById } = useShippings();
   const { loadInventory } = useInventory();
   const [filteredShippings, setFilteredShippings] = useState([]);
@@ -102,13 +104,14 @@ const ShippingsHistory = () => {
             </MDBox>
             <MDBox component="ul" display="flex" flexDirection="column" p={0} m={0}>
               {
-                sortShippings(filteredShippings).map((data, idx, arr) => (
+                sortShippings(filteredShippings).map((shipping, idx, arr) => (
                   <ShippingDetails
-                    key={data.code}
-                    title={`Orden #${data.code}`}
-                    shippingData={data}
-                    onEdit={e => handleEditShipping(data)}
-                    onDelete={handleDeleteShipping}
+                    key={shipping.code}
+                    title={`Orden #${shipping.code}`}
+                    shippingData={shipping}
+                    onEdit={handleEditShipping}
+                    onDelete={userSession?.privileges?.shippings?.delete ? handleDeleteShipping : null}
+                    readOnly={!userSession?.privileges?.shippings?.upsert}
                     noGutter={arr.length === (idx + 1)}
                   />
                 ))

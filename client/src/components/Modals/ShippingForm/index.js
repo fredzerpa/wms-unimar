@@ -29,7 +29,7 @@ import SelectedProducts from "./SelectedProducts";
 import GetPasswordConsent from "components/GetPasswordConsent";
 
 // Utils
-import { formatOnSubmitShippingsForm, formatShippingsFormEntryData, formatInventoryByStock, formatStockForSelection } from "./utils/functions.utils";
+import { formatOnSubmitShippingsForm, formatShippingsFormEntryData, groupInventoryStockByProduct } from "./utils/functions.utils";
 
 
 const INITIAL_VALUES = {
@@ -50,11 +50,10 @@ const ShippingModalForm = ({ shippingData, open, close, onSubmit, onDelete }) =>
   const { inventory } = useInventory();
   const { stores, loadingStores } = useStores();
 
-  const stockedProducts = useMemo(() => formatInventoryByStock(inventory), [inventory]);
-  const productsForShipping = useMemo(() => formatStockForSelection(stockedProducts), [stockedProducts]);
+  const productsStock = useMemo(() => groupInventoryStockByProduct(inventory), [inventory]);
 
   const { register, control, handleSubmit, watch, setValue, getValues, formState: { errors, isDirty, isSubmitting } } = useForm({
-    defaultValues: lodash.defaultsDeep(formatShippingsFormEntryData(shippingData, productsForShipping), INITIAL_VALUES),
+    defaultValues: lodash.defaultsDeep(formatShippingsFormEntryData(shippingData), INITIAL_VALUES),
   });
   const [controller] = useMaterialUIController();
   const { darkMode } = controller;
@@ -85,6 +84,7 @@ const ShippingModalForm = ({ shippingData, open, close, onSubmit, onDelete }) =>
   }
 
   const onFormSubmit = async data => {
+    console.log(formatOnSubmitShippingsForm(data))
     try {
       const response = await onSubmit(formatOnSubmitShippingsForm(data));
       const submitMessage = isEditingShipping ? "Se ha actualizado el producto exitosamente" : "Se creado el producto exitosamente"
@@ -103,29 +103,17 @@ const ShippingModalForm = ({ shippingData, open, close, onSubmit, onDelete }) =>
   }
 
   const handleSelectedProductRemove = useCallback(productData => {
-    const updatedSelectedProducts = selectedProducts.filter(product => {
-      const productKey = product.name + product.code + product.type.value + product.typeClass;
-      const productDataKey = productData.name + productData.code + productData.type.value + productData.typeClass;
-      return productKey !== productDataKey
-    })
+    const updatedSelectedProducts = selectedProducts.filter(product => product._id !== productData._id)
     setValue("products.selected", updatedSelectedProducts)
 
     const shippingProducts = getValues("products.shipping");
-    const updatedShippingProducts = shippingProducts.filter(product => {
-      const productKey = product.name + product.code + product.type + product.typeClass;
-      const productDataKey = productData.name + productData.code + productData.type.value + productData.typeClass;
-      return productKey !== productDataKey
-    })
+    const updatedShippingProducts = shippingProducts.filter(product => product._id !== productData._id)
     setValue("products.shipping", updatedShippingProducts)
   }, [getValues, selectedProducts, setValue]);
 
   const handleSelectedProductsDataChange = useCallback(newProductData => {
     const shippingProducts = getValues("products.shipping");
-    const shippingIndex = shippingProducts.findIndex(product => {
-      const productKey = product.name + product.code + product.type + product.typeClass;
-      const productDataKey = newProductData.name + newProductData.code + newProductData.type + newProductData.typeClass;
-      return productKey === productDataKey
-    });
+    const shippingIndex = shippingProducts.findIndex(product => product._id === newProductData._id);
 
     const isOnShipping = shippingIndex >= 0;
     const updatedShippingProducts = isOnShipping ?
@@ -170,7 +158,11 @@ const ShippingModalForm = ({ shippingData, open, close, onSubmit, onDelete }) =>
           <LocalizationProvider dateAdapter={AdapterLuxon} adapterLocale="es-es">
             <MDBox p={3}>
               <MDTypography variant="h4" fontWeight="medium" gutterBottom>
-                {isEditingShipping ? "Editar Envio" : "Nuevo Envio"}
+                {
+                  userSession?.privileges?.shippings?.upsert ?
+                    isEditingShipping ? "Editar" : "Nuevo"
+                    : "Detalles de"
+                } Envio
               </MDTypography>
 
               <MDBox>
@@ -219,6 +211,7 @@ const ShippingModalForm = ({ shippingData, open, close, onSubmit, onDelete }) =>
                             },
                           }}
                           sx={{ width: "100%" }}
+                          readOnly={!userSession?.privileges?.shippings?.upsert}
                         />
                       )}
                       rules={{
@@ -269,7 +262,7 @@ const ShippingModalForm = ({ shippingData, open, close, onSubmit, onDelete }) =>
                         />
                       )}
                       rules={{
-                        required: "Este campo es requerido"
+                        required: "Este campo es obligatorio"
                       }}
                     />
                     {
@@ -293,7 +286,7 @@ const ShippingModalForm = ({ shippingData, open, close, onSubmit, onDelete }) =>
                       render={({ field }) => (
                         <Select
                           {...field}
-                          error={!!errors?.product?.typeClass}
+                          error={!!errors?.product?.status}
                           fullWidth
                           readOnly={!userSession?.privileges?.inventory?.upsert}
                         >
@@ -303,19 +296,17 @@ const ShippingModalForm = ({ shippingData, open, close, onSubmit, onDelete }) =>
                         </Select>
                       )}
                       rules={{
-                        required: "Este campo es requerido"
+                        required: "Este campo es obligatorio"
                       }}
                     />
                     {
-                      !!errors?.store && (
+                      !!errors?.status && (
                         <MDTypography ml={1} fontSize="small" color="error" fontWeight="light">
-                          {errors?.store.message}
+                          {errors?.status.message}
                         </MDTypography>
                       )
                     }
                   </Grid>
-
-
 
                 </Grid>
 
@@ -326,56 +317,56 @@ const ShippingModalForm = ({ shippingData, open, close, onSubmit, onDelete }) =>
                     <MDTypography color="error" component="span" fontWeight="light" fontSize="small">*</MDTypography>
                   </MDTypography>
                   <MDBox p={1} borderRadius="lg" sx={{ border: `1px solid ${colors.grey[400]}` }}>
-                    <MDBox mx="auto" mb={2}>
-                      <Controller
-                        name="products.selected"
-                        control={control}
-                        render={({ field: { onChange, ...rest } }) => (
-                          <Autocomplete
-                            {...rest}
-                            fullWidth
-                            multiple
-                            options={productsForShipping}
-                            getOptionLabel={(option) => {
-                              const { code, name, type, typeClass, onStock } = option;
-                              const optionLabel = `
-                                [${code}] ${name} - ${type.label} 
-                                ${typeClass ? `"${typeClass}"` : ""} 
-                                ${onStock?.length ? "" : "(Sin Stock)"}
-                              `;
+                    {
+                      userSession?.privileges?.shippings?.upsert && (
+                        <MDBox mx="auto" mb={2}>
+                          <Controller
+                            name="products.selected"
+                            control={control}
+                            render={({ field: { onChange, ...rest } }) => (
+                              <Autocomplete
+                                {...rest}
+                                fullWidth
+                                multiple
+                                options={productsStock}
+                                getOptionLabel={(option) => {
+                                  const { code, name, type, typeClass } = option;
+                                  const optionLabel = `[${code}] ${name} - ${type.label} "${typeClass}"`
 
-                              return optionLabel;
-                            }}
-                            getOptionDisabled={(option) => !option.onStock.length}
-                            renderTags={() => null}
-                            filterSelectedOptions
-                            onChange={(event, newValue) => onChange(newValue)}
-                            isOptionEqualToValue={(option, value) => {
-                              const optionKey = option.code + option.name + option.type + option.typeClass;
-                              const valueKey = value.code + value.name + value.type + value.typeClass;
-                              return optionKey === valueKey
-                            }}
-                            renderInput={(params) => (
-                              <MDInput
-                                {...params}
-                                placeholder="Buscar productos"
-                                InputProps={{
-                                  ...params.InputProps,
-                                  endAdornment: null,
+                                  return optionLabel + (option.onStock?.length ? "" : "(Sin Stock)");
                                 }}
+                                noOptionsText="No se encontraron opciones"
+                                getOptionDisabled={(option) => !option.onStock.length}
+                                renderTags={() => null}
+                                readOnly={!userSession?.privileges?.shippings?.upsert}
+                                filterSelectedOptions
+                                onChange={(event, newValue) => onChange(newValue)}
+                                isOptionEqualToValue={(option, value) => option._id === value._id}
+                                renderInput={(params) => (
+                                  <MDInput
+                                    {...params}
+                                    placeholder="Buscar productos"
+                                    InputProps={{
+                                      ...params.InputProps,
+                                      endAdornment: null,
+                                    }}
+                                  />
+                                )}
                               />
                             )}
+                            rules={{
+                              required: "Escoja al menos 1 producto",
+                            }}
                           />
-                        )}
-                        rules={{
-                          required: "Escoja al menos 1 producto",
-                        }}
-                      />
-                    </MDBox>
+                        </MDBox>
+                      )
+                    }
+
                     <SelectedProducts
                       products={selectedProducts}
                       onProductsDataChange={handleSelectedProductsDataChange}
                       onProductRemove={handleSelectedProductRemove}
+                      readOnly={!userSession?.privileges?.shippings?.upsert}
                     />
                     {
                       !!errors?.products?.selected && (
@@ -435,9 +426,13 @@ const ShippingModalForm = ({ shippingData, open, close, onSubmit, onDelete }) =>
                     <MDButton loading={isSubmitting} variant="contained" onClick={handleClose} sx={{ alignSelf: "center" }}>
                       Cancelar
                     </MDButton>
-                    <MDButton loading={isSubmitting} disabled={!isEditingShipping && !isDirty} color="info" variant="gradient" type="submit">
-                      Guardar
-                    </MDButton>
+                    {
+                      userSession?.privileges?.shippings?.upsert && (
+                        <MDButton loading={isSubmitting} disabled={!isEditingShipping && !isDirty} color="info" variant="gradient" type="submit">
+                          Guardar
+                        </MDButton>
+                      )
+                    }
                   </MDBox>
                 </MDBox>
 

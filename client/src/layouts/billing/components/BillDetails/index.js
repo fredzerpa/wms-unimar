@@ -20,7 +20,7 @@ import { formatSelectionProducts } from "../../utils/functions.utils";
 import GetPasswordConsent from "components/GetPasswordConsent";
 import { enqueueSnackbar } from "notistack";
 
-const BillDetails = ({ title, billData, noGutter, onEdit, onDelete }) => {
+const BillDetails = ({ title, billData, noGutter, onEdit, onDelete, readOnly }) => {
   const { date, products, total, provider } = billData;
 
   const [controller] = useMaterialUIController();
@@ -43,6 +43,14 @@ const BillDetails = ({ title, billData, noGutter, onEdit, onDelete }) => {
     } catch (err) {
       if (err.target?.innerText.toLowerCase() === "cancelar") return; // Clicked "cancel" on password consent
       console.error(err);
+      enqueueSnackbar(err.message, { variant: "error" })
+    }
+  }
+
+  const handleClickEdit = async event => {
+    try {
+      return await onEdit(billData);
+    } catch (err) {
       enqueueSnackbar(err.message, { variant: "error" })
     }
   }
@@ -72,15 +80,22 @@ const BillDetails = ({ title, billData, noGutter, onEdit, onDelete }) => {
             {title}
           </MDTypography>
 
+          {/* Edit/Delete Buttons */}
           <MDBox display="flex" alignItems="center" mt={{ xs: 2, sm: 0 }} ml={{ xs: -1.5, sm: 0 }}>
-            <MDBox mr={1}>
-              <MDButton variant="text" color="error" onClick={handleClickDelete}>
-                <Icon>delete</Icon>&nbsp;delete
+            {
+              onDelete !== null && (
+                <MDBox mr={1}>
+                  <MDButton variant="text" color="error" onClick={handleClickDelete}>
+                    <Icon>delete</Icon>&nbsp;delete
+                  </MDButton>
+                </MDBox>
+              )
+            }
+            <MDBox>
+              <MDButton variant="text" color={darkMode ? "white" : "dark"} onClick={handleClickEdit}>
+                <Icon>{readOnly ? "visibility" : "edit"}</Icon>&nbsp;{readOnly ? "ver" : "editar"}
               </MDButton>
             </MDBox>
-            <MDButton variant="text" color={darkMode ? "white" : "dark"} onClick={onEdit}>
-              <Icon>edit</Icon>&nbsp;edit
-            </MDButton>
           </MDBox>
         </MDBox>
         <MDBox mb={1} lineHeight={0}>

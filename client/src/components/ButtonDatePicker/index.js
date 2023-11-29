@@ -36,9 +36,9 @@ const ButtonDatePicker = (props) => {
   return (
     <LocalizationProvider dateAdapter={AdapterLuxon} adapterLocale="es-es">
       <DatePicker
-        slots={{ field: ButtonField, ...props.slots }}
-        slotProps={{ field: { setOpen } }}
         {...props}
+        slots={{ field: ButtonField, ...props?.slots }}
+        slotProps={{ ...props?.slotProps, field: { ...props?.slotProps?.field, setOpen  } }}
         open={open}
         onClose={() => setOpen(false)}
         onOpen={() => setOpen(true)}

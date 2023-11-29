@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 // Libraries
 import { Autocomplete, Card, Modal } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
@@ -26,7 +26,7 @@ import SelectedProducts from "./SelectedProducts";
 import InputDocumentId from "./InputDocumentId";
 
 // Utils
-import { formatOnSubmitBillForm, formatBillFormEntryData, formatProductsForSelection } from "./utils/functions.utils";
+import { formatOnSubmitBillForm, formatBillFormEntryData, addProductsLabel } from "./utils/functions.utils";
 import { useProviders } from "context/providers.context";
 import { enqueueSnackbar } from "notistack";
 import { Lock } from "@mui/icons-material";
@@ -59,7 +59,7 @@ const BillModalForm = ({ billData, open, close, onSubmit, onDelete }) => {
   const { user: userSession } = useAuth();
   const { products } = useProducts();
   const { providers, loadingProviders } = useProviders();
-  const { register, control, handleSubmit, watch, reset, setValue, getValues, formState: { errors, isSubmitting } } = useForm({
+  const { register, control, handleSubmit, watch, reset, setValue, getValues, formState: { errors, isDirty, isSubmitting } } = useForm({
     defaultValues: lodash.defaultsDeep(formatBillFormEntryData(billData, products), INITIAL_VALUES),
   });
   const [controller] = useMaterialUIController();
@@ -69,11 +69,10 @@ const BillModalForm = ({ billData, open, close, onSubmit, onDelete }) => {
   const documentIdType = watch("provider.documentId.type");
   const watchObservations = watch("observations");
 
-  const productsForSelection = useMemo(() => formatProductsForSelection(products), [products]);
-
   const isEditingBill = !lodash.isEmpty(billData);
 
   const onFormSubmit = async data => {
+    console.log(formatOnSubmitBillForm(data))
     try {
       const response = await onSubmit(formatOnSubmitBillForm(data));
       const submitMessage = isEditingBill ? "Se ha actualizado la factura exitosamente" : "Se creado la factura exitosamente"
@@ -113,37 +112,22 @@ const BillModalForm = ({ billData, open, close, onSubmit, onDelete }) => {
   }
 
   const handleProductRemove = useCallback(productData => {
-    const orderProducts = getValues("products.order")
-    const updatedSelectedProducts = selectedProducts.filter(product => {
-      const productKey = product.name + product.code + product.type.value + product.typeClass;
-      const productDataKey = productData.name + productData.code + productData.type.value + productData.typeClass;
-      return productKey !== productDataKey
-    })
+    const updatedSelectedProducts = selectedProducts.filter(product => product._id !== productData._id);
     setValue("products.selected", updatedSelectedProducts)
 
-    const updatedOrderProducts = orderProducts.filter(product => {
-      const productKey = product.name + product.code + product.type + product.typeClass;
-      const productDataKey = productData.name + productData.code + productData.type.value + productData.typeClass;
-      return productKey !== productDataKey
-    })
+    const orderProducts = getValues("products.order")
+    const updatedOrderProducts = orderProducts.filter(product => product._id !== productData._id)
     setValue("products.order", updatedOrderProducts)
-
 
   }, [getValues, selectedProducts, setValue]);
 
   const handleSelectedProductsDataChange = useCallback(newProductData => {
     const orderProducts = getValues("products.order")
-    const isProductAlreadySaved = orderProducts.find(product => {
-      const productKey = product.name + product.code + product.type + product.typeClass;
-      const productDataKey = newProductData.name + newProductData.code + newProductData.type + newProductData.typeClass;
-      return productKey === productDataKey
-    });
+    const isProductAlreadySaved = orderProducts.find(product => product._id === newProductData._id);
 
     const updatedOrderProducts = !isProductAlreadySaved ? [...orderProducts, newProductData] : (
       orderProducts.map(product => {
-        const productKey = product.name + product.code + product.type + product.typeClass;
-        const productDataKey = newProductData.name + newProductData.code + newProductData.type + newProductData.typeClass;
-        if (productKey !== productDataKey) return product;
+        if (product._id !== newProductData._id) return product;
         return newProductData;
       })
     )
@@ -183,7 +167,11 @@ const BillModalForm = ({ billData, open, close, onSubmit, onDelete }) => {
           <LocalizationProvider dateAdapter={AdapterLuxon} adapterLocale="es-es">
             <MDBox p={3}>
               <MDTypography variant="h4" fontWeight="medium" gutterBottom>
-                {isEditingBill ? "Editar Factura" : "Nueva Factura"}
+                {
+                  userSession?.privileges?.shippings?.upsert ?
+                    isEditingBill ? "Editar" : "Nueva"
+                    : "Detalles de"
+                } Factura
               </MDTypography>
 
               <MDBox>
@@ -213,6 +201,7 @@ const BillModalForm = ({ billData, open, close, onSubmit, onDelete }) => {
 
                             return onChange(selectedProvider.name);
                           }}
+                          readOnly={!userSession?.privileges?.billing?.upsert}
                           isOptionEqualToValue={(option, value) => option.toLowerCase() === value?.toLowerCase()}
                           renderInput={(params) => (
                             <MDInput
@@ -260,6 +249,7 @@ const BillModalForm = ({ billData, open, close, onSubmit, onDelete }) => {
                             },
                           }}
                           sx={{ width: "100%" }}
+                          readOnly={!userSession?.privileges?.billing?.upsert}
                         />
                       )}
                       rules={{
@@ -382,6 +372,9 @@ const BillModalForm = ({ billData, open, close, onSubmit, onDelete }) => {
                       InputProps={{
                         startAdornment: <MDTypography variant="caption">Bs.</MDTypography>,
                       }}
+                      inputProps={{
+                        readOnly: !userSession.privileges.billing.upsert,
+                      }}
                     />
                     {
                       !!errors?.convertionRate?.rate && (
@@ -399,51 +392,52 @@ const BillModalForm = ({ billData, open, close, onSubmit, onDelete }) => {
                     <MDTypography color="error" component="span" fontWeight="light" fontSize="small">*</MDTypography>
                   </MDTypography>
                   <MDBox p={1} borderRadius="lg" sx={{ border: `1px solid ${colors.grey[400]}` }}>
-                    <MDBox mx="auto" mb={2}>
-                      <Controller
-                        name="products.selected"
-                        control={control}
-                        render={({ field: { onChange, ...rest } }) => (
-                          <Autocomplete
-                            {...rest}
-                            fullWidth
-                            multiple
-                            options={productsForSelection}
-                            getOptionLabel={(option) => {
-                              const { code, name, type, typeClass } = option;
-                              const optionLabel = `[${code}] ${name} - ${type.label} ${typeClass ? `"${typeClass}"` : ""}`;
-
-                              return optionLabel;
-                            }}
-                            renderTags={() => null}
-                            filterSelectedOptions
-                            onChange={(event, newValue) => onChange(newValue)}
-                            isOptionEqualToValue={(option, value) => {
-                              const optionKey = option.code + option.name + option.type + option.typeClass;
-                              const valueKey = value.code + value.name + value.type + value.typeClass;
-                              return optionKey === valueKey
-                            }}
-                            renderInput={(params) => (
-                              <MDInput
-                                {...params}
-                                placeholder="Buscar productos"
-                                InputProps={{
-                                  ...params.InputProps,
-                                  endAdornment: null,
+                    {
+                      userSession?.privileges?.billing?.upsert && (
+                        <MDBox mx="auto" mb={2}>
+                          <Controller
+                            name="products.selected"
+                            control={control}
+                            render={({ field: { onChange, ...rest } }) => (
+                              <Autocomplete
+                                {...rest}
+                                fullWidth
+                                multiple
+                                options={addProductsLabel(products)}
+                                getOptionLabel={(option) => {
+                                  const { code, name, type, typeClass } = option;
+                                  return `[${code}] ${name} - ${type.label} "${typeClass}"`
                                 }}
+                                renderTags={() => null}
+                                noOptionsText="No se encontraron opciones"
+                                filterSelectedOptions
+                                onChange={(event, newValue) => onChange(newValue)}
+                                isOptionEqualToValue={(option, value) => option._id === value._id}
+                                readOnly={!userSession?.privileges?.billing?.upsert}
+                                renderInput={(params) => (
+                                  <MDInput
+                                    {...params}
+                                    placeholder="Buscar productos"
+                                    InputProps={{
+                                      ...params.InputProps,
+                                      endAdornment: null,
+                                    }}
+                                  />
+                                )}
                               />
                             )}
+                            rules={{
+                              required: "Escoja al menos 1 producto",
+                            }}
                           />
-                        )}
-                        rules={{
-                          required: "Escoja al menos 1 producto",
-                        }}
-                      />
-                    </MDBox>
+                        </MDBox>
+                      )
+                    }
                     <SelectedProducts
                       products={selectedProducts}
                       onProductsDataChange={handleSelectedProductsDataChange}
                       onProductRemove={handleProductRemove}
+                      readOnly={!userSession?.privileges?.billing?.upsert}
                     />
                     {
                       !!errors?.products?.selected && (
@@ -465,10 +459,12 @@ const BillModalForm = ({ billData, open, close, onSubmit, onDelete }) => {
                     multiline
                     rows={5}
                     fullWidth
-                    inputProps={{ maxLength: 3000 }}
                     error={!!errors?.observations}
                     placeholder="Ej: Proveedor tiene muchos accidentes durante la entrega.."
-                    readOnly={!userSession.privileges.billing.upsert}
+                    inputProps={{
+                      readOnly: !userSession.privileges.billing.upsert,
+                      maxLength: 3000,
+                    }}
                   />
                   {
                     !!watchObservations?.length && (
@@ -501,7 +497,13 @@ const BillModalForm = ({ billData, open, close, onSubmit, onDelete }) => {
                   </MDBox>
                   <MDBox display="flex" justifyContent="flex-end" gap={3} width="100%">
                     <MDButton color="dark" variant="text" onClick={close} sx={{ alignSelf: "center" }}>Cancelar</MDButton>
-                    <MDButton loading={isSubmitting} color="info" variant="gradient" type="submit">Guardar</MDButton>
+                    {
+                      userSession?.privileges?.shippings?.upsert && (
+                        <MDButton loading={isSubmitting} disabled={!isEditingBill && !isDirty} color="info" variant="gradient" type="submit">
+                          Guardar
+                        </MDButton>
+                      )
+                    }
                   </MDBox>
                 </MDBox>
 

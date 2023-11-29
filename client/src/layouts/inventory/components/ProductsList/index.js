@@ -20,6 +20,9 @@ import DebouncedInput from "components/DebouncedInput";
 import MDButton from "components/MDButton";
 import ProductModalForm from "components/Modals/ProductForm";
 
+import { addProductsLabel } from "./utils/products-list.utils";
+import { useAuth } from "context/auth.context";
+
 
 const AddProductButton = ({ createProduct }) => {
   const [open, setOpen] = useState(false);
@@ -60,7 +63,6 @@ const Product = ({ productData, ...props }) => {
   const [controller] = useMaterialUIController();
   const { darkMode } = controller;
 
-
   return (
     <Grid
       container
@@ -77,19 +79,24 @@ const Product = ({ productData, ...props }) => {
       }}
       {...props}
     >
-      <Grid xs={6} sm={4}>
-        <MDTypography variant="button" align="center" fontWeight="bold" component="p">
-          {productData.name}
+      <Grid xs={6} sm={3} display="flex" justifyContent="center" alignItems="center">
+        <MDTypography variant="button" align="center" verticalAlign="middle" fontWeight="bold" component="p">
+          {productData?.name}
         </MDTypography>
       </Grid>
-      <Grid xs={6} sm={4} display="flex" justifyContent="center">
-        <MDTypography variant="button" align="center" fontWeight="bold" component="p">
-          {productData.code}
+      <Grid xs={6} sm={3} display="flex" justifyContent="center" alignItems="center">
+        <MDTypography variant="button" align="center" verticalAlign="middle" fontWeight="bold" component="p">
+          {productData?.code}
         </MDTypography>
       </Grid>
-      <Grid xs={6} sm={4} display="flex" justifyContent="center">
-        <MDTypography variant="button" align="center" fontWeight="bold" component="p">
-          {productData.slot}
+      <Grid xs={6} sm={3} display="flex" justifyContent="center" alignItems="center">
+        <MDTypography variant="button" align="center" verticalAlign="middle" fontWeight="bold" component="p">
+          {productData?.type?.label}
+        </MDTypography>
+      </Grid>
+      <Grid xs={6} sm={3} display="flex" justifyContent="center" alignItems="center">
+        <MDTypography variant="button" align="center" verticalAlign="middle" fontWeight="bold" component="p">
+          {productData?.typeClass}
         </MDTypography>
       </Grid>
     </Grid >
@@ -97,6 +104,7 @@ const Product = ({ productData, ...props }) => {
 }
 
 const ProductsList = ({ open, close }) => {
+  const { user: userSession } = useAuth();
   const { products, createProduct, updateProductById, deleteProductById } = useProducts();
   const [list, setList] = useState([]);
   const [editProduct, setEditProduct] = useState(null);
@@ -104,7 +112,10 @@ const ProductsList = ({ open, close }) => {
   const theme = useTheme();
 
   useEffect(() => {
-    setList(products);
+    (async () => {
+      const labeledProducts = await addProductsLabel(products)
+      setList(labeledProducts);
+    })()
   }, [products])
 
   const handleSearch = useCallback(search => {
@@ -142,7 +153,7 @@ const ProductsList = ({ open, close }) => {
           sx={theme => ({
             px: 2,
             py: 1,
-            width: "500px",
+            width: "600px",
             maxWidth: "100%",
             position: "absolute",
             overflow: "hidden",
@@ -164,9 +175,13 @@ const ProductsList = ({ open, close }) => {
               <Close color="dark" />
             </MDButton>
           </MDBox>
-          <MDBox display="flex" justifyContent="flex-end">
-            <AddProductButton createProduct={createProduct} />
-          </MDBox>
+          {
+            userSession?.privileges?.inventory?.upsert && (
+              <MDBox display="flex" justifyContent="flex-end">
+                <AddProductButton createProduct={createProduct} />
+              </MDBox>
+            )
+          }
           <Divider />
           <SimpleBar
             style={{
@@ -192,14 +207,17 @@ const ProductsList = ({ open, close }) => {
               list.length ?
                 (
                   <Grid container width="100%" mb={0.5} px={2}>
-                    <Grid xs={6} sm={4}>
+                    <Grid xs={6} sm={3}>
                       <MDTypography align="center" variant="caption" component="p">Nombre</MDTypography>
                     </Grid>
-                    <Grid xs={6} sm={4} display="flex" justifyContent="center">
-                      <MDTypography align="center" variant="caption" component="p">Codigo</MDTypography>
+                    <Grid xs={6} sm={3} display="flex" justifyContent="center">
+                      <MDTypography align="center" variant="caption">Codigo</MDTypography>
                     </Grid>
-                    <Grid xs={6} sm={4} display="flex" justifyContent="center">
-                      <MDTypography align="center" variant="caption" component="p">Lote</MDTypography>
+                    <Grid xs={6} sm={3} display="flex" justifyContent="center">
+                      <MDTypography align="center" variant="caption">Tipo</MDTypography>
+                    </Grid>
+                    <Grid xs={6} sm={3} display="flex" justifyContent="center">
+                      <MDTypography align="center" variant="caption">Clase</MDTypography>
                     </Grid>
                   </Grid>
                 )
@@ -214,7 +232,7 @@ const ProductsList = ({ open, close }) => {
             }
             {
               list.map(product => (
-                <Product key={product.code} productData={product} onClick={handleProductClick(product)} />
+                <Product key={product._id} productData={product} onClick={handleProductClick(product)} />
               ))
             }
           </SimpleBar>

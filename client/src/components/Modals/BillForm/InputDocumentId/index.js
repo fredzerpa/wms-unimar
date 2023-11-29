@@ -38,7 +38,6 @@ const InputDocumentId = forwardRef(({ selectValue, onSelectChange, selectProps, 
       >
         <SelectID value={selectValue} onChange={e => onSelectChange(e.target.value)} {...selectProps} />
         <MDInput
-          {...rest}
           ref={ref}
           fullWidth
           placeholder="Cedula/RIF"
@@ -49,6 +48,7 @@ const InputDocumentId = forwardRef(({ selectValue, onSelectChange, selectProps, 
               borderEndStartRadius: 0,
             },
           }}
+          {...rest}
         />
       </Paper>
     </MDBox>

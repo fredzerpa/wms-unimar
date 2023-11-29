@@ -304,7 +304,7 @@ const InventoryRecordModalForm = ({ recordData, open, close, onSubmit, onDelete 
                         </Select>
                       )}
                       rules={{
-                        required: "Este campo es requerido"
+                        required: "Este campo es obligatorio"
                       }}
                     />
                     {
@@ -332,7 +332,7 @@ const InventoryRecordModalForm = ({ recordData, open, close, onSubmit, onDelete 
                           error={!!errors?.product?.typeClass}
                           fullWidth
                           readOnly={true}
-                          disabled={!watchTypeSelection || watchTypeSelection === "industrialAndMarine"}
+                          disabled={!watchTypeSelection}
                           onClickCapture={(event) => {
                             if (!watchTypeSelection) {
                               return enqueueSnackbar(
@@ -340,23 +340,24 @@ const InventoryRecordModalForm = ({ recordData, open, close, onSubmit, onDelete 
                                 { variant: "warning" }
                               );
                             }
-                            if (watchTypeSelection === "industrialAndMarine") {
-                              return enqueueSnackbar(
-                                '"Industrial & Marina" no poseen clasificación',
-                                { variant: "warning" }
-                              );
-                            }
                           }}
                         >
-                          <MenuItem value="A" sx={{ my: 0.5 }}>Clase A</MenuItem>
-                          <MenuItem value="B" sx={{ my: 0.5 }}>Clase B</MenuItem>
-                          <MenuItem value="C" sx={{ my: 0.5 }}>Clase C</MenuItem>
+                          {
+                            watchTypeSelection === "industrialAndMarine" ?
+                              (
+                                <MenuItem value="U" sx={{ my: 0.5 }}>Clase U</MenuItem>
+                              )
+                              :
+                              ([
+                                <MenuItem key="A" value="A" sx={{ my: 0.5 }}>Clase A</MenuItem>,
+                                <MenuItem key="B" value="B" sx={{ my: 0.5 }}>Clase B</MenuItem>,
+                                <MenuItem key="C" value="C" sx={{ my: 0.5 }}>Clase C</MenuItem>,
+                              ])
+                          }
                         </Select>
                       )}
                       rules={{
-                        validate: {
-                          isRequired: value => (watchTypeSelection === "industrialAndMarine" || !!value) || "Este campo es requerido"
-                        }
+                        required: "Este campo es obligatorio"
                       }}
                     />
                     {
@@ -430,7 +431,7 @@ const InventoryRecordModalForm = ({ recordData, open, close, onSubmit, onDelete 
                         </Select>
                       )}
                       rules={{
-                        required: "Este campo es requerido"
+                        required: "Este campo es obligatorio"
                       }}
                     />
                     {

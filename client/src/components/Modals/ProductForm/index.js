@@ -1,12 +1,12 @@
 // Libraries
-import { Card, Modal } from "@mui/material";
+import { Card, MenuItem, Modal, Select } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import PropTypes from "prop-types";
 import SimpleBar from "simplebar-react";
 import "simplebar-react/dist/simplebar.min.css";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { Lock } from "@mui/icons-material";
 import lodash from "lodash";
 import { enqueueSnackbar } from "notistack";
@@ -19,7 +19,7 @@ import MDInput from "components/MDInput";
 
 // Context
 import { useAuth } from "context/auth.context";
-import { formatInventoryRecordSubmitData, formatItemEntryData } from "./utils/functions.utils";
+import { formatProductSubmitData, formatProductEntryData } from "./utils/functions.utils";
 import GetPasswordConsent from "components/GetPasswordConsent";
 import { useMemo } from "react";
 
@@ -27,15 +27,18 @@ const INITIAL_VALUES = {
   _id: null,
   name: "",
   code: "",
-  slot: "",
+  type: "",
+  typeClass: "",
 };
 
 const ProductModalForm = ({ productData, open, close, onSubmit, onDelete }) => {
   const { user: userSession } = useAuth();
-  const { register, handleSubmit, formState: { errors, isDirty, isSubmitting } } = useForm({
-    values: lodash.defaultsDeep(formatItemEntryData(productData), INITIAL_VALUES),
+  const { register, handleSubmit, control, watch, setValue, formState: { errors, isDirty, isSubmitting } } = useForm({
+    values: lodash.defaultsDeep(formatProductEntryData(productData), INITIAL_VALUES),
     shouldFocusError: true,
   });
+
+  const watchTypeSelection = watch("type");
 
   const isEditingProduct = useMemo(() => !lodash.isEmpty(productData), [productData]);
 
@@ -61,7 +64,7 @@ const ProductModalForm = ({ productData, open, close, onSubmit, onDelete }) => {
 
   const onFormSubmit = async data => {
     try {
-      const formattedData = formatInventoryRecordSubmitData(data);
+      const formattedData = formatProductSubmitData(data);
       const response = await onSubmit(formattedData);
 
       const submitMessage = isEditingProduct ? "Se ha actualizado el producto exitosamente" : "Se creado el producto exitosamente"
@@ -111,14 +114,18 @@ const ProductModalForm = ({ productData, open, close, onSubmit, onDelete }) => {
           <LocalizationProvider dateAdapter={AdapterLuxon} adapterLocale="es-es">
             <MDBox p={3}>
               <MDTypography variant="h4" fontWeight="medium" textTransform="capitalize" gutterBottom>
-                {isEditingProduct ? "Editar Producto" : "Nuevo Producto"}
+                {
+                  userSession?.privileges?.inventory?.upsert ?
+                    isEditingProduct ? "Editar" : "Nuevo"
+                    : "Detalles de"
+                } Producto
               </MDTypography>
 
               <MDBox>
                 <Grid container spacing={2}>
 
                   {/* Name */}
-                  <Grid xs={12}>
+                  <Grid xs={8}>
                     <MDTypography ml={1} component="label" variant="caption" fontWeight="bold" textTransform="capitalize">
                       Nombre del Producto
                       <MDTypography color="error" component="span" fontWeight="light" fontSize="small">*</MDTypography>
@@ -142,7 +149,7 @@ const ProductModalForm = ({ productData, open, close, onSubmit, onDelete }) => {
                   </Grid>
 
                   {/* Code */}
-                  <Grid xs={6}>
+                  <Grid xs={4}>
                     <MDTypography ml={1} component="label" variant="caption" fontWeight="bold" textTransform="capitalize">
                       Codigo
                       <MDTypography color="error" component="span" fontWeight="light" fontSize="small">*</MDTypography>
@@ -164,29 +171,100 @@ const ProductModalForm = ({ productData, open, close, onSubmit, onDelete }) => {
                       )
                     }
                   </Grid>
+                  
+                  <Grid container xs={12}>
+                    {/* Type */}
+                    <Grid xs={6}>
+                      <MDTypography ml={1} component="label" variant="caption" fontWeight="bold" textTransform="capitalize">
+                        Tipo
+                        <MDTypography color="error" component="span" fontWeight="light" fontSize="small">*</MDTypography>
+                      </MDTypography>
+                      <Controller
+                        control={control}
+                        name="type"
+                        render={({ field }) => {
+                          return (
+                            <Select
+                              {...field}
+                              onChange={e => {
+                                setValue("typeClass", "");
+                                return field.onChange(e)
+                              }}
+                              error={!!errors?.typeClass}
+                              fullWidth
+                              readOnly={!userSession?.privileges?.inventory?.upsert}
+                            >
+                              <MenuItem value="architectural" sx={{ my: 0.5 }}>Arquitectonico</MenuItem>
+                              <MenuItem value="enamel" sx={{ my: 0.5 }}>Esmalte</MenuItem>
+                              <MenuItem value="industrialAndMarine" sx={{ my: 0.5 }}>Industrial & Marina</MenuItem>
+                            </Select>
+                          )
+                        }}
+                        rules={{
+                          required: "Este campo es obligatorio",
+                        }}
+                      />
+                      {
+                        !!errors?.type && (
+                          <MDTypography ml={1} fontSize="small" color="error" fontWeight="light">
+                            {errors?.type.message}
+                          </MDTypography>
+                        )
+                      }
+                    </Grid>
 
-                  {/* Slot */}
-                  <Grid xs={6}>
-                    <MDTypography ml={1} component="label" variant="caption" fontWeight="bold" textTransform="capitalize">
-                      Lote
-                      <MDTypography color="error" component="span" fontWeight="light" fontSize="small">*</MDTypography>
-                    </MDTypography>
-                    <MDInput
-                      {...register("slot", { required: "Este campo es obligatorio" })}
-                      error={!!errors?.slot}
-                      placeholder="Lote del articulo"
-                      fullWidth
-                      inputProps={{
-                        readOnly: !userSession?.privileges?.inventory?.upsert,
-                      }}
-                    />
-                    {
-                      !!errors?.slot && (
-                        <MDTypography ml={1} fontSize="small" color="error" fontWeight="light">
-                          {errors?.slot.message}
-                        </MDTypography>
-                      )
-                    }
+                    {/* Type Class */}
+                    <Grid xs={6}>
+                      <MDTypography ml={1} component="label" variant="caption" fontWeight="bold" textTransform="capitalize">
+                        Clase
+                        <MDTypography color="error" component="span" fontWeight="light" fontSize="small">*</MDTypography>
+                      </MDTypography>
+                      <Controller
+                        control={control}
+                        name="typeClass"
+                        render={({ field: { value, ...rest } }) => (
+                          <Select
+                            {...rest}
+                            value={value ?? ""}
+                            error={!!errors?.typeClass}
+                            fullWidth
+                            readOnly={!userSession?.privileges?.inventory?.upsert}
+                            disabled={!watchTypeSelection}
+                            onClickCapture={(event) => {
+                              if (!watchTypeSelection) {
+                                return enqueueSnackbar(
+                                  'Escoja un tipo',
+                                  { variant: "warning" }
+                                );
+                              }
+                            }}
+                          >
+                            {
+                              watchTypeSelection === "industrialAndMarine" ?
+                                (
+                                  <MenuItem value="U" sx={{ my: 0.5 }}>Clase U</MenuItem>
+                                )
+                                :
+                                ([
+                                  <MenuItem key="A" value="A" sx={{ my: 0.5 }}>Clase A</MenuItem>,
+                                  <MenuItem key="B" value="B" sx={{ my: 0.5 }}>Clase B</MenuItem>,
+                                  <MenuItem key="C" value="C" sx={{ my: 0.5 }}>Clase C</MenuItem>,
+                                ])
+                            }
+                          </Select>
+                        )}
+                        rules={{
+                          required: "Este campo es obligatorio",
+                        }}
+                      />
+                      {
+                        !!errors?.typeClass && (
+                          <MDTypography ml={1} fontSize="small" color="error" fontWeight="light">
+                            {errors?.typeClass.message}
+                          </MDTypography>
+                        )
+                      }
+                    </Grid>
                   </Grid>
 
                 </Grid>
@@ -206,7 +284,14 @@ const ProductModalForm = ({ productData, open, close, onSubmit, onDelete }) => {
                   </MDBox>
                   <MDBox display="flex" justifyContent="flex-end" gap={3} width="100%">
                     <MDButton color="dark" variant="text" onClick={close} sx={{ alignSelf: "center" }}>Cancelar</MDButton>
-                    <MDButton loading={isSubmitting} disabled={!isDirty} color="info" variant="gradient" type="submit">Guardar</MDButton>
+                    {
+                      userSession?.privileges?.inventory?.upsert &&
+                      (
+                        <MDButton loading={isSubmitting} disabled={!isDirty} color="info" variant="gradient" type="submit">
+                          Guardar
+                        </MDButton>
+                      )
+                    }
                   </MDBox>
                 </MDBox>
 

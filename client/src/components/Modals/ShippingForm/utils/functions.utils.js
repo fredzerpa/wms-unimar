@@ -1,45 +1,47 @@
 import lodash from "lodash"
 import { DateTime } from "luxon";
 
-export const addLabelsToProducts = products => {
-  if (lodash.isEmpty(products)) return products;
+export const addLabelsToProducts = rawData => {
+  if (lodash.isEmpty(rawData)) return rawData;
 
   const PRODUCTS_PARAMS_LABELS_SCHEMA = {
-    sizes: {
-      quarterGallon: "1/4 Galon", // Stands for 1/4 Galon
-      oneGallon: "1 Galon",
-      fourGallons: "4 Galones",
-      fiveGallons: "5 Galones",
-      kit: "Kit",
+    size: {
+      "quarterGallon": <><sup>1</sup>&frasl;<sub>4</sub> &nbsp;Galon</>, // Stands for 1/4 Galon
+      "oneGallon": "1 Galon",
+      "fourGallons": "4 Galones",
+      "fiveGallons": "5 Galones",
+      "kit": "Kit",
     },
-    types: {
-      enamel: "Esmalte",
-      architectural: "Arquitectonico",
-      industrialAndMarine: "Industriales & Marinas",
+    type: {
+      "enamel": "Esmalte",
+      "architectural": "Arquitectonico",
+      "industrialAndMarine": "Industriales & Marinas",
     }
   }
 
-  const formatData = ({ size, type, ...data }) => {
-    const typeLabel = PRODUCTS_PARAMS_LABELS_SCHEMA.types[type] ?? "";
-    const sizeLabel = PRODUCTS_PARAMS_LABELS_SCHEMA.sizes[size] ?? "";
+  const formatData = (data) => {
+    const typeLabel = PRODUCTS_PARAMS_LABELS_SCHEMA.type[data.type];
+    const sizeLabel = PRODUCTS_PARAMS_LABELS_SCHEMA.size[data.size];
 
     return {
       ...data,
       type: {
-        value: type,
+        value: data.type,
         label: typeLabel,
       },
       size: {
-        value: size,
+        value: data.size,
         label: sizeLabel,
       },
+      ...data?.expirationDate && { expirationDate: DateTime.fromFormat(data.expirationDate, "dd/MM/yyyy") },
     };
   }
 
-  const formattedData = Array.isArray(products) ? products.map(formatData) : formatData(products);
+  const formattedData = Array.isArray(rawData) ? rawData.map(formatData) : formatData(rawData);
 
   return formattedData
 }
+
 
 export const getProductsWithStockBySizes = products => {
   if (lodash.isEmpty(products)) return products;
@@ -116,25 +118,25 @@ export const formatShippingsFormEntryData = (formData, productsForShipping = [])
   }
 }
 
-export const formatInventoryByStock = inventory => {
+export const groupInventoryStockByProduct = inventory => {
   if (lodash.isEmpty(inventory)) return inventory;
 
   const productsOnStock = inventory.filter(record => record.onStock > 0);
 
   return [...productsOnStock.reduce((groupedProducts, inventoryRecord) => {
-    const { product, onStock: stock, shipped, _id, ...rest } = inventoryRecord;
-    const { name, code, _id: productRefId, ...productProps } = addLabelsToProducts(product);
+    const { product, onStock: stock, shipped, _id: inventoryRefId, ...rest } = inventoryRecord;
+    const { _id: productRefId, name, code, type, typeClass, ...productProps } = addLabelsToProducts(product);
 
     const currentRecordStockData = {
       ...rest,
       ...productProps,
-      inventoryRefId: _id,
+      inventoryRefId,
       stock,
     }
 
-    if (groupedProducts.has(name)) {
-      const { onStock: groupedOnStock, ...groupedProps } = groupedProducts.get(name);
-      groupedProducts.set(name, {
+    if (groupedProducts.has(productRefId)) {
+      const { onStock: groupedOnStock, ...groupedProps } = groupedProducts.get(productRefId);
+      groupedProducts.set(productRefId, {
         ...groupedProps,
         onStock: [
           ...groupedOnStock,
@@ -142,10 +144,12 @@ export const formatInventoryByStock = inventory => {
         ]
       })
     } else {
-      groupedProducts.set(name, {
+      groupedProducts.set(productRefId, {
+        _id: productRefId,
         name,
         code,
-        _id: productRefId,
+        type,
+        typeClass,
         onStock: [currentRecordStockData]
       })
     }
@@ -153,53 +157,4 @@ export const formatInventoryByStock = inventory => {
 
     return groupedProducts;
   }, new Map()).values()];
-}
-
-export const formatStockForSelection = stock => {
-  return stock.flatMap(product => {
-    const { onStock, ...rest } = product;
-
-    const metadata = {
-      types: {
-        enamel: "Esmalte",
-        architectural: "Arquitectonico",
-        industrialAndMarine: "Industriales & Marinas",
-      },
-      typeClasses: ["A", "B", "C"],
-    }
-
-    return Object.entries(metadata.types).flatMap(([type, typeLabel]) => {
-      return metadata.typeClasses.reduce((formattedStock, typeClass, idx) => {
-        if (type === "industrialAndMarine" && idx > 0) return formattedStock;
-
-        const stocked = onStock.reduce((stocked, productStocked) => {
-          const isCorrectTypeAndClass = productStocked.type.value === type && productStocked.typeClass === typeClass;
-          if (isCorrectTypeAndClass) stocked.push(productStocked)
-
-          return stocked
-        }, [])
-
-        formattedStock.push({
-          ...rest,
-          type: {
-            value: type,
-            label: typeLabel,
-          },
-          typeClass: type === "industrialAndMarine" ? null : typeClass,
-          onStock: stocked,
-        })
-
-        return formattedStock;
-      }, [])
-    })
-  })
-}
-
-export const getStockItemized = stock => {
-  return stock.reduce((stockItemized, stockedProduct) => {
-    // const itemizedProduct = stockedProduct.map(product => )
-
-    stockItemized.push()
-    return stockItemized;
-  }, [])
 }

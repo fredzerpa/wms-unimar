@@ -33,7 +33,7 @@ export const addProductsLabel = rawData => {
         value: data.size,
         label: sizeLabel,
       },
-      expirationDate: DateTime.fromFormat(data.expirationDate, "dd/MM/yyyy"),
+      ...data?.expirationDate && { expirationDate: DateTime.fromFormat(data.expirationDate, "dd/MM/yyyy") },
     };
   }
 
@@ -68,8 +68,8 @@ export const formatOnSubmitBillForm = formData => {
     }
   }, { usd: 0, bs: 0 });
 
-  
-  
+
+
   return {
     ...formData,
     products,
@@ -96,43 +96,32 @@ export const formatBillFormEntryData = (formData) => {
   }
 }
 
-export const getAllRecordedProviders = bills => {
-  return [...bills.reduce((record, bill) => {
-    const key = bill?.provider?.name?.toLowerCase();
-    if (record.has(key)) return record;
+// export const formatProductsForSelection = products => {
+//   return products.flatMap(product => {
+//     const metadata = {
+//       types: {
+//         enamel: "Esmalte",
+//         architectural: "Arquitectonico",
+//         industrialAndMarine: "Industriales & Marinas",
+//       },
+//       typeClasses: ["A", "B", "C"],
+//     }
 
-    record.set(key, bill.provider);
+//     return Object.entries(metadata.types).flatMap(([type, typeLabel]) => {
+//       return metadata.typeClasses.reduce((formattedStock, typeClass, idx) => {
+//         if (type === "industrialAndMarine" && idx > 0) return formattedStock;
 
-    return record;
-  }, new Map()).values()];
-}
+//         formattedStock.push({
+//           ...product,
+//           type: {
+//             value: type,
+//             label: typeLabel,
+//           },
+//           typeClass: type === "industrialAndMarine" ? null : typeClass,
+//         })
 
-export const formatProductsForSelection = products => {
-  return products.flatMap(product => {
-    const metadata = {
-      types: {
-        enamel: "Esmalte",
-        architectural: "Arquitectonico",
-        industrialAndMarine: "Industriales & Marinas",
-      },
-      typeClasses: ["A", "B", "C"],
-    }
-
-    return Object.entries(metadata.types).flatMap(([type, typeLabel]) => {
-      return metadata.typeClasses.reduce((formattedStock, typeClass, idx) => {
-        if (type === "industrialAndMarine" && idx > 0) return formattedStock;
-
-        formattedStock.push({
-          ...product,
-          type: {
-            value: type,
-            label: typeLabel,
-          },
-          typeClass: type === "industrialAndMarine" ? null : typeClass,
-        })
-
-        return formattedStock;
-      }, [])
-    })
-  })
-}
+//         return formattedStock;
+//       }, [])
+//     })
+//   })
+// }

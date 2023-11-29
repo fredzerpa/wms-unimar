@@ -43,7 +43,7 @@ const ProviderModalForm = ({ providerData, open, close, onSubmit, onDelete }) =>
 
   const documentIdType = watch("documentId.type");
 
-  const isEditingProduct = useMemo(() => !lodash.isEmpty(providerData), [providerData]);
+  const isEditingProvider = useMemo(() => !lodash.isEmpty(providerData), [providerData]);
 
   const handleProductDelete = async e => {
     try {
@@ -70,7 +70,7 @@ const ProviderModalForm = ({ providerData, open, close, onSubmit, onDelete }) =>
       const formattedData = formatProviderSubmitData(data);
       const response = await onSubmit(formattedData);
 
-      const submitMessage = isEditingProduct ? "Se ha actualizado el producto exitosamente" : "Se creado el producto exitosamente"
+      const submitMessage = isEditingProvider ? "Se ha actualizado el producto exitosamente" : "Se creado el producto exitosamente"
       if (!response?.error) enqueueSnackbar(submitMessage, { variant: "success" })
 
       handleClose();
@@ -117,7 +117,11 @@ const ProviderModalForm = ({ providerData, open, close, onSubmit, onDelete }) =>
           <LocalizationProvider dateAdapter={AdapterLuxon} adapterLocale="es-es">
             <MDBox p={3}>
               <MDTypography variant="h4" fontWeight="medium" textTransform="capitalize" gutterBottom>
-                {isEditingProduct ? "Editar Proveedor" : "Nuevo Proveedor"}
+                {
+                  userSession?.privileges?.billing?.upsert ?
+                    isEditingProvider ? "Editar" : "Nueva"
+                    : "Detalles de"
+                } Proveedor
               </MDTypography>
 
               <MDBox>
@@ -200,6 +204,12 @@ const ProviderModalForm = ({ providerData, open, close, onSubmit, onDelete }) =>
                           {...field}
                           selectValue={documentIdType}
                           onSelectChange={value => setValue("documentId.type", value)}
+                          selectProps={{
+                            readOnly: true,
+                          }}
+                          inputProps={{
+                            readOnly: userSession?.privileges?.billing?.upsert
+                          }}
                         />
                       )}
                       rules={{
@@ -221,7 +231,7 @@ const ProviderModalForm = ({ providerData, open, close, onSubmit, onDelete }) =>
                 <MDBox mt={3} mb={1} display="flex" justifyContent="flex-between" width="100%">
                   <MDBox width="100%">
                     {
-                      isEditingProduct && userSession?.privileges?.billing?.delete &&
+                      isEditingProvider && userSession?.privileges?.billing?.delete &&
                       (
                         <MDButton loading={isSubmitting} color="error" variant="gradient" onClick={handleProductDelete}>
                           <Lock sx={{ mr: 1 }} />
@@ -233,7 +243,7 @@ const ProviderModalForm = ({ providerData, open, close, onSubmit, onDelete }) =>
                   <MDBox display="flex" justifyContent="flex-end" gap={3} width="100%">
                     <MDButton color="dark" variant="text" onClick={close} sx={{ alignSelf: "center" }}>Cancelar</MDButton>
                     {
-                      isEditingProduct && userSession?.privileges?.billing?.upsert &&
+                      userSession?.privileges?.billing?.upsert &&
                       (
                         <MDButton loading={isSubmitting} disabled={!isDirty} color="info" variant="gradient" type="submit">
                           Guardar

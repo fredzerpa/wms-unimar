@@ -5,7 +5,6 @@ import MDBox from "components/MDBox"
 import Product from "./components/Products";
 
 
-
 const SelectedProducts = ({ products, onProductsDataChange, ...rest }) => {
 
   return (
@@ -13,7 +12,7 @@ const SelectedProducts = ({ products, onProductsDataChange, ...rest }) => {
       <MDBox p={1.5}>
         {products.map(product =>
           <Product
-            key={product?.name + product?.type?.value + product?.typeClass}
+            key={product._id}
             productData={product}
             onDataChange={onProductsDataChange}
             {...rest}

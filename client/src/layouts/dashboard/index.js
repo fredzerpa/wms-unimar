@@ -1,6 +1,8 @@
-// @mui material components
+import { useMemo } from "react";
 import { Card } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
+import { Link } from "react-router-dom";
+import colors from "assets/theme/base/colors";
 
 import MDBox from "components/MDBox";
 import InventoryDataTable from "components/InventoryDataTable";
@@ -31,7 +33,7 @@ import {
 import { useBills } from "context/bills.context";
 import { useInventory } from "context/inventory.context";
 import { useShippings } from "context/shippings.context";
-import { useMemo } from "react";
+import MDTypography from "components/MDTypography";
 
 const Dashboard = () => {
   const { bills } = useBills();
@@ -223,7 +225,7 @@ const Dashboard = () => {
                   chart={{
                     labels: Object.keys(dataConfig.inventory.groupedByClass),
                     datasets: {
-                      backgroundColors: ["primary", "info", "text"],
+                      backgroundColors: ["primary", "info", "text", "warning"],
                       data: Object.values(dataConfig.inventory.groupedByClass).map(products => products.length),
                     },
                   }}
