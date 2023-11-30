@@ -53,7 +53,7 @@ const Dashboard = () => {
   const { shippings } = useShippings();
   const { inventory } = useInventory();
   const [cardsSelectedOptions, setCardsSelectedOptions] = useState({
-    rotations: {
+    inventory: {
       label: "Mes",
       value: "currentMonth"
     },
@@ -101,9 +101,6 @@ const Dashboard = () => {
     },
   }), [bills, inventory, shippings])
 
-  console.log(dataConfig.shippings.lastSixMonths)
-
-
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -123,7 +120,7 @@ const Dashboard = () => {
                   { label: "3 Meses", value: "lastThreeMonths" },
                   { label: "6 Meses", value: "lastSixMonths" },
                 ]}
-                onOptionChange={option => setCardsSelectedOptions({ ...cardsSelectedOptions, rotations: option })}
+                onOptionChange={option => setCardsSelectedOptions({ ...cardsSelectedOptions, inventory: option })}
                 percentage={(() => {
                   const CARD_LABELS_MAP = {
                     currentWeek: "esta semana",
@@ -135,7 +132,7 @@ const Dashboard = () => {
                   return {
                     color: "dark",
                     amount: "20",
-                    label: CARD_LABELS_MAP[cardsSelectedOptions.rotations.value],
+                    label: CARD_LABELS_MAP[cardsSelectedOptions.inventory.value],
                   }
                 })()}
               />
@@ -223,7 +220,7 @@ const Dashboard = () => {
                   { label: "3 Meses", value: "lastThreeMonths" },
                   { label: "6 Meses", value: "lastSixMonths" },
                 ]}
-                onOptionChange={option => setCardsSelectedOptions({ ...cardsSelectedOptions, costs: option })}
+                onOptionChange={option => setCardsSelectedOptions({ ...cardsSelectedOptions, bills: option })}
                 percentage={(() => {
                   const TARGET_MAP = {
                     currentWeek: sumBillsTotal(dataConfig.bills.currentWeek),
