@@ -28,7 +28,7 @@ export const AuthProvider = ({ userData, children }) => {
           error: err.response,
         });
       } finally {
-        setLoadingSession(false);
+        setLoadingSession(false)
       }
     })();
 

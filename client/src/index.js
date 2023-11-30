@@ -9,6 +9,14 @@ import { SnackbarProvider } from "notistack";
 import { MaterialUIControllerProvider } from "context";
 
 import App from "App";
+import { BillsProvider } from "context/bills.context";
+import { InventoryProvider } from "context/inventory.context";
+import { ProductsProvider } from "context/products.context";
+import { ShippingsProvider } from "context/shippings.context";
+import { StoresProvider } from "context/stores.context";
+import { ProvidersProvider } from "context/providers.context";
+import { AuthProvider } from "context/auth.context";
+
 
 const container = document.getElementById("app");
 const root = createRoot(container);
@@ -27,7 +35,21 @@ root.render(
           justifyContent: "center"
         }}
       >
-        <App />
+        <AuthProvider userData={null}>
+          <ProductsProvider>
+            <InventoryProvider>
+              <ProvidersProvider>
+                <BillsProvider>
+                  <StoresProvider>
+                    <ShippingsProvider>
+                      <App />
+                    </ShippingsProvider>
+                  </StoresProvider>
+                </BillsProvider>
+              </ProvidersProvider>
+            </InventoryProvider>
+          </ProductsProvider>
+        </AuthProvider>
       </SnackbarProvider>
     </MaterialUIControllerProvider>
   </BrowserRouter>

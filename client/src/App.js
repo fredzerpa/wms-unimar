@@ -21,21 +21,17 @@ import { ProtectedRoute } from "./ProtectedRoute";
 
 // Contexts
 import { useMaterialUIController, setMiniSidenav } from "context";
-import { AuthProvider } from "context/auth.context";
 import { MountPoint } from "context/confirmation.context";
+import { useAuth } from "context/auth.context";
 
 // Images
 import brandWhite from "assets/images/tiendas-montana.png";
 import brandDark from "assets/images/tiendas-montana.png";
-import { BillsProvider } from "context/bills.context";
-import { InventoryProvider } from "context/inventory.context";
-import { ProductsProvider } from "context/products.context";
-import { ShippingsProvider } from "context/shippings.context";
-import { StoresProvider } from "context/stores.context";
+
 
 // react-chartjs-2 components
 import { Chart as ChartJS, registerables } from 'chart.js';
-import { ProvidersProvider } from "context/providers.context";
+
 ChartJS.register(...registerables); // Fix react-chartjs-2 migration from v3 to v5
 
 const App = () => {
@@ -50,6 +46,7 @@ const App = () => {
   } = controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const { pathname } = useLocation();
+  const { user } = useAuth();
 
   // Open sidenav when mouse enter on mini sidenav
   const handleOnMouseEnter = () => {
@@ -94,42 +91,29 @@ const App = () => {
 
   return (
     <ThemeProvider theme={darkMode ? themeDark : theme}>
-      <AuthProvider userData={null}>
-        <ProductsProvider>
-          <InventoryProvider>
-            <ProvidersProvider>
-              <BillsProvider>
-                <StoresProvider>
-                  <ShippingsProvider>
 
-                    <MountPoint /> {/* Confirmation Context Provider */}
-                    <CssBaseline />
+      <MountPoint /> {/* Confirmation Context Provider */}
+      <CssBaseline />
 
-                    {layout === "dashboard" && (
-                      <>
-                        <Sidenav
-                          color={sidenavColor}
-                          brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandWhite : brandDark}
-                          routes={routes}
-                          onMouseEnter={handleOnMouseEnter}
-                          onMouseLeave={handleOnMouseLeave}
-                        />
-                        <Configurator />
-                      </>
-                    )}
+      {layout === "dashboard" && user && (
+        <>
+          <Sidenav
+            color={sidenavColor}
+            brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandWhite : brandDark}
+            routes={routes}
+            onMouseEnter={handleOnMouseEnter}
+            onMouseLeave={handleOnMouseLeave}
+          />
+          <Configurator />
+        </>
+      )}
 
-                    <Routes>
-                      {getRoutes(routes)}
-                      <Route path="*" element={<Navigate to="/dashboard" />} />
-                    </Routes>
+      <Routes>
+        {getRoutes(routes)}
+        <Route path="*" element={<Navigate to="/dashboard" />} />
+      </Routes>
 
-                  </ShippingsProvider>
-                </StoresProvider>
-              </BillsProvider>
-            </ProvidersProvider>
-          </InventoryProvider>
-        </ProductsProvider>
-      </AuthProvider>
+
     </ThemeProvider>
   );
 }
