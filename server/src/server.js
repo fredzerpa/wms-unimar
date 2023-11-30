@@ -21,15 +21,15 @@ const server = http.createServer(app);
 
   // TODO: set backup
   // Programamos la tarea de actualizacion de Collections y Back-Ups diariamente    
-  // cron.schedule(
-  //   '0 0 * * *', // Realiza la tarea a las 12:00 AM 
-  //   async () => {
-  //     await mongoBackupDatabase();
-  //   },
-  //   {
-  //     timezone: 'America/Caracas' // La tarea toma la hora en Venezuela/Caracas
-  //   }
-  // );
+  cron.schedule(
+    '0 0 * * *', // Realiza la tarea a las 12:00 AM 
+    async () => {
+      await mongoBackupDatabase();
+    },
+    {
+      timezone: 'America/Caracas' // La tarea toma la hora en Venezuela/Caracas
+    }
+  );
 
   server.listen(PORT, console.log(`Listening on PORT ${PORT}`));
 })()

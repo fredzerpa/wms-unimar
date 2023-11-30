@@ -36,20 +36,23 @@ async function mongoBackupDatabase() {
   try {
 
     const dumpResponse = dumpDatabase({
-      filePrefix: 'db-elangel',
+      filePrefix: 'db-tiendasMontana',
       pathToDumpFolder: path.join(__dirname, '..', 'temp-backups', 'MongoDB'),
-      database: 'el-angel',
+      database: 'tiendasMontana',
     })
 
-    const uploadBackupResponse = await uploadFileToBucket({
-      filePath: dumpResponse.data.filePath,
-      keyName: path.basename(dumpResponse.data.filePath), // Nombre original del archivo
-      bucketName: 'elangel-mongodb-dumps',
-    })
+    // const uploadBackupResponse = await uploadFileToBucket({
+    //   filePath: dumpResponse.data.filePath,
+    //   keyName: path.basename(dumpResponse.data.filePath), // Nombre original del archivo
+    //   bucketName: 'elangel-mongodb-dumps',
+    // })
 
-    if (uploadBackupResponse.ok) removeFile(dumpResponse.data.filePath);
+    // if (uploadBackupResponse.ok) removeFile(dumpResponse.data.filePath);
 
-    console.log(`Created Backup File ${uploadBackupResponse.file} on AWS.`);
+    // console.log(`Created Backup File ${uploadBackupResponse.file} on AWS.`);
+
+    console.log(dumpResponse)
+    console.log(`Created Backup File ${dumpResponse.data.fileName} on ${dumpResponse.data.filePath}.`);
   } catch (err) {
     console.log('Error on Database Backup Service: ', err.message);
   }
