@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Card } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import { Link } from "react-router-dom";
@@ -18,10 +18,13 @@ import PieChart from "components/Charts/PieChart";
 import { formatCurrency, formatPercentage, formatNumber } from "utils/functions.utils";
 import {
   LAST_SIX_MONTHS_LABELS,
+  getBillsByWeekNumber,
   getDiff,
   getInventoryGroupedByClass,
   getLastSixMonthsBills,
   getLastSixMonthsShippings,
+  getLastThreeMonthsBills,
+  getLastThreeMonthsShippings,
   getShippingsByMonth,
   getShippingsByWeekNumber,
   sortOrdersOverview,
@@ -39,6 +42,20 @@ const Dashboard = () => {
   const { bills } = useBills();
   const { shippings } = useShippings();
   const { inventory } = useInventory();
+  const [cardsSelectedOptions, setCardsSelectedOptions] = useState({
+    rotations: {
+      label: "Mes",
+      value: "month"
+    },
+    shippings: {
+      label: "Mes",
+      value: "month"
+    },
+    costs: {
+      label: "Mes",
+      value: "month"
+    },
+  })
 
   const dataConfig = useMemo(() => ({
     shippings: {
@@ -56,6 +73,26 @@ const Dashboard = () => {
     inventory: {
       groupedByClass: getInventoryGroupedByClass(inventory)
     },
+    cards: {
+      rotations: {
+        week: null,
+        month: null,
+        triMonths: null,
+        sixMonths: null,
+      },
+      shippings: {
+        week: getShippingsByWeekNumber(shippings, todayDT.weekNumber).length,
+        month: getShippingsByMonth(shippings, todayDT.month).length,
+        triMonths: getLastThreeMonthsShippings(shippings).length,
+        sixMonths: getLastSixMonthsShippings(shippings).length,
+      },
+      costs: {
+        week: sumBillsTotal(getBillsByWeekNumber(bills, todayDT.weekNumber)),
+        month: sumBillsTotal(getShippingsByMonth(bills, todayDT.month)),
+        triMonths: getLastThreeMonthsBills(bills).reduce((sum, month) => sum + sumBillsTotal(month.bills), 0),
+        sixMonths: getLastSixMonthsBills(bills).reduce((sum, month) => sum + sumBillsTotal(month.bills), 0),
+      },
+    }
   }), [bills, inventory, shippings])
 
   return (
@@ -63,57 +100,133 @@ const Dashboard = () => {
       <DashboardNavbar />
       <MDBox py={3}>
         <Grid container spacing={3}>
-          <Grid xs={12} md={6} lg={3}>
+          {/* Rotations */}
+          {/* <Grid xs={12} md={6} lg={3}>
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
                 color="dark"
                 icon="change_circle"
                 title="Rotaciones"
                 count={formatPercentage(0.34, { signDisplay: "never" })}
-                percentage={{
-                  color: "dark",
-                  amount: "20",
-                  label: "Dominó Satinado enviados",
-                }}
+                optionValue={cardsSelectedOptions.rotations}
+                options={[
+                  { label: "Semana", value: "week" },
+                  { label: "Mes", value: "month" },
+                  { label: "3 Meses", value: "triMonths" },
+                  { label: "6 Meses", value: "sixMonths" },
+                ]}
+                onOptionChange={option => setCardsSelectedOptions({ ...cardsSelectedOptions, rotations: option })}
+                percentage={(() => {
+                  const CARD_LABELS_MAP = {
+                    week: "esta semana",
+                    month: "este mes",
+                    triMonths: "en los ultimos 3 meses",
+                    sixMonths: "en los ultimos 6 meses",
+                  }
+
+                  return {
+                    color: "dark",
+                    amount: "20",
+                    label: CARD_LABELS_MAP[cardsSelectedOptions.rotations.value],
+                  }
+                })()}
               />
             </MDBox>
-          </Grid>
+          </Grid> */}
+
+          {/* Shippings */}
           <Grid xs={12} md={6} lg={3}>
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
                 icon="local_shipping"
-                title="Envios semanal"
-                count={formatNumber(dataConfig.shippings.currentWeek.length)}
+                title={(() => {
+                  const CARD_TITLE_LABELS_MAP = {
+                    week: "esta semana",
+                    month: "este mes",
+                    triMonths: "en los ultimos 3 meses",
+                    sixMonths: "en los ultimos 6 meses",
+                  }
+
+                  // TODO: Add dynamic title
+                  const title = `Envios`;
+
+                  return title
+                })()}
+                count={formatNumber(dataConfig.cards.shippings[cardsSelectedOptions.shippings.value])}
+                optionValue={cardsSelectedOptions.shippings}
+                options={[
+                  { label: "Semana", value: "week" },
+                  { label: "Mes", value: "month" },
+                  { label: "3 Meses", value: "triMonths" },
+                  { label: "6 Meses", value: "sixMonths" },
+                ]}
+                onOptionChange={option => setCardsSelectedOptions({ ...cardsSelectedOptions, shippings: option })}
                 percentage={(() => {
                   const target = dataConfig.shippings.currentWeek.length;
                   const source = dataConfig.shippings.formerWeek.length;
                   const diff = getDiff(target, source);
 
+                  const CARD_LABELS_MAP = {
+                    week: "esta semana",
+                    month: "este mes",
+                    triMonths: "en los ultimos 3 meses",
+                    sixMonths: "en los ultimos 6 meses",
+                  }
+
                   return {
                     color: diff?.label ? diff?.color : "dark",
                     amount: diff?.label ?? `+${target}`,
-                    label: "esta semana",
+                    label: CARD_LABELS_MAP[cardsSelectedOptions.shippings.value],
                   }
                 })()}
               />
             </MDBox>
           </Grid>
+
+          {/* Costs */}
           <Grid xs={12} md={6} lg={3}>
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
                 color="success"
                 icon="attach_money"
-                title="Gastos"
-                count={formatCurrency(sumBillsTotal(dataConfig.bills.currentMonth))}
+                title={(() => {
+                  const CARD_TITLE_LABELS_MAP = {
+                    week: "esta semana",
+                    month: "este mes",
+                    triMonths: "en los ultimos 3 meses",
+                    sixMonths: "en los ultimos 6 meses",
+                  }
+
+                  // TODO: Add dynamic title
+                  const title = `Gastos`;
+
+                  return title
+                })()}
+                count={formatCurrency(dataConfig.cards.costs[cardsSelectedOptions.costs.value])}
+                optionValue={cardsSelectedOptions.costs}
+                options={[
+                  { label: "Semana", value: "week" },
+                  { label: "Mes", value: "month" },
+                  { label: "3 Meses", value: "triMonths" },
+                  { label: "6 Meses", value: "sixMonths" },
+                ]}
+                onOptionChange={option => setCardsSelectedOptions({ ...cardsSelectedOptions, costs: option })}
                 percentage={(() => {
                   const target = sumBillsTotal(dataConfig.bills.currentMonth);
                   const source = dataConfig.bills.formerMonth;
                   const diff = getDiff(target, source);
 
+                  const CARD_LABELS_MAP = {
+                    week: "esta semana",
+                    month: "este mes",
+                    triMonths: "en los ultimos 3 meses",
+                    sixMonths: "en los ultimos 6 meses",
+                  }
+
                   return {
                     color: diff?.label ? diff?.color : "dark",
                     amount: diff?.label ?? `+${target}`,
-                    label: "esta mes",
+                    label: CARD_LABELS_MAP[cardsSelectedOptions.costs.value],
                   }
                 })()}
               />

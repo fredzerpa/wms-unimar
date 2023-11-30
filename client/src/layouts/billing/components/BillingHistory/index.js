@@ -56,7 +56,7 @@ const BillingHistory = () => {
   }, [bills])
 
   const sortBills = data => data.sort((a, b) => {
-    const diff = DateTime.fromFormat(b?.metadata?.issuedAt, "dd/MM/yyyy, TT").diff(DateTime.fromFormat(a?.metadata?.issuedAt, "dd/MM/yyyy, TT")).as("milliseconds");
+    const diff = DateTime.fromFormat(b?.date, "dd/MM/yyyy").diff(DateTime.fromFormat(a?.date, "dd/MM/yyyy")).as("milliseconds");
     if (diff < 0) return -1
     else if (diff > 0) return 1
     else return 0

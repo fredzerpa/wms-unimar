@@ -9,8 +9,10 @@ import Icon from "@mui/material/Icon";
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
+import { MenuItem, Select } from "@mui/material";
+import SettingsMenu from "layouts/profile/components/SettingsMenu/SettingsMenu";
 
-const ComplexStatisticsCard = ({ color, title, count, percentage, icon, slotProps }) => {
+const ComplexStatisticsCard = ({ color, title, count, percentage, icon, slotProps, options, onOptionChange }) => {
   return (
     <Card {...slotProps?.card}>
       <MDBox display="flex" justifyContent="space-between" pt={1} px={2}>
@@ -32,10 +34,30 @@ const ComplexStatisticsCard = ({ color, title, count, percentage, icon, slotProp
           </Icon>
         </MDBox>
         <MDBox lineHeight={1.25}>
-          <MDTypography variant="button" align="right" fontWeight="light" color="text" {...slotProps?.title}>
-            {title}
-          </MDTypography>
-          <MDTypography variant="h4" align="right" {...slotProps?.count}>{count}</MDTypography>
+          <MDBox display="flex" justifyContent="flex-end" mb={1}>
+            <MDBox mt={2} mr={1}>
+              <MDTypography variant="button" align="right" fontWeight="light" color="text" component="p" {...slotProps?.title}>
+                {title}
+              </MDTypography>
+              <MDTypography variant="h4" align="right" {...slotProps?.count}>{count}</MDTypography>
+            </MDBox>
+            <SettingsMenu
+              button={{
+                size: "medium",
+                sx: { p: 0 },
+                disableRipple: true,
+              }}
+              menu={{
+                transformOrigin: { horizontal: "right", vertical: "top" },
+                anchorOrigin: { horizontal: "right", vertical: "bottom" }
+              }}
+              items={options.map(option => ({
+                label: option.label,
+                action: () => onOptionChange(option),
+              }))}
+              noDivision
+            />
+          </MDBox>
         </MDBox>
       </MDBox>
       <Divider />

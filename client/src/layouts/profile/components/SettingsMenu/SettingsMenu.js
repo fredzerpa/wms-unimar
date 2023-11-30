@@ -4,7 +4,7 @@ import { Box, Divider, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/m
 import PropTypes from 'prop-types';
 import MDButton from 'components/MDButton';
 
-const SettingsMenu = ({ button, menu, items }) => {
+const SettingsMenu = ({ button, menu, items, noDivision }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -16,9 +16,11 @@ const SettingsMenu = ({ button, menu, items }) => {
     return (
       <Box key={idx}>
         <MenuItem onClick={item?.action ?? null}>
-          <ListItemIcon>
-            {item?.icon}
-          </ListItemIcon>
+          {item?.icon && (
+            <ListItemIcon>
+              {item.icon}
+            </ListItemIcon>
+          )}
           <ListItemText
             primary={item?.label}
             primaryTypographyProps={{
@@ -26,7 +28,7 @@ const SettingsMenu = ({ button, menu, items }) => {
             }}
           />
         </MenuItem>
-        {!isLastItem && <Divider />}
+        {!isLastItem && !noDivision && <Divider />}
       </Box>
     )
   })

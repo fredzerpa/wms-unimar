@@ -4,6 +4,7 @@ import { formatPercentage } from "utils/functions.utils";
 
 export const todayDT = DateTime.now().setLocale("es-ES");
 
+export const LAST_THREE_MONTHS_LABELS = Info.months("short", { locale: "es-ES" }).filter((month, idx) => idx >= todayDT.month - 3 && idx < todayDT.month).map(lodash.capitalize);
 export const LAST_SIX_MONTHS_LABELS = Info.months("short", { locale: "es-ES" }).filter((month, idx) => idx >= todayDT.month - 6 && idx < todayDT.month).map(lodash.capitalize);
 
 export const sumBillsTotal = array => Number(array.reduce((total, bill) => total + bill.total.usd, 0).toFixed(2));
@@ -48,6 +49,26 @@ export const getShippingsByMonth = (shippings, monthNumber) => {
   return filteredShippingsByMonth;
 }
 
+export const getLastThreeMonthsShippings = shippings => {
+  if (lodash.isEmpty(shippings)) return [];
+  const INITIAL_VALUE = LAST_THREE_MONTHS_LABELS.map(label => ({ label, shippings: [] }))
+  const lastSixMonthsShippings = shippings.reduce((months, shipping) => {
+    // Calculamos cuantos meses han pasado y para evitar cualquier mal calculo ponemos el mismo dia a ambos DateTimes
+    const shippingDT = DateTime.fromFormat(shipping.date, "dd/MM/yyyy").setLocale("es-ES").startOf("month");
+    const monthsPassedSinceShippingStarted = todayDT.startOf("month").diff(shippingDT.startOf("month")).as("months");
+    const isSixMonthsAgoFromNow = monthsPassedSinceShippingStarted >= 0 && monthsPassedSinceShippingStarted < 3;
+
+    if (!isSixMonthsAgoFromNow) return months; // Solo interesa los ultimos 3 meses de shippings - Valores entre 0-2
+
+    const index = months.findIndex(month => month.label.toLowerCase() === shippingDT.monthShort.toLowerCase())
+    months[index].shippings.push(shipping);
+
+    return months;
+  }, INITIAL_VALUE)
+
+  return lastSixMonthsShippings;
+}
+
 export const getLastSixMonthsShippings = shippings => {
   if (lodash.isEmpty(shippings)) return [];
   const INITIAL_VALUE = LAST_SIX_MONTHS_LABELS.map(label => ({ label, shippings: [] }))
@@ -82,6 +103,41 @@ export const getInventoryGroupedByClass = inventory => {
     C: [],
     U: [],
   })
+}
+
+export const getBillsByWeekNumber = (bills, weekNumber) => {
+  if (lodash.isEmpty(bills) || !weekNumber) return []
+
+  const weekDT = todayDT.set({ weekNumber }).startOf("week");
+  const nextWeekDT = todayDT.set({ weekNumber }).plus({ weeks: 1 }).startOf("week");
+
+  const filteredBills = bills.filter(shipping => {
+    const billDT = DateTime.fromFormat(shipping.date, "dd/MM/yyyy");
+    const isFromTheWeekNumber = billDT.diff(weekDT).as("milliseconds") > 0 && billDT.diff(nextWeekDT).as("milliseconds") < 0;
+    return isFromTheWeekNumber;
+  })
+
+  return filteredBills;
+}
+
+export const getLastThreeMonthsBills = bills => {
+  if (lodash.isEmpty(bills)) return [];
+  const INITIAL_VALUE = LAST_THREE_MONTHS_LABELS.map(label => ({ label, bills: [] }))
+  const lastSixMonthsBills = bills.reduce((months, bill) => {
+    // Calculamos cuantos meses han pasado y para evitar cualquier mal calculo ponemos el mismo dia a ambos DateTimes
+    const billDT = DateTime.fromFormat(bill.date, "dd/MM/yyyy").setLocale("es-ES").startOf("month");
+    const monthsPassedSinceBillStarted = todayDT.startOf("month").diff(billDT.startOf("month")).as("months");
+    const isSixMonthsAgoFromNow = monthsPassedSinceBillStarted >= 0 && monthsPassedSinceBillStarted < 3;
+
+    if (!isSixMonthsAgoFromNow) return months; // Solo interesa los ultimos 3 meses de billos - Valores entre 0-2
+
+    const index = months.findIndex(month => month.label.toLowerCase() === billDT.monthShort.toLowerCase())
+    months[index].bills.push(bill);
+
+    return months;
+  }, INITIAL_VALUE)
+
+  return lastSixMonthsBills;
 }
 
 export const getLastSixMonthsBills = bills => {
