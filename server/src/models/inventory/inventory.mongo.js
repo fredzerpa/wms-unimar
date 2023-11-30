@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const inventorySchema = new mongoose.Schema({
   code: {
     type: String,
-    unique: true,
+    // unique: true,
     required: false,
   },
   product: {

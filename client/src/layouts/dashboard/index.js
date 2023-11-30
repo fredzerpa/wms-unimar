@@ -101,6 +101,7 @@ const Dashboard = () => {
     },
   }), [bills, inventory, shippings])
 
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -113,7 +114,16 @@ const Dashboard = () => {
                 color="dark"
                 icon="change_circle"
                 title="Rotaciones"
-                count={formatPercentage(0.34, { signDisplay: "never" })}
+                count={(() => {
+                  const COUNT_MAP = {
+                    currentWeek: dataConfig.shippings.currentWeek.length,
+                    currentMonth: dataConfig.shippings.currentMonth.length,
+                    lastThreeMonths: dataConfig.shippings.lastThreeMonths.reduce((sum, month) => sum + month.shippings.length, 0),
+                    lastSixMonths: dataConfig.shippings.lastSixMonths.reduce((sum, month) => sum + month.shippings.length, 0),
+                  }
+                  const count = COUNT_MAP[cardsSelectedOptions.shippings.value]
+                  return formatPercentage(count, { signDisplay: "never" })
+                })()}
                 options={[
                   { label: "Semana", value: "currentWeek" },
                   { label: "Mes", value: "currentMonth" },
@@ -122,6 +132,18 @@ const Dashboard = () => {
                 ]}
                 onOptionChange={option => setCardsSelectedOptions({ ...cardsSelectedOptions, inventory: option })}
                 percentage={(() => {
+                  const TARGET_MAP = {
+                    currentWeek: dataConfig.inventory.currentWeek.length,
+                    currentMonth: dataConfig.inventory.currentMonth.length,
+                    lastThreeMonths: dataConfig.inventory.lastThreeMonths.reduce((sum, month) => sum + month.inventory.length, 0),
+                    lastSixMonths: dataConfig.inventory.lastSixMonths.reduce((sum, month) => sum + month.inventory.length, 0),
+                  }
+                  const SOURCE_MAP = {
+                    currentWeek: dataConfig.inventory.formerWeek.length,
+                    currentMonth: dataConfig.inventory.formerMonth.length,
+                    lastThreeMonths: dataConfig.inventory.formerLastThreeMonths.reduce((sum, month) => sum + month.inventory.length, 0),
+                    lastSixMonths: dataConfig.inventory.formerLastSixMonths.reduce((sum, month) => sum + month.inventory.length, 0),
+                  }
                   const CARD_LABELS_MAP = {
                     currentWeek: "esta semana",
                     currentMonth: "este mes",
@@ -129,9 +151,14 @@ const Dashboard = () => {
                     lastSixMonths: "en los ultimos 6 meses",
                   }
 
+                  const target = TARGET_MAP[cardsSelectedOptions.inventory.value];
+                  const source = SOURCE_MAP[cardsSelectedOptions.inventory.value];
+                  const diff = getDiff(target, source);
+
+
                   return {
-                    color: "dark",
-                    amount: "20",
+                    color: diff?.label ? diff?.color : "dark",
+                    amount: diff?.label ?? `+${target}`,
                     label: CARD_LABELS_MAP[cardsSelectedOptions.inventory.value],
                   }
                 })()}
@@ -255,6 +282,7 @@ const Dashboard = () => {
               />
             </MDBox>
           </Grid>
+
           {/* TODO: Add */}
           {/* <Grid xs={12} md={6} lg={3}>
             <MDBox mb={1.5}>

@@ -5,7 +5,10 @@ import { formatPercentage } from "utils/functions.utils";
 export const todayDT = DateTime.now().setLocale("es-ES");
 
 export const LAST_THREE_MONTHS_LABELS = Info.months("short", { locale: "es-ES" }).filter((month, idx) => idx >= todayDT.month - 3 && idx < todayDT.month).map(lodash.capitalize);
+export const FORMER_LAST_THREE_MONTHS_LABELS = Info.months("short", { locale: "es-ES" }).filter((month, idx) => idx >= todayDT.month - 6 && idx < todayDT.month - 3).map(lodash.capitalize);
 export const LAST_SIX_MONTHS_LABELS = Info.months("short", { locale: "es-ES" }).filter((month, idx) => idx >= todayDT.month - 6 && idx < todayDT.month).map(lodash.capitalize);
+export const FORMER_LAST_SIX_MONTHS_LABELS = Info.months("short", { locale: "es-ES" }).filter((month, idx) => idx >= todayDT.month - 12 && idx < todayDT.month - 6).map(lodash.capitalize);
+
 
 export const sumBillsTotal = array => Number(array.reduce((total, bill) => total + bill.total.usd, 0).toFixed(2));
 
@@ -61,6 +64,8 @@ export const getLastThreeMonthsShippings = shippings => {
     if (!isSixMonthsAgoFromNow) return months; // Solo interesa los ultimos 3 meses de shippings - Valores entre 0-2
 
     const index = months.findIndex(month => month.label.toLowerCase() === shippingDT.monthShort.toLowerCase())
+    if (!months[index]) return months;
+
     months[index].shippings.push(shipping);
 
     return months;
@@ -70,7 +75,7 @@ export const getLastThreeMonthsShippings = shippings => {
 }
 export const getFormerLastThreeMonthsShippings = shippings => {
   if (lodash.isEmpty(shippings)) return [];
-  const INITIAL_VALUE = LAST_THREE_MONTHS_LABELS.map(label => ({ label, shippings: [] }))
+  const INITIAL_VALUE = FORMER_LAST_THREE_MONTHS_LABELS.map(label => ({ label, shippings: [] }))
   const lastSixMonthsShippings = shippings.reduce((months, shipping) => {
     // Calculamos cuantos meses han pasado y para evitar cualquier mal calculo ponemos el mismo dia a ambos DateTimes
     const shippingDT = DateTime.fromFormat(shipping.date, "dd/MM/yyyy").setLocale("es-ES").startOf("month");
@@ -80,6 +85,8 @@ export const getFormerLastThreeMonthsShippings = shippings => {
     if (!isSixMonthsAgoFromNow) return months; // Solo interesa los anteriores ultimos 3 meses de shippings - Valores entre 2-5
 
     const index = months.findIndex(month => month.label.toLowerCase() === shippingDT.monthShort.toLowerCase())
+    if (!months[index]) return months;
+
     months[index].shippings.push(shipping);
 
     return months;
@@ -100,6 +107,8 @@ export const getLastSixMonthsShippings = shippings => {
     if (!isSixMonthsAgoFromNow) return months; // Solo interesa los ultimos 6 meses de shippings - Valores entre 0-5
 
     const index = months.findIndex(month => month.label.toLowerCase() === shippingDT.monthShort.toLowerCase())
+    if (!months[index]) return months;
+
     months[index].shippings.push(shipping);
 
     return months;
@@ -110,7 +119,7 @@ export const getLastSixMonthsShippings = shippings => {
 
 export const getFormerLastSixMonthsShippings = shippings => {
   if (lodash.isEmpty(shippings)) return [];
-  const INITIAL_VALUE = LAST_SIX_MONTHS_LABELS.map(label => ({ label, shippings: [] }))
+  const INITIAL_VALUE = FORMER_LAST_SIX_MONTHS_LABELS.map(label => ({ label, shippings: [] }))
   const lastSixMonthsShippings = shippings.reduce((months, shipping) => {
     // Calculamos cuantos meses han pasado y para evitar cualquier mal calculo ponemos el mismo dia a ambos DateTimes
     const shippingDT = DateTime.fromFormat(shipping.date, "dd/MM/yyyy").setLocale("es-ES").startOf("month");
@@ -120,6 +129,8 @@ export const getFormerLastSixMonthsShippings = shippings => {
     if (!isSixMonthsAgoFromNow) return months; // Solo interesa los anteriores ultimos 6 meses de shippings - Valores entre 6-11
 
     const index = months.findIndex(month => month.label.toLowerCase() === shippingDT.monthShort.toLowerCase())
+    if (!months[index]) return months;
+
     months[index].shippings.push(shipping);
 
     return months;
@@ -168,6 +179,8 @@ export const getLastThreeMonthsBills = bills => {
     if (!isSixMonthsAgoFromNow) return months; // Solo interesa los ultimos 3 meses de billos - Valores entre 0-2
 
     const index = months.findIndex(month => month.label.toLowerCase() === billDT.monthShort.toLowerCase())
+    if (!months[index]) return months;
+
     months[index].bills.push(bill);
 
     return months;
@@ -178,8 +191,8 @@ export const getLastThreeMonthsBills = bills => {
 
 export const getFormerLastThreeMonthsBills = bills => {
   if (lodash.isEmpty(bills)) return [];
-  const INITIAL_VALUE = LAST_THREE_MONTHS_LABELS.map(label => ({ label, bills: [] }))
-  const lastSixMonthsBills = bills.reduce((months, bill) => {
+  const INITIAL_VALUE = FORMER_LAST_THREE_MONTHS_LABELS.map(label => ({ label, bills: [] }))
+  const lastSixMonthsBills = bills?.reduce((months, bill) => {
     // Calculamos cuantos meses han pasado y para evitar cualquier mal calculo ponemos el mismo dia a ambos DateTimes
     const billDT = DateTime.fromFormat(bill.date, "dd/MM/yyyy").setLocale("es-ES").startOf("month");
     const monthsPassedSinceBillStarted = todayDT.startOf("month").diff(billDT.startOf("month")).as("months");
@@ -188,6 +201,8 @@ export const getFormerLastThreeMonthsBills = bills => {
     if (!isSixMonthsAgoFromNow) return months; // Solo interesa los anteriores ultimos 3 meses de billos - Valores entre 2-5
 
     const index = months.findIndex(month => month.label.toLowerCase() === billDT.monthShort.toLowerCase())
+    if (!months[index]) return months;
+
     months[index].bills.push(bill);
 
     return months;
@@ -208,6 +223,8 @@ export const getLastSixMonthsBills = bills => {
     if (!isSixMonthsAgoFromNow) return months; // Solo interesa los ultimos 6 meses de billos - Valores entre 0-5
 
     const index = months.findIndex(month => month.label.toLowerCase() === billDT.monthShort.toLowerCase())
+    if (!months[index]) return months;
+
     months[index].bills.push(bill);
 
     return months;
@@ -218,7 +235,7 @@ export const getLastSixMonthsBills = bills => {
 
 export const getFormerLastSixMonthsBills = bills => {
   if (lodash.isEmpty(bills)) return [];
-  const INITIAL_VALUE = LAST_SIX_MONTHS_LABELS.map(label => ({ label, bills: [] }))
+  const INITIAL_VALUE = FORMER_LAST_SIX_MONTHS_LABELS.map(label => ({ label, bills: [] }))
   const lastSixMonthsBills = bills.reduce((months, bill) => {
     // Calculamos cuantos meses han pasado y para evitar cualquier mal calculo ponemos el mismo dia a ambos DateTimes
     const billDT = DateTime.fromFormat(bill.date, "dd/MM/yyyy").setLocale("es-ES").startOf("month");
@@ -228,6 +245,8 @@ export const getFormerLastSixMonthsBills = bills => {
     if (!isSixMonthsAgoFromNow) return months; // Solo interesa los anteriores ultimos 6 meses de billos - Valores entre 6-11
 
     const index = months.findIndex(month => month.label.toLowerCase() === billDT.monthShort.toLowerCase())
+    if (!months[index]) return months;
+
     months[index].bills.push(bill);
 
     return months;
@@ -296,6 +315,8 @@ export const getLastThreeMonthsInventory = records => {
     if (!isSixMonthsAgoFromNow) return months; // Solo interesa los ultimos 3 meses de recordos - Valores entre 0-2
 
     const index = months.findIndex(month => month.label.toLowerCase() === recordDT.monthShort.toLowerCase())
+    if (!months[index]) return months;
+
     months[index].records.push(record);
 
     return months;
@@ -306,7 +327,7 @@ export const getLastThreeMonthsInventory = records => {
 
 export const getFormerLastThreeMonthsInventory = records => {
   if (lodash.isEmpty(records)) return [];
-  const INITIAL_VALUE = LAST_THREE_MONTHS_LABELS.map(label => ({ label, records: [] }))
+  const INITIAL_VALUE = FORMER_LAST_THREE_MONTHS_LABELS.map(label => ({ label, records: [] }))
   const lastSixMonthsInventory = records.reduce((months, record) => {
     // Calculamos cuantos meses han pasado y para evitar cualquier mal calculo ponemos el mismo dia a ambos DateTimes
     const recordDT = DateTime.fromFormat(record.entryDate, "dd/MM/yyyy").setLocale("es-ES").startOf("month");
@@ -316,6 +337,8 @@ export const getFormerLastThreeMonthsInventory = records => {
     if (!isSixMonthsAgoFromNow) return months; // Solo interesa los anteriores ultimos 3 meses de recordos - Valores entre 2-5
 
     const index = months.findIndex(month => month.label.toLowerCase() === recordDT.monthShort.toLowerCase())
+    if (!months[index]) return months;
+
     months[index].records.push(record);
 
     return months;
@@ -336,6 +359,8 @@ export const getLastSixMonthsInventory = records => {
     if (!isSixMonthsAgoFromNow) return months; // Solo interesa los ultimos 6 meses de recordos - Valores entre 0-5
 
     const index = months.findIndex(month => month.label.toLowerCase() === recordDT.monthShort.toLowerCase())
+    if (!months[index]) return months;
+
     months[index].records.push(record);
 
     return months;
@@ -346,7 +371,7 @@ export const getLastSixMonthsInventory = records => {
 
 export const getFormerLastSixMonthsInventory = records => {
   if (lodash.isEmpty(records)) return [];
-  const INITIAL_VALUE = LAST_SIX_MONTHS_LABELS.map(label => ({ label, records: [] }))
+  const INITIAL_VALUE = FORMER_LAST_SIX_MONTHS_LABELS.map(label => ({ label, records: [] }))
   const lastSixMonthsInventory = records.reduce((months, record) => {
     // Calculamos cuantos meses han pasado y para evitar cualquier mal calculo ponemos el mismo dia a ambos DateTimes
     const recordDT = DateTime.fromFormat(record.entryDate, "dd/MM/yyyy").setLocale("es-ES").startOf("month");
@@ -356,6 +381,8 @@ export const getFormerLastSixMonthsInventory = records => {
     if (!isSixMonthsAgoFromNow) return months; // Solo interesa los anteriores ultimos 6 meses de recordos - Valores entre 6-11
 
     const index = months.findIndex(month => month.label.toLowerCase() === recordDT.monthShort.toLowerCase())
+    if (!months[index]) return months;
+
     months[index].records.push(record);
 
     return months;
@@ -364,6 +391,35 @@ export const getFormerLastSixMonthsInventory = records => {
   return lastSixMonthsInventory;
 }
 
+
+export const getProductsRotationPercentage = records => {
+  if (lodash.isEmpty(records)) return [];
+
+  const rotations = records.reduce((rotations, record) => {
+    const { product, shipped, onStock } = record;
+
+    if (rotations.has(product._id)) {
+      rotations.set(product._id, {
+        ...rotations.get(product._id),
+      })
+    } else {
+
+      rotations.set(product._id, {
+        product: {
+          _id: product._id,
+          name: product.name,
+          code: product.code,
+          type: product.type,
+          typeClass: product.typeClass,
+        },
+        shipped: shipped.length,
+        ordered: onStock,
+      })
+    }
+
+    return rotations;
+  }, new Map())
+}
 
 export const sortOrdersOverview = orders => {
   return orders.sort((a, b) => {
