@@ -1,8 +1,6 @@
 import { useMemo, useState } from "react";
 import { Card } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
-import { Link } from "react-router-dom";
-import colors from "assets/theme/base/colors";
 
 import MDBox from "components/MDBox";
 import InventoryDataTable from "components/InventoryDataTable";
@@ -35,6 +33,7 @@ import {
   getLastThreeMonthsBills,
   getLastThreeMonthsInventory,
   getLastThreeMonthsShippings,
+  getProductsRotationPercentage,
   getShippingsByMonth,
   getShippingsByWeekNumber,
   sortOrdersOverview,
@@ -46,7 +45,6 @@ import {
 import { useBills } from "context/bills.context";
 import { useInventory } from "context/inventory.context";
 import { useShippings } from "context/shippings.context";
-import MDTypography from "components/MDTypography";
 
 const Dashboard = () => {
   const { bills } = useBills();
@@ -108,7 +106,7 @@ const Dashboard = () => {
       <MDBox py={3}>
         <Grid container spacing={3}>
           {/* Rotations */}
-          {/* <Grid xs={12} md={6} lg={4}>
+          <Grid xs={12} md={6} lg={4}>
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
                 color="dark"
@@ -116,12 +114,36 @@ const Dashboard = () => {
                 title="Rotaciones"
                 count={(() => {
                   const COUNT_MAP = {
-                    currentWeek: dataConfig.shippings.currentWeek.length,
-                    currentMonth: dataConfig.shippings.currentMonth.length,
-                    lastThreeMonths: dataConfig.shippings.lastThreeMonths.reduce((sum, month) => sum + month.shippings.length, 0),
-                    lastSixMonths: dataConfig.shippings.lastSixMonths.reduce((sum, month) => sum + month.shippings.length, 0),
+                    currentWeek: getProductsRotationPercentage(dataConfig.inventory.currentWeek).reduce((highest, rotation) => {
+                      if (!highest?.product) return rotation;
+
+                      if (highest.percentage > rotation.percentage) return highest
+
+                      return rotation;
+                    }, {}),
+                    currentMonth: getProductsRotationPercentage(dataConfig.inventory.currentMonth).reduce((highest, rotation) => {
+                      if (!highest?.product) return rotation;
+
+                      if (highest.percentage > rotation.percentage) return highest
+
+                      return rotation;
+                    }, {}),
+                    lastThreeMonths: getProductsRotationPercentage(dataConfig.inventory.lastThreeMonths?.flatMap(month => month.records)).reduce((highest, rotation) => {
+                      if (!highest?.product) return rotation;
+
+                      if (highest.percentage > rotation.percentage) return highest
+
+                      return rotation;
+                    }, {}),
+                    lastSixMonths: getProductsRotationPercentage(dataConfig.inventory.lastSixMonths?.flatMap(month => month.records)).reduce((highest, rotation) => {
+                      if (!highest?.product) return rotation;
+
+                      if (highest.percentage > rotation.percentage) return highest
+
+                      return rotation;
+                    }, {}),
                   }
-                  const count = COUNT_MAP[cardsSelectedOptions.shippings.value]
+                  const count = COUNT_MAP[cardsSelectedOptions.inventory.value].percentage
                   return formatPercentage(count, { signDisplay: "never" })
                 })()}
                 options={[
@@ -133,16 +155,64 @@ const Dashboard = () => {
                 onOptionChange={option => setCardsSelectedOptions({ ...cardsSelectedOptions, inventory: option })}
                 percentage={(() => {
                   const TARGET_MAP = {
-                    currentWeek: dataConfig.inventory.currentWeek.length,
-                    currentMonth: dataConfig.inventory.currentMonth.length,
-                    lastThreeMonths: dataConfig.inventory.lastThreeMonths.reduce((sum, month) => sum + month.inventory.length, 0),
-                    lastSixMonths: dataConfig.inventory.lastSixMonths.reduce((sum, month) => sum + month.inventory.length, 0),
+                    currentWeek: getProductsRotationPercentage(dataConfig.inventory.currentWeek).reduce((highest, rotation) => {
+                      if (!highest?.product) return rotation;
+
+                      if (highest.percentage > rotation.percentage) return highest
+
+                      return rotation;
+                    }, {}),
+                    currentMonth: getProductsRotationPercentage(dataConfig.inventory.currentMonth).reduce((highest, rotation) => {
+                      if (!highest?.product) return rotation;
+
+                      if (highest.percentage > rotation.percentage) return highest
+
+                      return rotation;
+                    }, {}),
+                    lastThreeMonths: getProductsRotationPercentage(dataConfig.inventory.lastThreeMonths?.flatMap(month => month.records)).reduce((highest, rotation) => {
+                      if (!highest?.product) return rotation;
+
+                      if (highest.percentage > rotation.percentage) return highest
+
+                      return rotation;
+                    }, {}),
+                    lastSixMonths: getProductsRotationPercentage(dataConfig.inventory.lastSixMonths?.flatMap(month => month.records)).reduce((highest, rotation) => {
+                      if (!highest?.product) return rotation;
+
+                      if (highest.percentage > rotation.percentage) return highest
+
+                      return rotation;
+                    }, {}),
                   }
                   const SOURCE_MAP = {
-                    currentWeek: dataConfig.inventory.formerWeek.length,
-                    currentMonth: dataConfig.inventory.formerMonth.length,
-                    lastThreeMonths: dataConfig.inventory.formerLastThreeMonths.reduce((sum, month) => sum + month.inventory.length, 0),
-                    lastSixMonths: dataConfig.inventory.formerLastSixMonths.reduce((sum, month) => sum + month.inventory.length, 0),
+                    currentWeek: getProductsRotationPercentage(dataConfig.inventory.formerWeek).reduce((highest, rotation) => {
+                      if (!highest?.product) return rotation;
+
+                      if (highest.percentage > rotation.percentage) return highest
+
+                      return rotation;
+                    }, {}),
+                    currentMonth: getProductsRotationPercentage(dataConfig.inventory.formerMonth).reduce((highest, rotation) => {
+                      if (!highest?.product) return rotation;
+
+                      if (highest.percentage > rotation.percentage) return highest
+
+                      return rotation;
+                    }, {}),
+                    lastThreeMonths: getProductsRotationPercentage(dataConfig.inventory.formerLastThreeMonths?.flatMap(month => month.records)).reduce((highest, rotation) => {
+                      if (!highest?.product) return rotation;
+
+                      if (highest.percentage > rotation.percentage) return highest
+
+                      return rotation;
+                    }, {}),
+                    lastSixMonths: getProductsRotationPercentage(dataConfig.inventory.formerLastSixMonths?.flatMap(month => month.records)).reduce((highest, rotation) => {
+                      if (!highest?.product) return rotation;
+
+                      if (highest.percentage > rotation.percentage) return highest
+
+                      return rotation;
+                    }, {}),
                   }
                   const CARD_LABELS_MAP = {
                     currentWeek: "esta semana",
@@ -153,18 +223,17 @@ const Dashboard = () => {
 
                   const target = TARGET_MAP[cardsSelectedOptions.inventory.value];
                   const source = SOURCE_MAP[cardsSelectedOptions.inventory.value];
-                  const diff = getDiff(target, source);
-
+                  const diff = getDiff(target.percentage * 100, source.percentage * 100);
 
                   return {
                     color: diff?.label ? diff?.color : "dark",
-                    amount: diff?.label ?? `+${target}`,
+                    amount: diff?.label ?? `${formatPercentage(target?.percentage)} ${target?.product?.name}`,
                     label: CARD_LABELS_MAP[cardsSelectedOptions.inventory.value],
                   }
                 })()}
               />
             </MDBox>
-          </Grid> */}
+          </Grid>
 
           {/* Shippings */}
           <Grid xs={12} md={6} lg={4}>

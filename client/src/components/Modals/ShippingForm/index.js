@@ -84,7 +84,6 @@ const ShippingModalForm = ({ shippingData, open, close, onSubmit, onDelete }) =>
   }
 
   const onFormSubmit = async data => {
-    console.log(formatOnSubmitShippingsForm(data))
     try {
       const response = await onSubmit(formatOnSubmitShippingsForm(data));
       const submitMessage = isEditingShipping ? "Se ha actualizado el producto exitosamente" : "Se creado el producto exitosamente"

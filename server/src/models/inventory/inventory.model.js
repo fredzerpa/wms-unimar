@@ -9,6 +9,14 @@ const getInventoryRecordById = async (recordId) => {
   return await inventory.findById(recordId).populate(['billRef', 'shipped']);
 }
 
+const getInventoryRecordsByProductId = async (productId) => {
+  return await inventory.find({ 'product._id': productId }).populate(['billRef', 'shipped']);
+}
+
+const getInventoryRecordsByShippingId = async (shippingId) => {
+  return await inventory.find({ shipped: shippingId }).populate(['billRef', 'shipped']);
+}
+
 const createInventoryRecord = async (recordData) => {
   return await inventory.create(recordData);
 }
@@ -47,6 +55,8 @@ const upsertInventoryRecordsByFields = async (bundle, fields = ['_id']) => {
 module.exports = {
   getInventoryRecords,
   getInventoryRecordById,
+  getInventoryRecordsByProductId,
+  getInventoryRecordsByShippingId,
   createInventoryRecord,
   updateInventoryRecordById,
   deleteInventoryRecordById,

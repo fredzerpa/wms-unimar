@@ -395,12 +395,20 @@ export const getFormerLastSixMonthsInventory = records => {
 export const getProductsRotationPercentage = records => {
   if (lodash.isEmpty(records)) return [];
 
-  const rotations = records.reduce((rotations, record) => {
+  const getTotalShippedProductFromShippings = (productId, shippings) => {
+    return shippings.reduce((sum, shipping) => {
+      return sum + shipping.products.find(product => product._id === productId).quantity
+    }, 0)
+  }
+
+  const rotations = [...records.reduce((rotations, record) => {
     const { product, shipped, onStock } = record;
 
     if (rotations.has(product._id)) {
       rotations.set(product._id, {
         ...rotations.get(product._id),
+        shipped: rotations.get(product._id).shipped + getTotalShippedProductFromShippings(product._id, shipped),
+        ordered: rotations.get(product._id).ordered + onStock + getTotalShippedProductFromShippings(product._id, shipped),
       })
     } else {
 
@@ -412,13 +420,18 @@ export const getProductsRotationPercentage = records => {
           type: product.type,
           typeClass: product.typeClass,
         },
-        shipped: shipped.length,
-        ordered: onStock,
+        shipped: getTotalShippedProductFromShippings(product._id, shipped),
+        ordered: onStock + getTotalShippedProductFromShippings(product._id, shipped),
       })
     }
 
     return rotations;
-  }, new Map())
+  }, new Map()).values()]
+
+  return rotations.map(rotation => ({
+    product: rotation.product,
+    percentage: (rotation.shipped * 1) / rotation.ordered
+  }));
 }
 
 export const sortOrdersOverview = orders => {

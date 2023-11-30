@@ -1,5 +1,5 @@
 const { default: mongoose } = require('mongoose');
-const { upsertInventoryRecordsByFields, getInventoryRecordById } = require('../../models/inventory/inventory.model');
+const { upsertInventoryRecordsByFields, getInventoryRecordById, getInventoryRecordsByProductId } = require('../../models/inventory/inventory.model');
 const {
   getShippings,
   getShippingById,
@@ -55,16 +55,47 @@ const httpCreateShipping = async (req, res) => {
     }
 
     const updatedInventoryRecordsForShipping = (await Promise.allSettled(shippingData.products.map(async product => {
-      const { inventoryRef, quantity } = product;
-      const { onStock } = await getInventoryRecordById(inventoryRef);
-      return {
-        _id: inventoryRef,
-        onStock: onStock - quantity,
-        shipped: [shippingData._id],
-      }
-    }))).map(res => res.value);
+      const { quantity } = product;
+      const records = await getInventoryRecordsByProductId(product._id);
+
+      // First to get expirated gets first
+      const prioritizedInventoryRecords = records.sort((a, b) => {
+        const diff = DateTime.fromFormat(b.expirationDate, 'dd/MM/yyyy').diff(DateTime.fromFormat(a.expirationDate, 'dd/MM/yyyy')).as('milliseconds');
+        if (diff < 0) return -1
+        else if (diff > 0) return 1
+        else return 0
+      })
+
+      const inventoryRecordsToUpdate = prioritizedInventoryRecords.reduce((config, record) => {
+        if (config.quantityToDeliver <= 0) return config;
+
+        const newConfig = {
+          recordsToUpdate: [
+            ...config.recordsToUpdate,
+            {
+              _id: record._id,
+              onStock: (record.onStock - config.quantityToDeliver) <= 0 ? 0 : (record.onStock - config.quantityToDeliver),
+              shipped: [...record.shipped, shippingData._id.toString()],
+            },
+          ],
+          quantityToDeliver: config.quantityToDeliver - record.onStock,
+        }
+
+        // console.log(newConfig)
+        return newConfig;
+
+      }, {
+        recordsToUpdate: [],
+        quantityToDeliver: Number(quantity),
+      }).recordsToUpdate;
+
+
+      return inventoryRecordsToUpdate;
+
+    }))).flatMap(res => res.value)
 
     await upsertInventoryRecordsByFields(updatedInventoryRecordsForShipping)
+
 
     return res.status(201).json(await createShipping(shippingData));
   } catch (error) {
