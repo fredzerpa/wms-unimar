@@ -9,7 +9,6 @@ import Icon from "@mui/material/Icon";
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-import { MenuItem, Select } from "@mui/material";
 import SettingsMenu from "layouts/profile/components/SettingsMenu/SettingsMenu";
 
 const ComplexStatisticsCard = ({ color, title, count, percentage, icon, slotProps, options, onOptionChange }) => {

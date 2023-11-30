@@ -20,10 +20,20 @@ import {
   LAST_SIX_MONTHS_LABELS,
   getBillsByWeekNumber,
   getDiff,
+  getFormerLastSixMonthsBills,
+  getFormerLastSixMonthsInventory,
+  getFormerLastSixMonthsShippings,
+  getFormerLastThreeMonthsBills,
+  getFormerLastThreeMonthsInventory,
+  getFormerLastThreeMonthsShippings,
+  getInventoryByMonth,
+  getInventoryByWeekNumber,
   getInventoryGroupedByClass,
   getLastSixMonthsBills,
+  getLastSixMonthsInventory,
   getLastSixMonthsShippings,
   getLastThreeMonthsBills,
+  getLastThreeMonthsInventory,
   getLastThreeMonthsShippings,
   getShippingsByMonth,
   getShippingsByWeekNumber,
@@ -45,15 +55,15 @@ const Dashboard = () => {
   const [cardsSelectedOptions, setCardsSelectedOptions] = useState({
     rotations: {
       label: "Mes",
-      value: "month"
+      value: "currentMonth"
     },
     shippings: {
       label: "Mes",
-      value: "month"
+      value: "currentMonth"
     },
-    costs: {
+    bills: {
       label: "Mes",
-      value: "month"
+      value: "currentMonth"
     },
   })
 
@@ -63,37 +73,36 @@ const Dashboard = () => {
       formerWeek: getShippingsByWeekNumber(shippings, todayDT.minus({ weeks: 1 }).weekNumber),
       currentMonth: getShippingsByMonth(shippings, todayDT.month),
       formerMonth: getShippingsByMonth(shippings, todayDT.minus({ months: 1 }).month),
-      lastSixthMonths: getLastSixMonthsShippings(shippings),
+      lastThreeMonths: getLastThreeMonthsShippings(shippings),
+      formerLastThreeMonths: getFormerLastThreeMonthsShippings(shippings),
+      lastSixMonths: getLastSixMonthsShippings(shippings),
+      formerLastSixMonths: getFormerLastSixMonthsShippings(shippings),
     },
     bills: {
+      currentWeek: getBillsByWeekNumber(bills, todayDT.weekNumber),
+      formerWeek: getBillsByWeekNumber(bills, todayDT.minus({ weeks: 1 }).weekNumber),
       currentMonth: getShippingsByMonth(bills, todayDT.month),
       formerMonth: getShippingsByMonth(bills, todayDT.minus({ months: 1 }).month),
-      lastSixthMonths: getLastSixMonthsBills(bills),
+      lastThreeMonths: getLastThreeMonthsBills(bills),
+      formerLastThreeMonths: getFormerLastThreeMonthsBills(bills),
+      lastSixMonths: getLastSixMonthsBills(bills),
+      formerLastSixMonths: getFormerLastSixMonthsBills(bills),
     },
     inventory: {
+      currentWeek: getInventoryByWeekNumber(inventory, todayDT.weekNumber),
+      formerWeek: getInventoryByWeekNumber(inventory, todayDT.minus({ weeks: 1 }).weekNumber),
+      currentMonth: getInventoryByMonth(inventory, todayDT.month),
+      formerMonth: getInventoryByMonth(inventory, todayDT.minus({ months: 1 }).month),
+      lastThreeMonths: getLastThreeMonthsInventory(inventory),
+      formerLastThreeMonths: getFormerLastThreeMonthsInventory(inventory),
+      lastSixMonths: getLastSixMonthsInventory(inventory),
+      formerLastSixMonths: getFormerLastSixMonthsInventory(inventory),
       groupedByClass: getInventoryGroupedByClass(inventory)
     },
-    cards: {
-      rotations: {
-        week: null,
-        month: null,
-        triMonths: null,
-        sixMonths: null,
-      },
-      shippings: {
-        week: getShippingsByWeekNumber(shippings, todayDT.weekNumber).length,
-        month: getShippingsByMonth(shippings, todayDT.month).length,
-        triMonths: getLastThreeMonthsShippings(shippings).length,
-        sixMonths: getLastSixMonthsShippings(shippings).length,
-      },
-      costs: {
-        week: sumBillsTotal(getBillsByWeekNumber(bills, todayDT.weekNumber)),
-        month: sumBillsTotal(getShippingsByMonth(bills, todayDT.month)),
-        triMonths: getLastThreeMonthsBills(bills).reduce((sum, month) => sum + sumBillsTotal(month.bills), 0),
-        sixMonths: getLastSixMonthsBills(bills).reduce((sum, month) => sum + sumBillsTotal(month.bills), 0),
-      },
-    }
   }), [bills, inventory, shippings])
+
+  console.log(dataConfig.shippings.lastSixMonths)
+
 
   return (
     <DashboardLayout>
@@ -101,27 +110,26 @@ const Dashboard = () => {
       <MDBox py={3}>
         <Grid container spacing={3}>
           {/* Rotations */}
-          {/* <Grid xs={12} md={6} lg={3}>
+          {/* <Grid xs={12} md={6} lg={4}>
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
                 color="dark"
                 icon="change_circle"
                 title="Rotaciones"
                 count={formatPercentage(0.34, { signDisplay: "never" })}
-                optionValue={cardsSelectedOptions.rotations}
                 options={[
-                  { label: "Semana", value: "week" },
-                  { label: "Mes", value: "month" },
-                  { label: "3 Meses", value: "triMonths" },
-                  { label: "6 Meses", value: "sixMonths" },
+                  { label: "Semana", value: "currentWeek" },
+                  { label: "Mes", value: "currentMonth" },
+                  { label: "3 Meses", value: "lastThreeMonths" },
+                  { label: "6 Meses", value: "lastSixMonths" },
                 ]}
                 onOptionChange={option => setCardsSelectedOptions({ ...cardsSelectedOptions, rotations: option })}
                 percentage={(() => {
                   const CARD_LABELS_MAP = {
-                    week: "esta semana",
-                    month: "este mes",
-                    triMonths: "en los ultimos 3 meses",
-                    sixMonths: "en los ultimos 6 meses",
+                    currentWeek: "esta semana",
+                    currentMonth: "este mes",
+                    lastThreeMonths: "en los ultimos 3 meses",
+                    lastSixMonths: "en los ultimos 6 meses",
                   }
 
                   return {
@@ -135,43 +143,52 @@ const Dashboard = () => {
           </Grid> */}
 
           {/* Shippings */}
-          <Grid xs={12} md={6} lg={3}>
+          <Grid xs={12} md={6} lg={4}>
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
                 icon="local_shipping"
-                title={(() => {
-                  const CARD_TITLE_LABELS_MAP = {
-                    week: "esta semana",
-                    month: "este mes",
-                    triMonths: "en los ultimos 3 meses",
-                    sixMonths: "en los ultimos 6 meses",
+                title="Envios"
+                count={(() => {
+                  const COUNT_MAP = {
+                    currentWeek: dataConfig.shippings.currentWeek.length,
+                    currentMonth: dataConfig.shippings.currentMonth.length,
+                    lastThreeMonths: dataConfig.shippings.lastThreeMonths.reduce((sum, month) => sum + month.shippings.length, 0),
+                    lastSixMonths: dataConfig.shippings.lastSixMonths.reduce((sum, month) => sum + month.shippings.length, 0),
                   }
-
-                  // TODO: Add dynamic title
-                  const title = `Envios`;
-
-                  return title
+                  const count = COUNT_MAP[cardsSelectedOptions.shippings.value]
+                  return formatNumber(count)
                 })()}
-                count={formatNumber(dataConfig.cards.shippings[cardsSelectedOptions.shippings.value])}
-                optionValue={cardsSelectedOptions.shippings}
                 options={[
-                  { label: "Semana", value: "week" },
-                  { label: "Mes", value: "month" },
-                  { label: "3 Meses", value: "triMonths" },
-                  { label: "6 Meses", value: "sixMonths" },
+                  { label: "Semana", value: "currentWeek" },
+                  { label: "Mes", value: "currentMonth" },
+                  { label: "3 Meses", value: "lastThreeMonths" },
+                  { label: "6 Meses", value: "lastSixMonths" },
                 ]}
                 onOptionChange={option => setCardsSelectedOptions({ ...cardsSelectedOptions, shippings: option })}
                 percentage={(() => {
-                  const target = dataConfig.shippings.currentWeek.length;
-                  const source = dataConfig.shippings.formerWeek.length;
+                  const TARGET_MAP = {
+                    currentWeek: dataConfig.shippings.currentWeek.length,
+                    currentMonth: dataConfig.shippings.currentMonth.length,
+                    lastThreeMonths: dataConfig.shippings.lastThreeMonths.reduce((sum, month) => sum + month.shippings.length, 0),
+                    lastSixMonths: dataConfig.shippings.lastSixMonths.reduce((sum, month) => sum + month.shippings.length, 0),
+                  }
+                  const SOURCE_MAP = {
+                    currentWeek: dataConfig.shippings.formerWeek.length,
+                    currentMonth: dataConfig.shippings.formerMonth.length,
+                    lastThreeMonths: dataConfig.shippings.formerLastThreeMonths.reduce((sum, month) => sum + month.shippings.length, 0),
+                    lastSixMonths: dataConfig.shippings.formerLastSixMonths.reduce((sum, month) => sum + month.shippings.length, 0),
+                  }
+                  const CARD_LABELS_MAP = {
+                    currentWeek: "esta semana",
+                    currentMonth: "este mes",
+                    lastThreeMonths: "en los ultimos 3 meses",
+                    lastSixMonths: "en los ultimos 6 meses",
+                  }
+
+                  const target = TARGET_MAP[cardsSelectedOptions.shippings.value];
+                  const source = SOURCE_MAP[cardsSelectedOptions.shippings.value];
                   const diff = getDiff(target, source);
 
-                  const CARD_LABELS_MAP = {
-                    week: "esta semana",
-                    month: "este mes",
-                    triMonths: "en los ultimos 3 meses",
-                    sixMonths: "en los ultimos 6 meses",
-                  }
 
                   return {
                     color: diff?.label ? diff?.color : "dark",
@@ -184,49 +201,58 @@ const Dashboard = () => {
           </Grid>
 
           {/* Costs */}
-          <Grid xs={12} md={6} lg={3}>
+          <Grid xs={12} md={6} lg={4}>
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
                 color="success"
                 icon="attach_money"
-                title={(() => {
-                  const CARD_TITLE_LABELS_MAP = {
-                    week: "esta semana",
-                    month: "este mes",
-                    triMonths: "en los ultimos 3 meses",
-                    sixMonths: "en los ultimos 6 meses",
+                title="Gastos"
+                count={(() => {
+                  const COUNT_MAP = {
+                    currentWeek: sumBillsTotal(dataConfig.bills.currentWeek),
+                    currentMonth: sumBillsTotal(dataConfig.bills.currentMonth),
+                    lastThreeMonths: dataConfig.bills.lastThreeMonths.reduce((sum, month) => sum + sumBillsTotal(month.bills), 0),
+                    lastSixMonths: dataConfig.bills.lastSixMonths.reduce((sum, month) => sum + sumBillsTotal(month.bills), 0),
                   }
-
-                  // TODO: Add dynamic title
-                  const title = `Gastos`;
-
-                  return title
+                  const count = COUNT_MAP[cardsSelectedOptions.bills.value]
+                  return formatCurrency(count)
                 })()}
-                count={formatCurrency(dataConfig.cards.costs[cardsSelectedOptions.costs.value])}
-                optionValue={cardsSelectedOptions.costs}
                 options={[
-                  { label: "Semana", value: "week" },
-                  { label: "Mes", value: "month" },
-                  { label: "3 Meses", value: "triMonths" },
-                  { label: "6 Meses", value: "sixMonths" },
+                  { label: "Semana", value: "currentWeek" },
+                  { label: "Mes", value: "currentMonth" },
+                  { label: "3 Meses", value: "lastThreeMonths" },
+                  { label: "6 Meses", value: "lastSixMonths" },
                 ]}
                 onOptionChange={option => setCardsSelectedOptions({ ...cardsSelectedOptions, costs: option })}
                 percentage={(() => {
-                  const target = sumBillsTotal(dataConfig.bills.currentMonth);
-                  const source = dataConfig.bills.formerMonth;
-                  const diff = getDiff(target, source);
-
-                  const CARD_LABELS_MAP = {
-                    week: "esta semana",
-                    month: "este mes",
-                    triMonths: "en los ultimos 3 meses",
-                    sixMonths: "en los ultimos 6 meses",
+                  const TARGET_MAP = {
+                    currentWeek: sumBillsTotal(dataConfig.bills.currentWeek),
+                    currentMonth: sumBillsTotal(dataConfig.bills.currentMonth),
+                    lastThreeMonths: dataConfig.bills.lastThreeMonths.reduce((sum, month) => sum + sumBillsTotal(month.bills), 0),
+                    lastSixMonths: dataConfig.bills.lastSixMonths.reduce((sum, month) => sum + sumBillsTotal(month.bills), 0),
                   }
+                  const SOURCE_MAP = {
+                    currentWeek: sumBillsTotal(dataConfig.bills.formerWeek),
+                    currentMonth: sumBillsTotal(dataConfig.bills.formerMonth),
+                    lastThreeMonths: dataConfig.bills.formerLastThreeMonths.reduce((sum, month) => sum + sumBillsTotal(month.bills), 0),
+                    lastSixMonths: dataConfig.bills.formerLastSixMonths.reduce((sum, month) => sum + sumBillsTotal(month.bills), 0),
+                  }
+                  const CARD_LABELS_MAP = {
+                    currentWeek: "esta semana",
+                    currentMonth: "este mes",
+                    lastThreeMonths: "en los ultimos 3 meses",
+                    lastSixMonths: "en los ultimos 6 meses",
+                  }
+
+                  const target = TARGET_MAP[cardsSelectedOptions.bills.value];
+                  const source = SOURCE_MAP[cardsSelectedOptions.bills.value];
+
+                  const diff = getDiff(target, source);
 
                   return {
                     color: diff?.label ? diff?.color : "dark",
                     amount: diff?.label ?? `+${target}`,
-                    label: CARD_LABELS_MAP[cardsSelectedOptions.costs.value],
+                    label: CARD_LABELS_MAP[cardsSelectedOptions.bills.value],
                   }
                 })()}
               />
@@ -279,7 +305,7 @@ const Dashboard = () => {
                     labels: LAST_SIX_MONTHS_LABELS,
                     datasets: {
                       label: "Envios",
-                      data: dataConfig.shippings.lastSixthMonths.map(month => month?.shippings?.length)
+                      data: dataConfig.shippings.lastSixMonths.map(month => month?.shippings?.length)
                     },
                     options: {
                       scales: {
@@ -304,7 +330,7 @@ const Dashboard = () => {
                   chart={{
                     labels: LAST_SIX_MONTHS_LABELS,
                     datasets: {
-                      data: dataConfig.bills.lastSixthMonths.map(month =>
+                      data: dataConfig.bills.lastSixMonths.map(month =>
                         month.bills.reduce((total, bill) => total + bill.total.usd, 0)
                       )
                     },
