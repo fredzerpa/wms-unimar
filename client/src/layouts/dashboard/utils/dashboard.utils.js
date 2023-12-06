@@ -35,7 +35,7 @@ export const getDiff = (target, source) => {
 
   return {
     value: diff,
-    label: source > 0 ? formatPercentage(diff, { signDisplay: "always" }) : null, // Puede obtenerse valores antiguos no agregados a la BDD
+    label: source > 0 ? formatPercentage(diff, { signDisplay: "always" }).replace(" ", "") : null, // El replace elimina el espacio creado en el porcentaje
     color: diff === 0 ? "dark" : (diff > 0 ? "success" : "error"),
   }
 }

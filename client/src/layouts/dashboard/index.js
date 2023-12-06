@@ -143,8 +143,10 @@ const Dashboard = () => {
                       return rotation;
                     }, {}),
                   }
-                  const count = COUNT_MAP[cardsSelectedOptions.inventory.value].percentage
-                  return formatPercentage(count, { signDisplay: "never" })
+                  
+                  const count = COUNT_MAP[cardsSelectedOptions.inventory.value]?.product
+                  console.log(count)
+                  return count?.name ?? "No hubo rotacion";
                 })()}
                 options={[
                   { label: "Semana", value: "currentWeek" },
@@ -223,7 +225,9 @@ const Dashboard = () => {
 
                   const target = TARGET_MAP[cardsSelectedOptions.inventory.value];
                   const source = SOURCE_MAP[cardsSelectedOptions.inventory.value];
-                  const diff = getDiff(target.percentage * 100, source.percentage * 100);
+
+                  const diff = getDiff(target?.percentage ?? 0 * 100, source?.percentage ?? 0 * 100);
+                  console.log({target, source, diff})
 
                   return {
                     color: diff?.label ? diff?.color : "dark",
@@ -281,7 +285,6 @@ const Dashboard = () => {
                   const target = TARGET_MAP[cardsSelectedOptions.shippings.value];
                   const source = SOURCE_MAP[cardsSelectedOptions.shippings.value];
                   const diff = getDiff(target, source);
-
 
                   return {
                     color: diff?.label ? diff?.color : "dark",
@@ -487,9 +490,11 @@ const Dashboard = () => {
                     ...dataConfig.shippings.currentMonth.map(shipping => ({ ...shipping, isShipping: true })),
                     ...dataConfig.bills.currentMonth.map(shipping => ({ ...shipping, isBilling: true })),
                   ]);
+                  console.log(diff)
+                  
                   return (
                     <OrdersOverview
-                      title="Ultimos 30 dias"
+                      title="Actividades recientes"
                       subtitle={diff}
                       orders={orders}
                     />

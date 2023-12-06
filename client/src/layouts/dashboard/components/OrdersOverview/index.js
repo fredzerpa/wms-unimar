@@ -21,9 +21,9 @@ const OrdersOverview = ({ title, subtitle, orders }) => {
           <MDBox mt={0} mb={2}>
             <MDTypography variant="button" color="text" fontWeight="regular">
               <MDTypography variant="button" color={subtitle?.label ? subtitle?.color : "dark"} fontWeight="medium">
-                {subtitle?.amount ?? ""}
+                {subtitle?.label ?? ""}
               </MDTypography>
-              {" "} {subtitle?.label ?? ""}
+              {" "} este mes
             </MDTypography>
           </MDBox>
         </MDBox>
@@ -38,6 +38,13 @@ const OrdersOverview = ({ title, subtitle, orders }) => {
                 shipping: "send",
                 bill: "shopping_cart",
               }
+
+              if (!orders.length) return (
+                <MDTypography align="center">
+                  No hay actividades recientes
+                </MDTypography>
+              )
+
               return orders.map((order, idx, arr) => {
                 const orderCanceled = order.status === "canceled";
                 const isShipping = order?.isShipping;

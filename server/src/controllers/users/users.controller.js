@@ -145,7 +145,8 @@ const httpUpdateUserByEmail = async (req, res) => {
     }
 
     if (updateData?.password) updateData.password = await encrypt(updateData.password);
-    else delete updateData.password; // Si no hemos enviado una contraseña entonces la eliminamos
+    // Si no hemos enviado una contraseña entonces la eliminamos para evitar una actualizacion "null"
+    else delete updateData.password;
 
     const userUpdated = await updateUserByEmail(email, updateData);
 
